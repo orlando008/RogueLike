@@ -11,7 +11,7 @@ namespace RogueLike
         {
             OverallMap ovMap = new OverallMap();
             ovMap.CreateLevel();
-            Console.WriteLine(ovMap.ToString());
+            Console.WriteLine(ovMap.GetDrawingOfLevel(0));
 
             Console.Read();
         }
