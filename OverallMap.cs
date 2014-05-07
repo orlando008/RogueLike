@@ -277,7 +277,7 @@ namespace RogueLike
             room1DoorWayGlobal = new Point(room1DoorWay.X + room1.Origin.X, room1DoorWay.Y + room1.Origin.Y);
             room2DoorWayGlobal = new Point(room2DoorWay.X + room2.Origin.X, room2DoorWay.Y + room2.Origin.Y);
 
-            List<Point> _pointsBetweenDoors = new List<Point>();
+            List<Point> pointsBetweenDoors = new List<Point>();
 
 
             while (room1.RoomLayout[room1DoorWay.X, room1DoorWay.Y].Connected == false)
@@ -287,10 +287,10 @@ namespace RogueLike
                 int ultimateXDirection = room2DoorWayGlobal.X - room1DoorWayGlobal.X;
                 int ultimateYDirection = room2DoorWayGlobal.Y - room1DoorWayGlobal.Y;
 
-                if (_pointsBetweenDoors.Count > 0)
+                if (pointsBetweenDoors.Count > 0)
                 {
-                    ultimateXDirection = room2DoorWayGlobal.X - _pointsBetweenDoors[_pointsBetweenDoors.Count - 1].X;
-                    ultimateYDirection = room2DoorWayGlobal.Y - _pointsBetweenDoors[_pointsBetweenDoors.Count - 1].Y;
+                    ultimateXDirection = room2DoorWayGlobal.X - pointsBetweenDoors[pointsBetweenDoors.Count - 1].X;
+                    ultimateYDirection = room2DoorWayGlobal.Y - pointsBetweenDoors[pointsBetweenDoors.Count - 1].Y;
                 }
 
                 if (ultimateXDirection < 0)
@@ -311,7 +311,7 @@ namespace RogueLike
                     ultimateYDirection = 1;
                 }
 
-                if (_pointsBetweenDoors.Count == 0)
+                if (pointsBetweenDoors.Count == 0)
                 {
                     pointToTry = new Point(room1DoorWayGlobal.X + ultimateXDirection, room1DoorWayGlobal.Y);
                 }
@@ -319,11 +319,11 @@ namespace RogueLike
                 {
                     if (ultimateXDirection != 0)
                     {
-                        pointToTry = new Point(_pointsBetweenDoors[_pointsBetweenDoors.Count - 1].X + ultimateXDirection, _pointsBetweenDoors[_pointsBetweenDoors.Count - 1].Y);
+                        pointToTry = new Point(pointsBetweenDoors[pointsBetweenDoors.Count - 1].X + ultimateXDirection, pointsBetweenDoors[pointsBetweenDoors.Count - 1].Y);
                     }
                     else if (ultimateYDirection != 0)
                     {
-                        pointToTry = new Point(_pointsBetweenDoors[_pointsBetweenDoors.Count - 1].X, _pointsBetweenDoors[_pointsBetweenDoors.Count - 1].Y + ultimateYDirection);
+                        pointToTry = new Point(pointsBetweenDoors[pointsBetweenDoors.Count - 1].X, pointsBetweenDoors[pointsBetweenDoors.Count - 1].Y + ultimateYDirection);
                     }
                     else
                     {
@@ -356,22 +356,22 @@ namespace RogueLike
                             }
                             else
                             {
-                                _pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
+                                pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
                             }
                         }
                         else
                         {
-                            _pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
+                            pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
                         }
                     }
                     else
                     {
-                        _pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
+                        pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
                     }
                 }
                 else
                 {
-                    _pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
+                    pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
                 }
 
                 if ((pointToTry.Y + 1 == room2DoorWayGlobal.X && pointToTry.X == room2DoorWayGlobal.Y) ||
@@ -383,14 +383,14 @@ namespace RogueLike
                     room2.RoomLayout[room2DoorWay.X, room2DoorWay.Y].Connected = true;
                 }
 
-                LevelHallways.Add(level, _pointsBetweenDoors);
+                LevelHallways.Add(level, pointsBetweenDoors);
                 Console.WriteLine(GetDrawingOfLevel(0));
                 LevelHallways.Remove(0);
                 
             }
 
             
-            LevelHallways.Add(level,_pointsBetweenDoors);
+            LevelHallways.Add(level,pointsBetweenDoors);
         }
 
         public bool PointIsClear(Point pointToTry, int level)
