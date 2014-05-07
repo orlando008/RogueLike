@@ -17,6 +17,7 @@ namespace RogueLike.StructuralClasses
     public class RoomTile
     {
         TileType _tileType;
+        bool _connected = false;
 
         public RoomTile(TileType tyleType)
         {
@@ -32,6 +33,18 @@ namespace RogueLike.StructuralClasses
             set
             {
                 _tileType = value;
+            }
+        }
+
+        public bool Connected
+        {
+            get
+            {
+                return _connected;
+            }
+            set
+            {
+                _connected = value;
             }
         }
 

@@ -48,6 +48,7 @@
     <Compile Include="InteractableObjects\Item.cs" />
     <Compile Include="OverallMap.cs" />
     <Compile Include="InteractableObjects\Interactable.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StructuralClasses\Room.cs" />

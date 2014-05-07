@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RogueLike.StructuralClasses;
+using System.Drawing;
 
 namespace RogueLike
 {
@@ -17,15 +18,15 @@ namespace RogueLike
         private RoomType _roomType;
         private RoomTile[,] _roomLayout = null;
         private OverallMap _parentMap;
-        private Tuple<int, int> _origin;
-        private Tuple<int, int> _size;
-        private Dictionary<Tuple<int, int>, string> _roomStrings;
+        private Point _origin;
+        private Point _size;
+        private Dictionary<Point, string> _roomStrings;
 
         public Room(OverallMap parentMap, RoomType roomType)
         {
             _parentMap = parentMap;
             _roomType = roomType;
-            _origin = Tuple.Create<int, int>(-1, -1);
+            _origin = new Point(-1, -1);
 
             switch (roomType)
             {
@@ -33,7 +34,7 @@ namespace RogueLike
                     int widthOfRoom = _parentMap.RNG.Next(5, 25);
                     int heightOfRoom = _parentMap.RNG.Next(5, 25);
 
-                    _size = Tuple.Create<int, int>(widthOfRoom, heightOfRoom);
+                    _size = new Point(widthOfRoom, heightOfRoom);
 
                     _roomLayout = new RoomTile[heightOfRoom, widthOfRoom];
 
@@ -46,12 +47,12 @@ namespace RogueLike
                     {
                         _roomLayout = new RoomTile[lengthOfHallway, 1];
 
-                        _size = Tuple.Create<int, int>(lengthOfHallway, 1);
+                        _size = new Point(lengthOfHallway, 1);
                     }
                     else
                     {
                         _roomLayout = new RoomTile[1, lengthOfHallway];
-                        _size = Tuple.Create<int, int>(1, lengthOfHallway);
+                        _size = new Point(1, lengthOfHallway);
                     }
 
                     FillInRoomLayoutForHallway();
@@ -60,7 +61,7 @@ namespace RogueLike
             }
         }
 
-        public Tuple<int, int> Size
+        public Point Size
         {
             get
             {
@@ -68,7 +69,7 @@ namespace RogueLike
             }
         }
 
-        public Tuple<int, int> Origin
+        public Point Origin
         {
             get
             {
@@ -78,6 +79,14 @@ namespace RogueLike
             {
                 _origin = value;
                 FitIntoStringDictionary();
+            }
+        }
+
+        public RoomTile[,] RoomLayout
+        {
+            get
+            {
+                return _roomLayout;
             }
         }
 
@@ -117,26 +126,38 @@ namespace RogueLike
 
         public void FitIntoStringDictionary()
         {
-            _roomStrings = new Dictionary<Tuple<int, int>, string>();
+            _roomStrings = new Dictionary<Point, string>();
             for (int i = 0; i < _roomLayout.GetLength(0); i++)
             {
                 for (int j = 0; j < _roomLayout.GetLength(1); j++)
                 {
-                    Tuple<int, int> tmpTuple = Tuple.Create<int, int>(Origin.Item1 + j, Origin.Item2 + i);
-                    _roomStrings.Add(tmpTuple, _roomLayout[i, j].ToString());
+                    Point tmpPoint = new Point(Origin.X + j, Origin.Y + i);
+                    _roomStrings.Add(tmpPoint, _roomLayout[i, j].ToString());
                 }
             }
         }
 
-        public string GetStringAtLevel(Tuple<int,int> i)
+        public string GetStringAtPoint(Point i)
         {
             if (_roomStrings.ContainsKey(i))
             {
-                return _roomLayout[i.Item2 - Origin.Item2, i.Item1 - Origin.Item1].ToString();
+                return _roomLayout[i.Y - Origin.Y, i.X - Origin.X].ToString();
             }
             else
             {
                 return "";
+            }
+        }
+
+        public RoomTile GetRoomTileAtPoint(Point i)
+        {
+            if (_roomStrings.ContainsKey(i))
+            {
+                return _roomLayout[i.Y - Origin.Y, i.X - Origin.X];
+            }
+            else
+            {
+                return null;
             }
         }
 
@@ -177,27 +198,32 @@ namespace RogueLike
             
             if (westWallHasDoor)
             {
-                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Item2-1);
+                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Y-1);
                 _roomLayout[tileToPlaceDoor, 0].ThisTileType = TileType.Door;
             }
 
             if (eastWallHasDoor)
             {
-                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Item2-1);
-                _roomLayout[tileToPlaceDoor, this.Size.Item1 - 1].ThisTileType = TileType.Door;
+                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Y-1);
+                _roomLayout[tileToPlaceDoor, this.Size.X - 1].ThisTileType = TileType.Door;
             }
 
             if (northWallHasDoor)
             {
-                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Item1-1);
+                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.X-1);
                 _roomLayout[0, tileToPlaceDoor].ThisTileType = TileType.Door;
             }
 
             if (southWallHasDoor)
             {
-                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Item1-1);
-                _roomLayout[this.Size.Item2 - 1, tileToPlaceDoor].ThisTileType = TileType.Door;
+                tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.X-1);
+                _roomLayout[this.Size.Y - 1, tileToPlaceDoor].ThisTileType = TileType.Door;
             }
+        }
+
+        public void GetUnconnectedDoorway()
+        {
+
         }
     }
 }
