@@ -15,12 +15,21 @@ namespace RogueLike
         private Dictionary<int, List<Point>> _levelHallways;
         private Player _player;
 
+        private Point _door1;
+        private Point _door2;
+
+        public int _seed = 0; //467 is a good one
+
         public Random RNG
         {
             get
             {
                 if (_rng == null)
-                    _rng = new Random(DateTime.Now.Millisecond);
+                {
+                    _seed = DateTime.Now.Millisecond;
+                    _rng = new Random(_seed);
+                }
+                    
 
                 return _rng;
             }
@@ -60,13 +69,8 @@ namespace RogueLike
         {
         }
 
-        public string GetDrawingOfLevel(int level)
+        public void GetMax(ref int maxX, ref int maxY, int level)
         {
-            string s = "";
-
-            int maxY = 0;
-            int maxX = 0;
-
             foreach (Room room in _levels[level])
             {
                 if (room.Origin.Y + room.Size.Y > maxY)
@@ -82,6 +86,17 @@ namespace RogueLike
 
             maxY += 5;
             maxX += 5;
+        }
+
+        public string GetDrawingOfLevel(int level)
+        {
+            string s = "";
+
+            int maxY = 0;
+            int maxX = 0;
+
+            GetMax(ref maxX, ref maxY, level);
+
 
             for (int i = 0; i < maxY; i++)
             {
@@ -89,7 +104,15 @@ namespace RogueLike
                 {
                     Point tmpPoint = new Point(j, i);
 
-                    if(_player != null && (tmpPoint.Equals(_player.Location)))
+                    if (tmpPoint.Equals(_door1))
+                    {
+                        s += "1";
+                    }
+                    else if (tmpPoint.Equals(_door2))
+                    {
+                        s += "2";
+                    }
+                    else if (_player != null && (tmpPoint.Equals(_player.Location)))
                     {
                         s += "@";
                     }
@@ -163,7 +186,7 @@ namespace RogueLike
                 int x = RNG.Next(0, 100);
                 int y = RNG.Next(0, 100);
 
-                Rectangle roomRectangle = new Rectangle(x, y, proposedRoom.Size.X + 1, proposedRoom.Size.Y + 1);
+                Rectangle roomRectangle = new Rectangle(x, y, proposedRoom.Size.X + 2, proposedRoom.Size.Y + 2);
 
                 bool intersectionFound = false;
                 foreach (Room r in rooms)
@@ -213,7 +236,7 @@ namespace RogueLike
                             room1 = r;
                             room1DoorWay = new Point(i, 0);
                         }
-                        else if (!room1.Equals(r))
+                        else if (!room1.Equals(r) && room2 == null)
                         {
                             room2 = r;
                             room2DoorWay = new Point(i, 0);
@@ -228,7 +251,7 @@ namespace RogueLike
                             room1 = r;
                             room1DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
                         }
-                        else if (!room1.Equals(r))
+                        else if (!room1.Equals(r) && room2 == null)
                         {
                             room2 = r;
                             room2DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
@@ -248,7 +271,7 @@ namespace RogueLike
                             room1 = r;
                             room1DoorWay = new Point(0, i);
                         }
-                        else if(!room1.Equals(r))
+                        else if (!room1.Equals(r) && room2 == null)
                         {
                             room2 = r;
                             room2DoorWay = new Point(0, i);
@@ -261,12 +284,14 @@ namespace RogueLike
                         if (room1 == null)
                         {
                             room1 = r;
-                            room1DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
+                            //room1DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
+                            room1DoorWay = new Point( r.RoomLayout.GetLength(1) - 1,i);
                         }
-                        else if (!room1.Equals(r))
+                        else if (!room1.Equals(r) && room2 == null)
                         {
                             room2 = r;
-                            room2DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
+                            //room2DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
+                            room2DoorWay = new Point(r.RoomLayout.GetLength(1) - 1, i);
                         }
 
                         break;
@@ -276,9 +301,15 @@ namespace RogueLike
 
             room1DoorWayGlobal = new Point(room1DoorWay.X + room1.Origin.X, room1DoorWay.Y + room1.Origin.Y);
             room2DoorWayGlobal = new Point(room2DoorWay.X + room2.Origin.X, room2DoorWay.Y + room2.Origin.Y);
+            _door1 = room1DoorWayGlobal;
+            _door2 = room2DoorWayGlobal;
 
             List<Point> pointsBetweenDoors = new List<Point>();
 
+            int maxX = 0;
+            int maxY = 0;
+
+            GetMax(ref maxX, ref maxY, level);
 
             while (room1.RoomLayout[room1DoorWay.X, room1DoorWay.Y].Connected == false)
             {
@@ -311,48 +342,71 @@ namespace RogueLike
                     ultimateYDirection = 1;
                 }
 
+                Point basePoint;
+
                 if (pointsBetweenDoors.Count == 0)
                 {
-                    pointToTry = new Point(room1DoorWayGlobal.X + ultimateXDirection, room1DoorWayGlobal.Y);
+                    basePoint = new Point(room1DoorWayGlobal.X, room1DoorWayGlobal.Y);
                 }
                 else
                 {
-                    if (ultimateXDirection != 0)
-                    {
-                        pointToTry = new Point(pointsBetweenDoors[pointsBetweenDoors.Count - 1].X + ultimateXDirection, pointsBetweenDoors[pointsBetweenDoors.Count - 1].Y);
-                    }
-                    else if (ultimateYDirection != 0)
-                    {
-                        pointToTry = new Point(pointsBetweenDoors[pointsBetweenDoors.Count - 1].X, pointsBetweenDoors[pointsBetweenDoors.Count - 1].Y + ultimateYDirection);
-                    }
-                    else
-                    {
-                        //break out of the while
-                        room1.RoomLayout[room1DoorWay.X, room1DoorWay.Y].Connected = true;
-                        room2.RoomLayout[room2DoorWay.X, room2DoorWay.Y].Connected = true;
-                        break;
-                    }
-
-                    
+                    basePoint = pointsBetweenDoors[pointsBetweenDoors.Count - 1];       
                 }
 
-                
 
-                if (!PointIsClear(pointToTry, level))
+                if (ultimateXDirection != 0)
                 {
-                    pointToTry = new Point(room1DoorWayGlobal.X, room1DoorWayGlobal.Y + ultimateYDirection);
+                    pointToTry = new Point(basePoint.X + ultimateXDirection, basePoint.Y);
+                }
+                else if (ultimateYDirection != 0)
+                {
+                    pointToTry = new Point(basePoint.X, basePoint.Y + ultimateYDirection);
+                }
+                else
+                {
+                    //break out of the while
+                    room1.RoomLayout[room1DoorWay.X, room1DoorWay.Y].Connected = true;
+                    room2.RoomLayout[room2DoorWay.X, room2DoorWay.Y].Connected = true;
+                    break;
+                }
 
-                    if (!PointIsClear(pointToTry, level))
+                 
+
+                if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                {
+
+                    pointToTry = new Point(basePoint.X, basePoint.Y + ultimateYDirection);
+
+                    if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                     {
-                        pointToTry = new Point(room1DoorWayGlobal.X - ultimateXDirection, room1DoorWayGlobal.Y);
+                        pointToTry = new Point(basePoint.X + (-ultimateXDirection), basePoint.Y);
 
-                        if (!PointIsClear(pointToTry, level))
+                        if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                         {
-                            pointToTry = new Point(room1DoorWayGlobal.X, room1DoorWayGlobal.Y - ultimateYDirection);
+                            pointToTry = new Point(basePoint.X, basePoint.Y + (-ultimateYDirection));
 
-                            if (!PointIsClear(pointToTry, level))
+                            if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                             {
-                                Console.WriteLine("Could not connect doorways");
+                                pointToTry = new Point(basePoint.X + (-ultimateYDirection), basePoint.Y);
+
+                                if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                                {
+                                    pointToTry = new Point(basePoint.X, basePoint.Y + (-ultimateXDirection));
+
+                                    if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                                    {
+                                        Console.WriteLine("Could not connect doorways");
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
+                                    }
+                                }
+                                else
+                                {
+                                    pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
+                                }
                             }
                             else
                             {
@@ -374,13 +428,13 @@ namespace RogueLike
                     pointsBetweenDoors.Add(new Point(pointToTry.X, pointToTry.Y));
                 }
 
-                if ((pointToTry.Y + 1 == room2DoorWayGlobal.X && pointToTry.X == room2DoorWayGlobal.Y) ||
-                    (pointToTry.Y - 1 == room2DoorWayGlobal.X && pointToTry.X == room2DoorWayGlobal.Y) ||
-                    (pointToTry.Y == room2DoorWayGlobal.X && pointToTry.X + 1 == room2DoorWayGlobal.Y) ||
-                    (pointToTry.Y == room2DoorWayGlobal.X && pointToTry.X - 1 == room2DoorWayGlobal.Y) )
+                if ((pointToTry.Y + 1 == room2DoorWayGlobal.Y && pointToTry.X == room2DoorWayGlobal.X) ||
+                    (pointToTry.Y - 1 == room2DoorWayGlobal.Y && pointToTry.X == room2DoorWayGlobal.X) ||
+                    (pointToTry.Y == room2DoorWayGlobal.Y && pointToTry.X + 1 == room2DoorWayGlobal.X) ||
+                    (pointToTry.Y == room2DoorWayGlobal.Y && pointToTry.X - 1 == room2DoorWayGlobal.X) )
                 {
-                    room1.RoomLayout[room1DoorWay.X, room1DoorWay.Y].Connected = true;
-                    room2.RoomLayout[room2DoorWay.X, room2DoorWay.Y].Connected = true;
+                    room1.RoomLayout[room1DoorWay.Y, room1DoorWay.X].Connected = true;
+                    room2.RoomLayout[room2DoorWay.Y, room2DoorWay.X].Connected = true;
                 }
 
                 LevelHallways.Add(level, pointsBetweenDoors);
@@ -393,9 +447,16 @@ namespace RogueLike
             LevelHallways.Add(level,pointsBetweenDoors);
         }
 
-        public bool PointIsClear(Point pointToTry, int level)
+        public bool PointIsClear(Point pointToTry, int level, List<Point> pointsAlreadyTried, int maxX, int maxY)
         {
-            if (pointToTry.X < 0 || pointToTry.X > 250 || pointToTry.Y < 0 || pointToTry.Y > 250)
+            if (pointsAlreadyTried != null & pointsAlreadyTried.Count > 0)
+            {
+                bool tmp = pointsAlreadyTried.Any(x => x.Equals(pointToTry));
+                if (tmp)
+                    return false;
+            }
+
+            if (pointToTry.X < 0 || pointToTry.X > maxX || pointToTry.Y < 0 || pointToTry.Y > maxY)
                 return false;
 
             foreach (Room r in _levels[level])

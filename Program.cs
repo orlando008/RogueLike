@@ -15,6 +15,7 @@ namespace RogueLike
 
             _ovMap = new OverallMap();
             _ovMap.CreateLevel();
+
             Console.WriteLine(_ovMap.GetDrawingOfLevel(0));
 
             while (!_exit)
