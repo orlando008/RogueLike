@@ -20,7 +20,7 @@ namespace RogueLike
         private OverallMap _parentMap;
         private Point _origin;
         private Point _size;
-        private Dictionary<Point, string> _roomStrings;
+        private List<Point> _roomStrings;
 
         public Room(OverallMap parentMap, RoomType roomType)
         {
@@ -36,7 +36,7 @@ namespace RogueLike
 
                     _size = new Point(widthOfRoom, heightOfRoom);
 
-                    _roomLayout = new RoomTile[heightOfRoom, widthOfRoom];
+                    _roomLayout = new RoomTile[_size.X, _size.Y];
 
                     FillInRoomLayoutForRoom();
                     break;
@@ -92,32 +92,32 @@ namespace RogueLike
 
         private void FillInRoomLayoutForHallway()
         {
-            for (int i = 0; i < _roomLayout.GetLength(0); i++)
+            for (int x = 0; x < _roomLayout.GetLength(0); x++)
             {
-                for (int j = 0; j < _roomLayout.GetLength(1); j++)
+                for (int y = 0; y < _roomLayout.GetLength(1); y++)
                 {
-                    _roomLayout[i, j] = new RoomTile(TileType.HallwayFloor);
+                    _roomLayout[x, y] = new RoomTile(TileType.HallwayFloor);
                 }
             }
         }
 
         private void FillInRoomLayoutForRoom()
         {
-            for (int i = 0; i < _roomLayout.GetLength(0); i++)
+            for (int x = 0; x < _roomLayout.GetLength(0); x++)
             {
-                for (int j = 0; j < _roomLayout.GetLength(1); j++)
+                for (int y = 0; y < _roomLayout.GetLength(1); y++)
                 {
-                    if (i == 0 || i + 1 == _roomLayout.GetLength(0))
+                    if (x == 0 || x + 1 == _roomLayout.GetLength(0))
                     {
-                        _roomLayout[i, j] = new RoomTile(TileType.HorizontalWall);
+                        _roomLayout[x, y] = new RoomTile(TileType.VerticalWall);
                     }
-                    else if (j == 0 || j + 1 == _roomLayout.GetLength(1))
+                    else if (y == 0 || y + 1 == _roomLayout.GetLength(1))
                     {
-                        _roomLayout[i, j] = new RoomTile(TileType.VerticalWall);
+                        _roomLayout[x, y] = new RoomTile(TileType.HorizontalWall);
                     }
                     else
                     {
-                        _roomLayout[i, j] = new RoomTile(TileType.Floor);
+                        _roomLayout[x, y] = new RoomTile(TileType.Floor);
                     }
                     
                 }
@@ -126,34 +126,34 @@ namespace RogueLike
 
         public void FitIntoStringDictionary()
         {
-            _roomStrings = new Dictionary<Point, string>();
-            for (int i = 0; i < _roomLayout.GetLength(0); i++)
+            _roomStrings = new List<Point>();
+            for (int x = 0; x < _roomLayout.GetLength(0); x++)
             {
-                for (int j = 0; j < _roomLayout.GetLength(1); j++)
+                for (int y = 0; y < _roomLayout.GetLength(1); y++)
                 {
-                    Point tmpPoint = new Point(Origin.X + j, Origin.Y + i);
-                    _roomStrings.Add(tmpPoint, _roomLayout[i, j].ToString());
+                    Point tmpPoint = new Point(Origin.X + x, Origin.Y + y);
+                    _roomStrings.Add(tmpPoint);
                 }
             }
         }
 
-        public string GetStringAtPoint(Point i)
+        public string GetStringAtPoint(Point thePoint)
         {
-            if (_roomStrings.ContainsKey(i))
-            {
-                return _roomLayout[i.Y - Origin.Y, i.X - Origin.X].ToString();
-            }
-            else
-            {
+            RoomTile rt = GetRoomTileAtPoint(thePoint);
+
+            if (rt == null)
                 return "";
-            }
+            else
+                return rt.ToString();
         }
 
-        public RoomTile GetRoomTileAtPoint(Point i)
+        public RoomTile GetRoomTileAtPoint(Point thePoint)
         {
-            if (_roomStrings.ContainsKey(i))
+            Point normalizedPoint = new Point(thePoint.X - Origin.X, thePoint.Y - Origin.Y);
+
+            if (normalizedPoint.X < this.Size.X && normalizedPoint.Y < this.Size.Y && normalizedPoint.X >= 0 && normalizedPoint.Y >= 0)
             {
-                return _roomLayout[i.Y - Origin.Y, i.X - Origin.X];
+                return _roomLayout[normalizedPoint.X, normalizedPoint.Y];
             }
             else
             {
@@ -199,25 +199,25 @@ namespace RogueLike
             if (westWallHasDoor)
             {
                 tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Y-1);
-                _roomLayout[tileToPlaceDoor, 0].ThisTileType = TileType.Door;
+                _roomLayout[0, tileToPlaceDoor].ThisTileType = TileType.Door;
             }
 
             if (eastWallHasDoor)
             {
                 tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.Y-1);
-                _roomLayout[tileToPlaceDoor, this.Size.X - 1].ThisTileType = TileType.Door;
+                _roomLayout[this.Size.X - 1, tileToPlaceDoor].ThisTileType = TileType.Door;
             }
 
             if (northWallHasDoor)
             {
                 tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.X-1);
-                _roomLayout[0, tileToPlaceDoor].ThisTileType = TileType.Door;
+                _roomLayout[tileToPlaceDoor, 0].ThisTileType = TileType.Door;
             }
 
             if (southWallHasDoor)
             {
                 tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.X-1);
-                _roomLayout[this.Size.Y - 1, tileToPlaceDoor].ThisTileType = TileType.Door;
+                _roomLayout[tileToPlaceDoor, this.Size.Y - 1].ThisTileType = TileType.Door;
             }
         }
 

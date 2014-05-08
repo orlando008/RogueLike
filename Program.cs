@@ -13,10 +13,8 @@ namespace RogueLike
         {
             Console.SetWindowSize(Console.LargestWindowWidth - 10, Console.LargestWindowHeight- 10);
 
-            _ovMap = new OverallMap();
-            _ovMap.CreateLevel();
 
-            Console.WriteLine(_ovMap.GetDrawingOfLevel(0));
+            StartNewGame();
 
             while (!_exit)
             {
@@ -30,35 +28,47 @@ namespace RogueLike
         public static void ProcessUserCommand()
         {
             string userInput = Console.ReadLine();
+            string[] userInputArray = userInput.Split(" ".ToCharArray());
+            int lengthOfMove = 1;
 
-            switch (userInput)
+            switch (userInputArray[0].ToUpper())
             {
-                case "w":
-                    Console.Write("Moving up...");
-                    _ovMap.ThePlayer.MovePlayer(0, -1);
+                case "MOVEX":
+                    Console.Write("Moving in X direction...");
+
+                    if (userInputArray.Length > 1)
+                        lengthOfMove = Convert.ToInt32(userInputArray[1]);
+
+                    for(int i = 0; i < lengthOfMove; i++)
+                        _ovMap.ThePlayer.MovePlayer(1, 0);
                     break;
-                case "a":
-                    Console.Write("Moving left...");
-                    _ovMap.ThePlayer.MovePlayer(-1, 0);
+                case "MOVEY":
+                    Console.Write("Moving in Y direction...");
+                    lengthOfMove = 1;
+
+                    if (userInputArray.Length > 1)
+                        lengthOfMove = Convert.ToInt32(userInputArray[1]);
+
+                    for(int i = 0; i < lengthOfMove; i++)
+                        _ovMap.ThePlayer.MovePlayer(0, 1);
                     break;
-                case "s":
-                    Console.Write("Moving down...");
-                    _ovMap.ThePlayer.MovePlayer(0, 1);
-                    break;
-                case "d":
-                    Console.Write("Moving right...");
-                    _ovMap.ThePlayer.MovePlayer(1, 0);
-                    break;
-                case "x":
+                case "EXIT":
                     _exit = true;
                     break;
-                case "help":
+                case "HELP":
                     PrintHelp();
                     break;
-                case "draw":
+                case "DRAW":
                     Console.WriteLine(_ovMap.GetDrawingOfLevel(0));
                     break;
+                case "SEED":
+                    Console.WriteLine(_ovMap.Seed.ToString());
+                    break;
+                case "NEWGAME":
+                    StartNewGame();
+                    break;
                 default:
+                    Console.WriteLine("Command not recognized.");
                     break;
             }
         }
@@ -66,6 +76,27 @@ namespace RogueLike
         public static void PrintHelp()
         {
             Console.WriteLine("W/A/S/D");
+        }
+
+        public static void StartNewGame()
+        {
+            Console.Clear();
+
+            int seed = 0;
+#if DEBUG
+            Console.Write("Seed?");
+            string seedString = Console.ReadLine();
+
+            if (Int32.TryParse(seedString, out seed) == false)
+                seed = 0;
+            else
+                seed = Convert.ToInt32(seedString);
+#endif
+
+            Console.Clear();
+            _ovMap = new OverallMap(seed);
+            _ovMap.CreateLevel();
+            Console.WriteLine(_ovMap.GetDrawingOfLevel(0));
         }
     }
 }

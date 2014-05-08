@@ -16,7 +16,9 @@ namespace RogueLike
 
         public Player(OverallMap ovMap)
         {
-            _location = new Point(0, 0);
+            int hallway = ovMap.RNG.Next(0, ovMap.LevelHallways[0].Count - 1);
+
+            _location = ovMap.LevelHallways[0][hallway];
             _dungeonLevel = 0;
             _playerLevel = 1;
             _playerExperience = 0;
