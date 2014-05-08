@@ -143,6 +143,8 @@ namespace RogueLike
 
             if (rt == null)
                 return "";
+            else if (rt.Discovered == false)
+                return "";
             else
                 return rt.ToString();
         }

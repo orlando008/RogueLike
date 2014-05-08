@@ -9,15 +9,10 @@ namespace RogueLike
 {
     public class OverallMap
     {
-        public List<Room> _rooms;
         private Random _rng = null;
         private Dictionary<int, List<Room>> _levels;
         private Dictionary<int, List<Point>> _levelHallways;
         private Player _player;
-
-        private Point _door1;
-        private Point _door2;
-
         public int _seed = 0;
 
         public Random RNG
@@ -82,8 +77,11 @@ namespace RogueLike
             _seed = seed;
         }
 
-        public void GetMax(ref int maxX, ref int maxY, int level)
+        public void GetMax(out int maxX, out int maxY, int level)
         {
+            maxX = 0;
+            maxY = 0;
+
             foreach (Room room in _levels[level])
             {
                 if (room.Origin.Y + room.Size.Y > maxY)
@@ -108,7 +106,7 @@ namespace RogueLike
             int maxY = 0;
             int maxX = 0;
 
-            GetMax(ref maxX, ref maxY, level);
+            GetMax(out maxX, out maxY, level);
 
 
             for (int i = 0; i < maxY; i++)
@@ -249,83 +247,10 @@ namespace RogueLike
             Room room2 = null;
             Point room2DoorWay = new Point(0, 0);
             Point room2DoorWayGlobal = new Point(0, 0);
-            
-            foreach (Room r in _levels[level])
-            {
-                //For each potential vertical wall door
-                for (int x = 0; x < r.RoomLayout.GetLength(0); x++)
-                {
-                    if (r.RoomLayout[x, 0].ThisTileType == TileType.Door && r.RoomLayout[x, 0].Connected == false)
-                    {
-                        if (room1 == null)
-                        {
-                            room1 = r;
-                            room1DoorWay = new Point(x, 0);
-                        }
-                        else if (!room1.Equals(r) && room2 == null)
-                        {
-                            room2 = r;
-                            room2DoorWay = new Point(x, 0);
-                        }
+            int tries = 0;
 
-                        break;
-                    }
-                    else if (r.RoomLayout[x, r.RoomLayout.GetLength(1) -1].ThisTileType == TileType.Door && r.RoomLayout[x, r.RoomLayout.GetLength(1) -1].Connected == false)
-                    {
-                        if (room1 == null)
-                        {
-                            room1 = r;
-                            room1DoorWay = new Point(x, r.RoomLayout.GetLength(1) - 1);
-                        }
-                        else if (!room1.Equals(r) && room2 == null)
-                        {
-                            room2 = r;
-                            room2DoorWay = new Point(x, r.RoomLayout.GetLength(1) - 1);
-                        }
-
-                        break;
-                    }
-                }
-
-                //For each potential horizontal wall door
-                for (int y = 0; y < r.RoomLayout.GetLength(1); y++)
-                {
-                    if (r.RoomLayout[0, y].ThisTileType == TileType.Door && r.RoomLayout[0, y].Connected == false)
-                    {
-                        if (room1 == null)
-                        {
-                            room1 = r;
-                            room1DoorWay = new Point(0, y);
-                        }
-                        else if (!room1.Equals(r) && room2 == null)
-                        {
-                            room2 = r;
-                            room2DoorWay = new Point(0, y);
-                        }
-
-                        break;
-                    }
-                    else if (r.RoomLayout[r.RoomLayout.GetLength(0) - 1, y].ThisTileType == TileType.Door && r.RoomLayout[r.RoomLayout.GetLength(0) - 1, y].Connected == false)
-                    {
-                        if (room1 == null)
-                        {
-                            room1 = r;
-                            //room1DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
-                            room1DoorWay = new Point( r.RoomLayout.GetLength(0) - 1,y);
-                        }
-                        else if (!room1.Equals(r) && room2 == null)
-                        {
-                            room2 = r;
-                            //room2DoorWay = new Point(i, r.RoomLayout.GetLength(1) - 1);
-                            room2DoorWay = new Point(r.RoomLayout.GetLength(0) - 1, y);
-                        }
-
-                        break;
-                    }
-                }
-            }
-
-            room1DoorWayGlobal = new Point(room1DoorWay.X + room1.Origin.X, room1DoorWay.Y + room1.Origin.Y);
+            GetRoomAndUnconnectedDoorway(out room1, out room1DoorWay, null, level);
+            GetRoomAndUnconnectedDoorway(out room2, out room2DoorWay, room1, level);
 
             if (room2 == null)
             {
@@ -337,16 +262,12 @@ namespace RogueLike
                 room2DoorWayGlobal = new Point(room2DoorWay.X + room2.Origin.X, room2DoorWay.Y + room2.Origin.Y);
             }
 
-            
-            _door1 = room1DoorWayGlobal;
-            _door2 = room2DoorWayGlobal;
-
             List<Point> pointsBetweenDoors = new List<Point>();
 
             int maxX = 0;
             int maxY = 0;
 
-            GetMax(ref maxX, ref maxY, level);
+            GetMax(out maxX, out maxY, level);
 
             while (room1.RoomLayout[room1DoorWay.X, room1DoorWay.Y].Connected == false)
             {
@@ -438,7 +359,7 @@ namespace RogueLike
 
                                     if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                                     {
-                                        if (LevelHallways.Count == 0)
+                                        if (LevelHallways.Count == 0 || tries > 10)
                                             break;
 
                                         //if two doorways can't be connected, try to connect to another hallway
@@ -446,7 +367,7 @@ namespace RogueLike
                                         int hallway = RNG.Next(0, LevelHallways[level].Count-1);
                                         room2DoorWayGlobal = new Point(LevelHallways[level][hallway].X, LevelHallways[level][hallway].Y);
                                         room2 = null;
-                                        
+                                        tries++;
                                         
                                         //Console.WriteLine("Doors at (" + room1DoorWayGlobal.X.ToString() + "," + room1DoorWayGlobal.Y.ToString() + ") could not be connected to doorway at (" + room2DoorWayGlobal.X.ToString() + "," + room2DoorWayGlobal.Y.ToString() + ")");
                                     }
@@ -522,6 +443,89 @@ namespace RogueLike
             }
 
             return true;
+        }
+
+        private void GetRoomAndUnconnectedDoorway(out Room room1, out Point room1DoorWay, Room roomItCantBe, int level)
+        {
+            room1 = null;
+            room1DoorWay = new Point(0,0);
+
+            List<Room> listOfRooms = null;
+
+            int ordering = RNG.Next(0, 8);
+
+            switch (ordering)
+            {
+                case 0:
+                    listOfRooms = _levels[level].OrderBy(x => x.Size.X).ToList<Room>();
+                    break;
+                case 1:
+                    listOfRooms = _levels[level].OrderBy(x => x.Size.Y).ToList<Room>();
+                    break;
+                case 2:
+                    listOfRooms = _levels[level].OrderByDescending(x => x.Size.X).ToList<Room>();
+                    break;
+                case 3:
+                    listOfRooms = _levels[level].OrderByDescending(x => x.Size.Y).ToList<Room>();
+                    break;
+                case 4:
+                    listOfRooms = _levels[level].OrderBy(x => x.Origin.X).ToList<Room>();
+                    break;
+                case 5:
+                    listOfRooms = _levels[level].OrderBy(x => x.Origin.Y).ToList<Room>();
+                    break;
+                case 6:
+                    listOfRooms = _levels[level].OrderByDescending(x => x.Origin.X).ToList<Room>();
+                    break;
+                case 7:
+                    listOfRooms = _levels[level].OrderByDescending(x => x.Origin.Y).ToList<Room>();
+                    break;
+                default:
+                    listOfRooms = _levels[level].OrderBy(x => x.Size.X).ToList<Room>();
+                    break;
+            }
+
+            foreach (Room r in listOfRooms)
+            {
+                if (r.Equals(roomItCantBe)) continue;
+
+                //For each potential vertical wall door
+                for (int x = 0; x < r.RoomLayout.GetLength(0); x++)
+                {
+                    if (r.RoomLayout[x, 0].ThisTileType == TileType.Door && r.RoomLayout[x, 0].Connected == false)
+                    {
+                        room1 = r;
+                        room1DoorWay = new Point(x, 0);
+
+                        return;
+                    }
+                    else if (r.RoomLayout[x, r.RoomLayout.GetLength(1) - 1].ThisTileType == TileType.Door && r.RoomLayout[x, r.RoomLayout.GetLength(1) - 1].Connected == false)
+                    {
+                        room1 = r;
+                        room1DoorWay = new Point(x, r.RoomLayout.GetLength(1) - 1);
+                        return;
+                    }
+                }
+
+                //For each potential horizontal wall door
+                for (int y = 0; y < r.RoomLayout.GetLength(1); y++)
+                {
+                    if (r.RoomLayout[0, y].ThisTileType == TileType.Door && r.RoomLayout[0, y].Connected == false)
+                    {
+                        room1 = r;
+                        room1DoorWay = new Point(0, y);
+
+                        return;
+                    }
+                    else if (r.RoomLayout[r.RoomLayout.GetLength(0) - 1, y].ThisTileType == TileType.Door && r.RoomLayout[r.RoomLayout.GetLength(0) - 1, y].Connected == false)
+                    {
+                        room1 = r;
+                        room1DoorWay = new Point(r.RoomLayout.GetLength(0) - 1, y);
+
+                        return;
+                    }
+                }
+            }
         }
     }
 }
