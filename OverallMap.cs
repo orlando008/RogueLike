@@ -12,6 +12,7 @@ namespace RogueLike
         private Random _rng = null;
         private Dictionary<int, List<Room>> _levels;
         private Dictionary<int, List<Point>> _levelHallways;
+        private Dictionary<int, List<Point>> _levelDiscoveredHallways;
         private Player _player;
         public int _seed = 0;
 
@@ -69,6 +70,17 @@ namespace RogueLike
                     _levelHallways = new Dictionary<int, List<Point>>();
 
                 return _levelHallways;
+            }
+        }
+
+        public Dictionary<int, List<Point>> LevelDiscoveredHallways
+        {
+            get
+            {
+                if (_levelDiscoveredHallways == null)
+                    _levelDiscoveredHallways = new Dictionary<int, List<Point>>();
+
+                return _levelDiscoveredHallways;
             }
         }
 
@@ -137,8 +149,12 @@ namespace RogueLike
                         }
                         else
                         {
-
-                            int p = LevelHallways[level].FindIndex(x => x.X == tmpPoint.X && x.Y == tmpPoint.Y);
+                            int p = -1;
+                            if (LevelDiscoveredHallways.ContainsKey(level))
+                            {
+                                p = LevelDiscoveredHallways[level].FindIndex(x => x.X == tmpPoint.X && x.Y == tmpPoint.Y);
+                            }
+                            
 
                             if (p != -1)
                                 s += "#";
@@ -179,6 +195,7 @@ namespace RogueLike
                 ConnectTwoDoorways(Levels.Count-1);
 
             PlacePlayerOnMap();
+            DiscoverTilesAroundPlayer();
         }
 
         public int GetCountOfUnconnectedDoors(int level)
@@ -521,11 +538,60 @@ namespace RogueLike
                     {
                         room1 = r;
                         room1DoorWay = new Point(r.RoomLayout.GetLength(0) - 1, y);
-
+                        
                         return;
                     }
                 }
             }
+        }
+
+        public void DiscoverTilesAroundPlayer()
+        {
+            List<Point> pointsToDiscover = new List<Point>();
+
+            pointsToDiscover.Add(ThePlayer.Location);
+
+            for (int i = 1; i <= ThePlayer.VisionRadius; i++)
+            {
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X, ThePlayer.Location.Y + i));
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X, ThePlayer.Location.Y - i));
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X + i, ThePlayer.Location.Y + i));
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X - i, ThePlayer.Location.Y - i));
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X - i, ThePlayer.Location.Y + i));
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X + i, ThePlayer.Location.Y - i));
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X + i, ThePlayer.Location.Y));
+                pointsToDiscover.Add(new Point(ThePlayer.Location.X - i, ThePlayer.Location.Y));
+            }
+
+            foreach (Point p in pointsToDiscover)
+            {
+                DiscoverTileAtPoint(p, ThePlayer.DungeonLevel);
+            }
+        }
+
+        public void DiscoverTileAtPoint(Point p, int level)
+        {
+            RoomTile roomTile;
+
+            foreach (Room room in _levels[level])
+            {
+                roomTile = room.GetRoomTileAtPoint(p);
+
+                if (roomTile != null)
+                {
+                    roomTile.Discovered = true;
+                    return;
+                }
+
+            }
+
+            if (LevelHallways.ContainsKey(level) & LevelHallways[level].Contains(p))
+            {
+                if (!LevelDiscoveredHallways.ContainsKey(level))
+                    LevelDiscoveredHallways.Add(level, new List<Point>());
+                LevelDiscoveredHallways[level].Add(p);
+            }
+        
         }
     }
 }

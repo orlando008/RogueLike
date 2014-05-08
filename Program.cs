@@ -39,8 +39,14 @@ namespace RogueLike
                     if (userInputArray.Length > 1)
                         lengthOfMove = Convert.ToInt32(userInputArray[1]);
 
-                    for(int i = 0; i < lengthOfMove; i++)
+                    for (int i = 0; i < lengthOfMove; i++)
+                    {
                         _ovMap.ThePlayer.MovePlayer(1, 0);
+                        _ovMap.DiscoverTilesAroundPlayer();
+                    }
+                        
+
+                    _ovMap.DiscoverTilesAroundPlayer();
                     break;
                 case "MOVEY":
                     Console.Write("Moving in Y direction...");
@@ -49,8 +55,13 @@ namespace RogueLike
                     if (userInputArray.Length > 1)
                         lengthOfMove = Convert.ToInt32(userInputArray[1]);
 
-                    for(int i = 0; i < lengthOfMove; i++)
+                    for (int i = 0; i < lengthOfMove; i++)
+                    {
                         _ovMap.ThePlayer.MovePlayer(0, 1);
+                        _ovMap.DiscoverTilesAroundPlayer();
+                    }
+
+                    
                     break;
                 case "EXIT":
                     _exit = true;
@@ -96,6 +107,7 @@ namespace RogueLike
             Console.Clear();
             _ovMap = new OverallMap(seed);
             _ovMap.CreateLevel();
+            _ovMap.DiscoverTilesAroundPlayer();
             Console.WriteLine(_ovMap.GetDrawingOfLevel(0));
         }
     }

@@ -13,6 +13,7 @@ namespace RogueLike
         int _playerLevel;
         int _playerExperience;
         OverallMap _overallMap;
+        int _visionRadius = 1;
 
         public Player(OverallMap ovMap)
         {
@@ -46,6 +47,14 @@ namespace RogueLike
             get
             {
                 return _playerLevel;
+            }
+        }
+
+        public int VisionRadius
+        {
+            get
+            {
+                return _visionRadius;
             }
         }
 
