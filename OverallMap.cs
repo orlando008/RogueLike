@@ -15,6 +15,10 @@ namespace RogueLike
         private Dictionary<int, List<Point>> _levelDiscoveredHallways;
         private Player _player;
         public int _seed = 0;
+        private const int MAX_LVL_HEIGHT = 50;
+        private const int MAX_LVL_WIDTH = 50;
+        private const int MIN_NUMBER_OF_ROOMS = 3;
+        private const int MAX_NUMBER_OF_ROOMS = 7;
 
         public Random RNG
         {
@@ -111,7 +115,7 @@ namespace RogueLike
             maxX += 5;
         }
 
-        public string GetDrawingOfLevel(int level)
+        public string GetDrawingOfLevel(int level, bool onlyDiscovered)
         {
             string s = "";
 
@@ -127,41 +131,79 @@ namespace RogueLike
                 {
                     Point tmpPoint = new Point(j, i);
 
-                    if (_player != null && (tmpPoint.Equals(_player.Location)))
+                    if ((tmpPoint.X == 0 && tmpPoint.Y == 0) || (tmpPoint.X == 0 && tmpPoint.Y == maxY - 1) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == 0) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == maxY -1))
                     {
-                        s += ":";
+                        s += "*";
+                    }
+                    else if (tmpPoint.X == 0 || tmpPoint.X == maxX -1)
+                    {
+                        if (tmpPoint.Y % 5 == 0)
+                        {
+                            s += "-";
+                        }
+                        else
+                            s += "|";
+                    }
+                    else if (tmpPoint.Y == 0 || tmpPoint.Y == maxY - 1)
+                    {
+                        if (tmpPoint.X % 5 == 0)
+                        {
+                            s += "|";
+                        }
+                        else
+                            s += "-";
                     }
                     else
                     {
-                        string tmp = "";
 
-                        foreach (Room room in _levels[level])
+                        if (_player != null && (tmpPoint.Equals(_player.Location)))
                         {
-                            tmp = room.GetStringAtPoint(tmpPoint);
-
-                            if (tmp != "")
-                                break;
-                        }
-
-                        if (tmp != "")
-                        {
-                            s += tmp;
+                            s += ":";
                         }
                         else
                         {
-                            int p = -1;
-                            if (LevelDiscoveredHallways.ContainsKey(level))
-                            {
-                                p = LevelDiscoveredHallways[level].FindIndex(x => x.X == tmpPoint.X && x.Y == tmpPoint.Y);
-                            }
-                            
+                            string tmp = "";
 
-                            if (p != -1)
-                                s += "#";
+                            foreach (Room room in _levels[level])
+                            {
+                                tmp = room.GetStringAtPoint(tmpPoint, onlyDiscovered);
+
+                                if (tmp != "")
+                                    break;
+                            }
+
+                            if (tmp != "")
+                            {
+                                s += tmp;
+                            }
                             else
-                                s += " ";
+                            {
+                                int p = -1;
+
+                                if (onlyDiscovered)
+                                {
+                                    if (LevelDiscoveredHallways.ContainsKey(level))
+                                    {
+                                        p = LevelDiscoveredHallways[level].FindIndex(x => x.X == tmpPoint.X && x.Y == tmpPoint.Y);
+                                    }
+                                }
+                                else
+                                {
+                                    if (LevelHallways.ContainsKey(level))
+                                    {
+                                        p = LevelHallways[level].FindIndex(x => x.X == tmpPoint.X && x.Y == tmpPoint.Y);
+                                    }
+                                }
+
+
+
+                                if (p != -1)
+                                    s += "#";
+                                else
+                                    s += " ";
+                            }
                         }
-                    }         
+                    }
                 }
 
                 s += "\n";
@@ -173,7 +215,7 @@ namespace RogueLike
 
         public void CreateLevel()
         {
-            int numberOfRooms = RNG.Next(3, 20);
+            int numberOfRooms = RNG.Next(MIN_NUMBER_OF_ROOMS, MAX_NUMBER_OF_ROOMS);
 
             List<Room> rooms = new List<Room>();
 
@@ -184,8 +226,13 @@ namespace RogueLike
 
                 tmpRoom.Origin = FindValidOriginForRoom(rooms, tmpRoom);
 
-                tmpRoom.AddDoorwayToRoom();
-                rooms.Add(tmpRoom);
+                if (tmpRoom.Origin.X == -1)
+                    Console.WriteLine("Could not place room.");
+                else
+                {
+                    tmpRoom.AddDoorwayToRoom();
+                    rooms.Add(tmpRoom);
+                }
             }
 
             
@@ -222,8 +269,8 @@ namespace RogueLike
 
             while (!placed || tries > 2500)
             {
-                int x = RNG.Next(0, 100);
-                int y = RNG.Next(0, 100);
+                int x = RNG.Next(2, MAX_LVL_WIDTH);
+                int y = RNG.Next(2, MAX_LVL_HEIGHT);
 
                 Rectangle roomRectangle = new Rectangle(x, y, proposedRoom.Size.X + 3, proposedRoom.Size.Y + 3);
 
@@ -268,6 +315,8 @@ namespace RogueLike
 
             GetRoomAndUnconnectedDoorway(out room1, out room1DoorWay, null, level);
             GetRoomAndUnconnectedDoorway(out room2, out room2DoorWay, room1, level);
+
+            room1DoorWayGlobal = new Point(room1DoorWay.X + room1.Origin.X, room1DoorWay.Y + room1.Origin.Y);
 
             if (room2 == null)
             {
@@ -450,7 +499,7 @@ namespace RogueLike
                     return false;
             }
 
-            if (pointToTry.X < 0 || pointToTry.X > maxX || pointToTry.Y < 0 || pointToTry.Y > maxY)
+            if (pointToTry.X < 1 || pointToTry.X > maxX || pointToTry.Y < 1 || pointToTry.Y > maxY)
                 return false;
 
             foreach (Room r in _levels[level])

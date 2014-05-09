@@ -13,7 +13,6 @@ namespace RogueLike
         {
             Console.SetWindowSize(Console.LargestWindowWidth - 10, Console.LargestWindowHeight- 10);
 
-
             StartNewGame();
 
             while (!_exit)
@@ -41,8 +40,13 @@ namespace RogueLike
 
                     for (int i = 0; i < lengthOfMove; i++)
                     {
-                        _ovMap.ThePlayer.MovePlayer(1, 0);
-                        _ovMap.DiscoverTilesAroundPlayer();
+                        if (_ovMap.ThePlayer.MovePlayer(1, 0))
+                            _ovMap.DiscoverTilesAroundPlayer();
+                        else
+                        {
+                            Console.Write("Ran into a wall.");
+                            break;
+                        }  
                     }
                         
 
@@ -57,8 +61,13 @@ namespace RogueLike
 
                     for (int i = 0; i < lengthOfMove; i++)
                     {
-                        _ovMap.ThePlayer.MovePlayer(0, 1);
-                        _ovMap.DiscoverTilesAroundPlayer();
+                        if (_ovMap.ThePlayer.MovePlayer(0, 1))
+                            _ovMap.DiscoverTilesAroundPlayer();
+                        else
+                        {
+                            Console.Write("Ran into a wall.");
+                            break;
+                        }      
                     }
 
                     
@@ -70,7 +79,8 @@ namespace RogueLike
                     PrintHelp();
                     break;
                 case "DRAW":
-                    Console.WriteLine(_ovMap.GetDrawingOfLevel(0));
+                    Console.Clear();
+                    Console.WriteLine(_ovMap.GetDrawingOfLevel(0, true));
                     break;
                 case "SEED":
                     Console.WriteLine(_ovMap.Seed.ToString());
@@ -78,6 +88,12 @@ namespace RogueLike
                 case "NEWGAME":
                     StartNewGame();
                     break;
+#if DEBUG
+                case "DRAWALL":
+                    Console.Clear();
+                    Console.WriteLine(_ovMap.GetDrawingOfLevel(0, false));
+                    break;
+#endif
                 default:
                     Console.WriteLine("Command not recognized.");
                     break;
@@ -108,7 +124,7 @@ namespace RogueLike
             _ovMap = new OverallMap(seed);
             _ovMap.CreateLevel();
             _ovMap.DiscoverTilesAroundPlayer();
-            Console.WriteLine(_ovMap.GetDrawingOfLevel(0));
+            Console.WriteLine(_ovMap.GetDrawingOfLevel(0, true));
         }
     }
 }

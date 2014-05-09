@@ -137,13 +137,13 @@ namespace RogueLike
             }
         }
 
-        public string GetStringAtPoint(Point thePoint)
+        public string GetStringAtPoint(Point thePoint, bool onlyDiscovered)
         {
             RoomTile rt = GetRoomTileAtPoint(thePoint);
 
             if (rt == null)
                 return "";
-            else if (rt.Discovered == false)
+            else if (rt.Discovered == false && onlyDiscovered)
                 return "";
             else
                 return rt.ToString();
