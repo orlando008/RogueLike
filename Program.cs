@@ -9,9 +9,13 @@ namespace RogueLike
     {
         private static bool _exit = false;
         private static OverallMap _ovMap;
+        private static string RAN_INTO_WALL = "You ran into a wall.";
+        private static string GAME_NAME = "Dungeon Adventure 2014";
+
         static void Main(string[] args)
         {
             Console.SetWindowSize(Console.LargestWindowWidth - 10, Console.LargestWindowHeight- 10);
+            Console.Title = GAME_NAME;
 
             StartNewGame();
 
@@ -33,7 +37,7 @@ namespace RogueLike
             switch (userInputArray[0].ToUpper())
             {
                 case "MOVEX":
-                    Console.Write("Moving in X direction...");
+                    Console.WriteLine("Moving in X direction...");
 
                     if (userInputArray.Length > 1)
                         lengthOfMove = Convert.ToInt32(userInputArray[1]);
@@ -44,7 +48,7 @@ namespace RogueLike
                             _ovMap.DiscoverTilesAroundPlayer();
                         else
                         {
-                            Console.Write("Ran into a wall.");
+                            Console.WriteLine(RAN_INTO_WALL);
                             break;
                         }  
                     }
@@ -53,7 +57,7 @@ namespace RogueLike
                     _ovMap.DiscoverTilesAroundPlayer();
                     break;
                 case "MOVEY":
-                    Console.Write("Moving in Y direction...");
+                    Console.WriteLine("Moving in Y direction...");
                     lengthOfMove = 1;
 
                     if (userInputArray.Length > 1)
@@ -65,7 +69,7 @@ namespace RogueLike
                             _ovMap.DiscoverTilesAroundPlayer();
                         else
                         {
-                            Console.Write("Ran into a wall.");
+                            Console.WriteLine(RAN_INTO_WALL);
                             break;
                         }      
                     }
@@ -80,7 +84,7 @@ namespace RogueLike
                     break;
                 case "DRAW":
                     Console.Clear();
-                    Console.WriteLine(_ovMap.GetDrawingOfLevel(0, true));
+                    _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);
                     break;
                 case "SEED":
                     Console.WriteLine(_ovMap.Seed.ToString());
@@ -91,7 +95,7 @@ namespace RogueLike
 #if DEBUG
                 case "DRAWALL":
                     Console.Clear();
-                    Console.WriteLine(_ovMap.GetDrawingOfLevel(0, false));
+                    _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, false);
                     break;
 #endif
                 default:
@@ -102,7 +106,25 @@ namespace RogueLike
 
         public static void PrintHelp()
         {
-            Console.WriteLine("W/A/S/D");
+            StringBuilder sb = new StringBuilder();
+            Console.BackgroundColor = ConsoleColor.Yellow;
+            sb.AppendLine(">----------------------------------------------------------------} " + GAME_NAME + " {----------------------------------------------------------------<");
+            sb.AppendLine();
+
+            sb.AppendLine("All commands are case insensitive.");
+            sb.AppendLine("Commands are listed with single quotes around them for clarity, but no quotes should be used when executing them in-game.");
+            sb.AppendLine();
+
+            sb.AppendLine("***Moving***");
+            sb.AppendLine("  'MoveX' (without quotes) will move you right or left.  You can specify a specific number of tiles, positive or negative.  Positive numbers move you to the right, negative to the left.");
+            sb.AppendLine("  Examples: 'MoveX 10', 'MoveX -12'");
+            sb.AppendLine("  'MoveY' works the same as 'MoveX', except it moves you up or down.");
+            sb.AppendLine();
+
+            sb.AppendLine("***Drawing***");
+            sb.AppendLine("  'Draw' will re-draw the current level.");
+
+            Console.WriteLine(sb);
         }
 
         public static void StartNewGame()
@@ -124,7 +146,7 @@ namespace RogueLike
             _ovMap = new OverallMap(seed);
             _ovMap.CreateLevel();
             _ovMap.DiscoverTilesAroundPlayer();
-            Console.WriteLine(_ovMap.GetDrawingOfLevel(0, true));
+            _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);
         }
     }
 }

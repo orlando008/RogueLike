@@ -15,50 +15,27 @@ namespace RogueLike
 
     public class Room
     {
-        private RoomType _roomType;
         private RoomTile[,] _roomLayout = null;
         private OverallMap _parentMap;
         private Point _origin;
         private Point _size;
         private List<Point> _roomStrings;
+        private const int MIN_ROOM_WIDTH = 5;
+        private const int MAX_ROOM_WIDTH = 15;
 
-        public Room(OverallMap parentMap, RoomType roomType)
+        public Room(OverallMap parentMap)
         {
             _parentMap = parentMap;
-            _roomType = roomType;
             _origin = new Point(-1, -1);
 
-            switch (roomType)
-            {
-                case RoomType.Room:
-                    int widthOfRoom = _parentMap.RNG.Next(5, 25);
-                    int heightOfRoom = _parentMap.RNG.Next(5, 25);
+            int widthOfRoom = _parentMap.RNG.Next(MIN_ROOM_WIDTH, MAX_ROOM_WIDTH);
+            int heightOfRoom = _parentMap.RNG.Next(MIN_ROOM_WIDTH, MAX_ROOM_WIDTH);
 
-                    _size = new Point(widthOfRoom, heightOfRoom);
+            _size = new Point(widthOfRoom, heightOfRoom);
 
-                    _roomLayout = new RoomTile[_size.X, _size.Y];
+            _roomLayout = new RoomTile[_size.X, _size.Y];
 
-                    FillInRoomLayoutForRoom();
-                    break;
-                case RoomType.Hallway:
-                    int lengthOfHallway = _parentMap.RNG.Next(1, 10);
-
-                    if (_parentMap.RNG.Next(1, 2) == 1)
-                    {
-                        _roomLayout = new RoomTile[lengthOfHallway, 1];
-
-                        _size = new Point(lengthOfHallway, 1);
-                    }
-                    else
-                    {
-                        _roomLayout = new RoomTile[1, lengthOfHallway];
-                        _size = new Point(1, lengthOfHallway);
-                    }
-
-                    FillInRoomLayoutForHallway();
-                    
-                    break;
-            }
+            FillInRoomLayoutForRoom();
         }
 
         public Point Size

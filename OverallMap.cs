@@ -16,9 +16,9 @@ namespace RogueLike
         private Player _player;
         public int _seed = 0;
         private const int MAX_LVL_HEIGHT = 50;
-        private const int MAX_LVL_WIDTH = 50;
+        private const int MAX_LVL_WIDTH = 125;
         private const int MIN_NUMBER_OF_ROOMS = 3;
-        private const int MAX_NUMBER_OF_ROOMS = 7;
+        private const int MAX_NUMBER_OF_ROOMS = 10;
 
         public Random RNG
         {
@@ -115,10 +115,8 @@ namespace RogueLike
             maxX += 5;
         }
 
-        public string GetDrawingOfLevel(int level, bool onlyDiscovered)
+        public void DrawLevelDirect(int level, bool onlyDiscovered)
         {
-            string s = "";
-
             int maxY = 0;
             int maxX = 0;
 
@@ -129,36 +127,46 @@ namespace RogueLike
             {
                 for (int j = 0; j < maxX; j++)
                 {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
+
                     Point tmpPoint = new Point(j, i);
 
-                    if ((tmpPoint.X == 0 && tmpPoint.Y == 0) || (tmpPoint.X == 0 && tmpPoint.Y == maxY - 1) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == 0) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == maxY -1))
+                    if ((tmpPoint.X == 0 && tmpPoint.Y == 0) || (tmpPoint.X == 0 && tmpPoint.Y == maxY - 1) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == 0) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == maxY - 1))
                     {
-                        s += "*";
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write("*");
                     }
-                    else if (tmpPoint.X == 0 || tmpPoint.X == maxX -1)
+                    else if (tmpPoint.X == 0 || tmpPoint.X == maxX - 1)
                     {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
                         if (tmpPoint.Y % 5 == 0)
                         {
-                            s += "-";
+                           Console.Write("-");
                         }
                         else
-                            s += "|";
+                            Console.Write("|");
                     }
                     else if (tmpPoint.Y == 0 || tmpPoint.Y == maxY - 1)
                     {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
                         if (tmpPoint.X % 5 == 0)
                         {
-                            s += "|";
+                            Console.Write("|");
                         }
                         else
-                            s += "-";
+                            Console.Write("-");
                     }
                     else
                     {
 
                         if (_player != null && (tmpPoint.Equals(_player.Location)))
                         {
-                            s += ":";
+                            Console.BackgroundColor = ConsoleColor.DarkGreen;
+                            Console.Write(":");
                         }
                         else
                         {
@@ -174,7 +182,7 @@ namespace RogueLike
 
                             if (tmp != "")
                             {
-                                s += tmp;
+                                Console.Write(tmp);
                             }
                             else
                             {
@@ -198,19 +206,23 @@ namespace RogueLike
 
 
                                 if (p != -1)
-                                    s += "#";
+                                {
+                                    Console.Write("#");
+                                }
                                 else
-                                    s += " ";
+                                {
+                                    Console.Write(" ");
+                                }  
                             }
                         }
                     }
                 }
 
-                s += "\n";
-                
-            }
+                Console.Write("\n");
 
-            return s;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+            }
         }
 
         public void CreateLevel()
@@ -222,7 +234,7 @@ namespace RogueLike
             Room tmpRoom;
             for (int i = 0; i < numberOfRooms; i++)
             {
-                tmpRoom = new Room(this, RoomType.Room);
+                tmpRoom = new Room(this);
 
                 tmpRoom.Origin = FindValidOriginForRoom(rooms, tmpRoom);
 
