@@ -225,6 +225,108 @@ namespace RogueLike
             }
         }
 
+        public void DrawLevelInOneString(int level, bool onlyDiscovered)
+        {
+            int maxY = 0;
+            int maxX = 0;
+            string levelString = "";
+
+            GetMax(out maxX, out maxY, level);
+
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            for (int i = 0; i < maxY; i++)
+            {
+                for (int j = 0; j < maxX; j++)
+                {
+                    Point tmpPoint = new Point(j, i);
+
+                    if ((tmpPoint.X == 0 && tmpPoint.Y == 0) || (tmpPoint.X == 0 && tmpPoint.Y == maxY - 1) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == 0) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == maxY - 1))
+                    {
+                        levelString += "*";
+                    }
+                    else if (tmpPoint.X == 0 || tmpPoint.X == maxX - 1)
+                    {
+                        if (tmpPoint.Y % 5 == 0)
+                        {
+                            levelString += ("-");
+                        }
+                        else
+                            levelString += ("|");
+                    }
+                    else if (tmpPoint.Y == 0 || tmpPoint.Y == maxY - 1)
+                    {
+                        if (tmpPoint.X % 5 == 0)
+                        {
+                            levelString +=("|");
+                        }
+                        else
+                            levelString +=("-");
+                    }
+                    else
+                    {
+
+                        if (_player != null && (tmpPoint.Equals(_player.Location)))
+                        {
+                            levelString +=(":");
+                        }
+                        else
+                        {
+                            string tmp = "";
+
+                            foreach (Room room in _levels[level])
+                            {
+                                tmp = room.GetStringAtPoint(tmpPoint, onlyDiscovered);
+
+                                if (tmp != "")
+                                    break;
+                            }
+
+                            if (tmp != "")
+                            {
+                                levelString +=(tmp);
+                            }
+                            else
+                            {
+                                int p = -1;
+
+                                if (onlyDiscovered)
+                                {
+                                    if (LevelDiscoveredHallways.ContainsKey(level))
+                                    {
+                                        p = LevelDiscoveredHallways[level].FindIndex(x => x.X == tmpPoint.X && x.Y == tmpPoint.Y);
+                                    }
+                                }
+                                else
+                                {
+                                    if (LevelHallways.ContainsKey(level))
+                                    {
+                                        p = LevelHallways[level].FindIndex(x => x.X == tmpPoint.X && x.Y == tmpPoint.Y);
+                                    }
+                                }
+
+
+
+                                if (p != -1)
+                                {
+                                    levelString +=("#");
+                                }
+                                else
+                                {
+                                    levelString +=(" ");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                levelString +=("\n");
+
+                Console.WriteLine(levelString);
+            }
+        }
+
         public void CreateLevel()
         {
             int numberOfRooms = RNG.Next(MIN_NUMBER_OF_ROOMS, MAX_NUMBER_OF_ROOMS);
@@ -653,6 +755,32 @@ namespace RogueLike
                 LevelDiscoveredHallways[level].Add(p);
             }
         
+        }
+
+        public bool IsPointTraversable(Point p, int level)
+        {
+            RoomTile roomTile;
+
+            foreach (Room room in _levels[level])
+            {
+                roomTile = room.GetRoomTileAtPoint(p);
+
+                if (roomTile != null)
+                {
+                    if (roomTile.ThisTileType == TileType.HorizontalWall || roomTile.ThisTileType == TileType.VerticalWall)
+                        return false;
+                    else if (roomTile.ThisTileType == TileType.Floor || roomTile.ThisTileType == TileType.Door)
+                        return true;
+                }
+
+            }
+
+            if (LevelHallways.ContainsKey(level) & LevelHallways[level].Contains(p))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

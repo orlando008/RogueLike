@@ -33,48 +33,25 @@ namespace RogueLike
             string userInput = Console.ReadLine();
             string[] userInputArray = userInput.Split(" ".ToCharArray());
             int lengthOfMove = 1;
+            bool reDraw = false;
 
             switch (userInputArray[0].ToUpper())
             {
-                case "MOVEX":
-                    Console.WriteLine("Moving in X direction...");
-
-                    if (userInputArray.Length > 1)
-                        lengthOfMove = Convert.ToInt32(userInputArray[1]);
-
-                    for (int i = 0; i < lengthOfMove; i++)
-                    {
-                        if (_ovMap.ThePlayer.MovePlayer(1, 0))
-                            _ovMap.DiscoverTilesAroundPlayer();
-                        else
-                        {
-                            Console.WriteLine(RAN_INTO_WALL);
-                            break;
-                        }  
-                    }
-                        
-
-                    _ovMap.DiscoverTilesAroundPlayer();
+                case "MOVERIGHT":
+                    Console.WriteLine("Moving right...");
+                    MoveCommand(1, 0, userInputArray, out reDraw);
                     break;
-                case "MOVEY":
-                    Console.WriteLine("Moving in Y direction...");
-                    lengthOfMove = 1;
-
-                    if (userInputArray.Length > 1)
-                        lengthOfMove = Convert.ToInt32(userInputArray[1]);
-
-                    for (int i = 0; i < lengthOfMove; i++)
-                    {
-                        if (_ovMap.ThePlayer.MovePlayer(0, 1))
-                            _ovMap.DiscoverTilesAroundPlayer();
-                        else
-                        {
-                            Console.WriteLine(RAN_INTO_WALL);
-                            break;
-                        }      
-                    }
-
-                    
+                case "MOVELEFT":
+                    Console.WriteLine("Moving left...");
+                    MoveCommand(-1, 0, userInputArray, out reDraw);
+                    break;
+                case "MOVEUP":
+                    Console.WriteLine("Moving up...");
+                    MoveCommand(0, -1, userInputArray, out reDraw);
+                    break;
+                case "MOVEDOWN":
+                    Console.WriteLine("Moving down...");
+                    MoveCommand(0, 1, userInputArray, out reDraw);
                     break;
                 case "EXIT":
                     _exit = true;
@@ -98,31 +75,46 @@ namespace RogueLike
                     _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, false);
                     break;
 #endif
+                case "STATS":
+                    _ovMap.ThePlayer.DrawStats();
+                    break;
                 default:
                     Console.WriteLine("Command not recognized.");
                     break;
             }
+
+            if(reDraw)
+                _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);
         }
 
         public static void PrintHelp()
         {
             StringBuilder sb = new StringBuilder();
-            Console.BackgroundColor = ConsoleColor.Yellow;
             sb.AppendLine(">----------------------------------------------------------------} " + GAME_NAME + " {----------------------------------------------------------------<");
             sb.AppendLine();
 
             sb.AppendLine("All commands are case insensitive.");
-            sb.AppendLine("Commands are listed with single quotes around them for clarity, but no quotes should be used when executing them in-game.");
+            sb.AppendLine("Commands are listed with brackets round them for clarity, but no brackets should be used when executing them in-game.");
             sb.AppendLine();
 
             sb.AppendLine("***Moving***");
-            sb.AppendLine("  'MoveX' (without quotes) will move you right or left.  You can specify a specific number of tiles, positive or negative.  Positive numbers move you to the right, negative to the left.");
-            sb.AppendLine("  Examples: 'MoveX 10', 'MoveX -12'");
-            sb.AppendLine("  'MoveY' works the same as 'MoveX', except it moves you up or down.");
+            sb.AppendLine("  [MoveRight] - move right 1 tile.  Optional #1: specify a number of tiles to move. Optional #2: Set the 'd' flag to re-draw level immediately after moving.");
+            sb.AppendLine("  Example: 'MoveRight 10'");
+            sb.AppendLine("  [MoveLeft], [MoveUp], and [MoveDown] work the same way.");
+            sb.AppendLine("  The player cannot move through walls, any extraneous move amounts are ignored.");
             sb.AppendLine();
 
             sb.AppendLine("***Drawing***");
-            sb.AppendLine("  'Draw' will re-draw the current level.");
+            sb.AppendLine("  [Draw] - re-draw the current level.");
+            sb.AppendLine();
+
+            sb.AppendLine("***Player***");
+            sb.AppendLine("  [Inventory] - display contents of player inventory.");
+            sb.AppendLine("  [Stats] - display stats of player.");
+
+            sb.AppendLine("***Menu Functions***");
+            sb.AppendLine("  [NewGame] - start a new game.");
+            sb.AppendLine("  [Exit] - exit the game.");
 
             Console.WriteLine(sb);
         }
@@ -147,6 +139,36 @@ namespace RogueLike
             _ovMap.CreateLevel();
             _ovMap.DiscoverTilesAroundPlayer();
             _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);
+        }
+
+        public static void MoveCommand(int xDirection, int yDirection, string[] userInputArray, out bool reDraw)
+        {
+            int lengthOfMove = 1;
+            reDraw = false;
+
+            if (userInputArray.Length > 1)
+                lengthOfMove = Convert.ToInt32(userInputArray[1]);
+
+            for (int i = 0; i < lengthOfMove; i++)
+            {
+                if (_ovMap.ThePlayer.MovePlayer(xDirection, yDirection))
+                    _ovMap.DiscoverTilesAroundPlayer();
+                else
+                {
+                    Console.WriteLine(RAN_INTO_WALL);
+                    break;
+                }
+            }
+
+            if (userInputArray.Length > 2)
+            {
+                if (userInputArray[2].ToString().ToUpper() == "D")
+                {
+                    reDraw = true;
+                }
+            }
+
+            _ovMap.DiscoverTilesAroundPlayer();
         }
     }
 }

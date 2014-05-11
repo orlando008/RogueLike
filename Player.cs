@@ -11,9 +11,13 @@ namespace RogueLike
         Point _location;
         int _dungeonLevel;
         int _playerLevel;
-        int _playerExperience;
+        int _playerExperience = 0;
+        int _experiencePerLevel = 100;
         OverallMap _overallMap;
         int _visionRadius = 1;
+        int _health = 100;
+        int _mana = 100;
+        string _class = "Not Yet Set";
 
         public Player(OverallMap ovMap)
         {
@@ -68,14 +72,31 @@ namespace RogueLike
 
         public bool MovePlayer(int xDirection, int yDirection)
         {
-            _location = new Point(_location.X + xDirection, _location.Y + yDirection);
+            Point newLocation = new Point(_location.X + xDirection, _location.Y + yDirection);
+            if (_overallMap.IsPointTraversable(newLocation, _dungeonLevel))
+            {
+                _location = newLocation;
+                return true;
+            }
+            else
+                return false;
 
-            return true;
+            
         }
 
         public string LocationString()
         {
             return "Currently in dungeon level " + _dungeonLevel.ToString() + " at (" + _location.X.ToString() + "," + _location.Y.ToString() + ")";
+        }
+
+        public void DrawStats()
+        {
+            Console.WriteLine("Level: " + _playerLevel.ToString());
+            Console.WriteLine("Experience To Next Level: " + (_experiencePerLevel - _playerExperience).ToString());
+            Console.WriteLine("Location: " + _location.ToString());
+            Console.WriteLine("Health: " + _health.ToString());
+            Console.WriteLine("Mana: " + _mana.ToString());
+            Console.WriteLine("Class: " + _class);
         }
     }
 }
