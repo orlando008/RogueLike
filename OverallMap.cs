@@ -447,6 +447,8 @@ namespace RogueLike
             int maxX = 0;
             int maxY = 0;
 
+            bool favorX = false;
+
             GetMax(out maxX, out maxY, level);
 
             while (room1.RoomLayout[room1DoorWay.X, room1DoorWay.Y].Connected == false)
@@ -460,6 +462,12 @@ namespace RogueLike
                 {
                     ultimateXDirection = room2DoorWayGlobal.X - pointsBetweenDoors[pointsBetweenDoors.Count - 1].X;
                     ultimateYDirection = room2DoorWayGlobal.Y - pointsBetweenDoors[pointsBetweenDoors.Count - 1].Y;
+                }
+
+                if (Math.Abs(ultimateXDirection) != 0 && Math.Abs(ultimateYDirection) != 0)
+                {
+                    if(RNG.Next(0, 2) == 1)
+                        favorX = true;
                 }
 
                 if (ultimateXDirection < 0)
@@ -493,7 +501,7 @@ namespace RogueLike
 
                 bool triedXFirst = false;
 
-                if (ultimateXDirection != 0)
+                if (ultimateXDirection != 0 && favorX)
                 {
                     triedXFirst = true;
                     pointToTry = new Point(basePoint.X + ultimateXDirection, basePoint.Y);
@@ -514,30 +522,30 @@ namespace RogueLike
 
                  
 
-                if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                if (!PointIsClearForHallway(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                 {
                     if(triedXFirst)
                         pointToTry = new Point(basePoint.X, basePoint.Y + ultimateYDirection);
                     else
                         pointToTry = new Point(basePoint.X + ultimateXDirection, basePoint.Y);
 
-                    if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                    if (!PointIsClearForHallway(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                     {
                         pointToTry = new Point(basePoint.X + (-ultimateXDirection), basePoint.Y);
 
-                        if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                        if (!PointIsClearForHallway(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                         {
                             pointToTry = new Point(basePoint.X, basePoint.Y + (-ultimateYDirection));
 
-                            if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                            if (!PointIsClearForHallway(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                             {
                                 pointToTry = new Point(basePoint.X + (-ultimateYDirection), basePoint.Y);
 
-                                if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                                if (!PointIsClearForHallway(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                                 {
                                     pointToTry = new Point(basePoint.X, basePoint.Y + (-ultimateXDirection));
 
-                                    if (!PointIsClear(pointToTry, level, pointsBetweenDoors, maxX, maxY))
+                                    if (!PointIsClearForHallway(pointToTry, level, pointsBetweenDoors, maxX, maxY))
                                     {
                                         if (LevelHallways.Count == 0 || tries > 10)
                                             break;
@@ -604,7 +612,7 @@ namespace RogueLike
             }
         }
 
-        public bool PointIsClear(Point pointToTry, int level, List<Point> pointsAlreadyTried, int maxX, int maxY)
+        public bool PointIsClearForHallway(Point pointToTry, int level, List<Point> pointsAlreadyTried, int maxX, int maxY)
         {
             if (pointsAlreadyTried != null & pointsAlreadyTried.Count > 0)
             {

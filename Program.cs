@@ -31,6 +31,8 @@ namespace RogueLike
         public static void ProcessUserCommand()
         {
             string userInput = Console.ReadLine();
+            userInput = userInput.Trim();
+
             string[] userInputArray = userInput.Split(" ".ToCharArray());
             int lengthOfMove = 1;
             bool reDraw = false;
