@@ -18,6 +18,9 @@ namespace RogueLike
         int _health = 100;
         int _mana = 100;
         string _class = "Not Yet Set";
+        int _healthPotions = 1;
+        int _manaPotions = 1;
+        int _gold = 10;
 
         public Player(OverallMap ovMap)
         {
@@ -70,18 +73,25 @@ namespace RogueLike
             }
         }
 
-        public bool MovePlayer(int xDirection, int yDirection)
+        public bool MovePlayer(int xDirection, int yDirection, out bool encounteredEnemy)
         {
             Point newLocation = new Point(_location.X + xDirection, _location.Y + yDirection);
             if (_overallMap.IsPointTraversable(newLocation, _dungeonLevel))
             {
                 _location = newLocation;
+
+                if (_overallMap.RNG.Next(0, 101) > 70)
+                    encounteredEnemy = true;
+                else
+                    encounteredEnemy = false;
+               
                 return true;
             }
             else
-                return false;
-
-            
+            {
+                encounteredEnemy = false;
+                return false;   
+            }      
         }
 
         public string LocationString()
@@ -97,6 +107,18 @@ namespace RogueLike
             Console.WriteLine("Health: " + _health.ToString());
             Console.WriteLine("Mana: " + _mana.ToString());
             Console.WriteLine("Class: " + _class);
+        }
+
+        public void DrawInventory()
+        {
+            Console.WriteLine("Inventory:");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Gold - " + _gold.ToString());
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Health Potions - " + _healthPotions.ToString());
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Mana Potions - " + _healthPotions.ToString());
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

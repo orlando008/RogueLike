@@ -19,6 +19,9 @@ namespace RogueLike
         private const int MAX_LVL_WIDTH = 125;
         private const int MIN_NUMBER_OF_ROOMS = 3;
         private const int MAX_NUMBER_OF_ROOMS = 10;
+        
+        Dictionary<int, string> _enemyNames = new Dictionary<int, string>();
+
 
         public Random RNG
         {
@@ -91,6 +94,14 @@ namespace RogueLike
         public OverallMap(int seed)
         {
             _seed = seed;
+
+            _enemyNames.Add(0, "Rat");
+            _enemyNames.Add(1, "Goblin");
+            _enemyNames.Add(2, "Minotaur");
+            _enemyNames.Add(3, "Orc");
+            _enemyNames.Add(4, "Spider");
+            _enemyNames.Add(5, "Scorpion");
+            _enemyNames.Add(6, "Skeleton");
         }
 
         public void GetMax(out int maxX, out int maxY, int level)
@@ -789,6 +800,53 @@ namespace RogueLike
             }
 
             return false;
+        }
+
+        public void GenerateRandomEnemyEncounter()
+        {
+            Console.WriteLine("You encountered a level " + GetEnemyLevel().ToString() + " " + GetEnemyName() + "!");
+            Console.WriteLine("It has " + GetEnemyHealth(ThePlayer.DungeonLevel).ToString() + " health.");
+            Console.WriteLine("Would you like to fight or flee?");
+
+            bool combatResolved = false;
+            while (!combatResolved)
+            {
+                string userInput = Console.ReadLine();
+
+                switch (userInput.Trim().ToUpper())
+                {
+                    case "FIGHT":
+                        Console.WriteLine("You fought.");
+                        combatResolved = true;
+                        break;
+                    case "FLEE":
+                        Console.WriteLine("You ran away.");
+                        combatResolved = true;
+                        break;
+                    default:
+                        Console.WriteLine("Command not recognized in combat.");
+                        break;
+                }
+            }
+            
+        }
+
+        public string GetEnemyName()
+        {
+            int enemy = RNG.Next(0, _enemyNames.Count);
+            return _enemyNames[enemy];
+        }
+
+        public int GetEnemyLevel()
+        {
+            int level = RNG.Next(1, ThePlayer.DungeonLevel + 2);
+            return level;
+        }
+
+        public int GetEnemyHealth(int level)
+        {
+            int healthPoints = RNG.Next(10, 21);
+            return (level+1) * healthPoints;
         }
     }
 }

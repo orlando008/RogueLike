@@ -80,6 +80,9 @@ namespace RogueLike
                 case "STATS":
                     _ovMap.ThePlayer.DrawStats();
                     break;
+                case "INVENTORY":
+                    _ovMap.ThePlayer.DrawInventory();
+                    break;
                 default:
                     Console.WriteLine("Command not recognized.");
                     break;
@@ -147,14 +150,23 @@ namespace RogueLike
         {
             int lengthOfMove = 1;
             reDraw = false;
+            bool encounteredEnemy = false;
 
             if (userInputArray.Length > 1)
                 lengthOfMove = Convert.ToInt32(userInputArray[1]);
 
             for (int i = 0; i < lengthOfMove; i++)
             {
-                if (_ovMap.ThePlayer.MovePlayer(xDirection, yDirection))
+                if (_ovMap.ThePlayer.MovePlayer(xDirection, yDirection, out encounteredEnemy))
+                {
                     _ovMap.DiscoverTilesAroundPlayer();
+
+                    if (encounteredEnemy)
+                    {
+                        _ovMap.GenerateRandomEnemyEncounter();
+                        break;
+                    }
+                }
                 else
                 {
                     Console.WriteLine(RAN_INTO_WALL);
