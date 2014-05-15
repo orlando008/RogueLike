@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InteractableObjects\CombatUnit.cs" />
     <Compile Include="InteractableObjects\Enemy.cs" />
     <Compile Include="InteractableObjects\Item.cs" />
     <Compile Include="OverallMap.cs" />
