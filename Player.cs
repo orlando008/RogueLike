@@ -17,10 +17,14 @@ namespace RogueLike
         int _visionRadius = 1;
         int _health = 100;
         int _mana = 100;
-        string _class = "Not Yet Set";
         int _healthPotions = 1;
         int _manaPotions = 1;
         int _gold = 10;
+        bool _specializationChosen = false;
+        RogueLike.OverallMap.FirstSpecializations _specialization1;
+        RogueLike.OverallMap.WarriorSpecializations _warriorSpecialization;
+        RogueLike.OverallMap.MageSpecializations _mageSpecialization;
+        RogueLike.OverallMap.ArcherSpecializations _archerSpecialization;
 
         public Player(OverallMap ovMap)
         {
@@ -38,6 +42,27 @@ namespace RogueLike
             get
             {
                 return _location;
+            }
+        }
+
+        public RogueLike.OverallMap.FirstSpecializations Specialization
+        {
+            get
+            {
+                return _specialization1;
+            }
+            set
+            {
+                _specialization1 = value;
+                _specializationChosen = true;
+            }
+        }
+
+        public bool SpecializationChosen
+        {
+            get
+            {
+                return _specializationChosen;
             }
         }
 
@@ -70,6 +95,14 @@ namespace RogueLike
             get
             {
                 return _playerExperience;
+            }
+        }
+        
+        public int Gold
+        {
+            get
+            {
+                return _gold;
             }
         }
 
@@ -106,7 +139,9 @@ namespace RogueLike
             Console.WriteLine("Location: " + _location.ToString());
             Console.WriteLine("Health: " + _health.ToString());
             Console.WriteLine("Mana: " + _mana.ToString());
-            Console.WriteLine("Class: " + _class);
+
+            if(SpecializationChosen)
+                Console.WriteLine("Specialization: " + Enum.GetName(typeof(RogueLike.OverallMap.FirstSpecializations), _specialization1));
         }
 
         public void DrawInventory()
@@ -119,6 +154,39 @@ namespace RogueLike
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Mana Potions - " + _healthPotions.ToString());
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public void GiveExperiencePoints(int exp)
+        {
+            _playerExperience += exp;
+
+            if (_playerExperience >= _experiencePerLevel)
+            {
+                int levelsGained = _playerExperience / _experiencePerLevel;
+                _playerExperience = _playerExperience - (_experiencePerLevel * (_playerExperience / _experiencePerLevel));
+
+                for (int i = 0; i < levelsGained - 1; i++)
+                {
+                    _playerLevel += 1;
+                    OnLeveledUp(EventArgs.Empty);
+                }   
+            }
+        }
+
+        public void GiveGold(int gold)
+        {
+            _gold += gold;
+        }
+
+        public event EventHandler LeveledUp;
+
+        protected void OnLeveledUp(EventArgs e)
+        {
+            EventHandler handler = LeveledUp;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
     }
 }

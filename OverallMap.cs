@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using RogueLike.StructuralClasses;
+using RogueLike.InteractableObjects;
 
 namespace RogueLike
 {
@@ -20,8 +21,33 @@ namespace RogueLike
         private const int MIN_NUMBER_OF_ROOMS = 3;
         private const int MAX_NUMBER_OF_ROOMS = 10;
         
-        Dictionary<int, string> _enemyNames = new Dictionary<int, string>();
+        public enum FirstSpecializations
+        {
+            Warrior = 0,
+            Mage,
+            Archer
+        }
 
+        public enum WarriorSpecializations
+        {
+            Duelist = 0,
+            Paladin,
+            Vanguard
+        }
+
+        public enum MageSpecializations
+        {
+            Summoner = 0,
+            Mystic,
+            Elementalist
+        }
+
+        public enum ArcherSpecializations
+        {
+            Trapper = 0,
+            Hunter,
+            Bowman
+        }
 
         public Random RNG
         {
@@ -94,14 +120,6 @@ namespace RogueLike
         public OverallMap(int seed)
         {
             _seed = seed;
-
-            _enemyNames.Add(0, "Rat");
-            _enemyNames.Add(1, "Goblin");
-            _enemyNames.Add(2, "Minotaur");
-            _enemyNames.Add(3, "Orc");
-            _enemyNames.Add(4, "Spider");
-            _enemyNames.Add(5, "Scorpion");
-            _enemyNames.Add(6, "Skeleton");
         }
 
         public void GetMax(out int maxX, out int maxY, int level)
@@ -426,6 +444,44 @@ namespace RogueLike
         public void PlacePlayerOnMap()
         {
             _player = new Player(this);
+            _player.LeveledUp += new EventHandler(_player_LeveledUp);
+        }
+
+        private void _player_LeveledUp(object sender, EventArgs e)
+        {
+            Console.WriteLine("Achieved Level " + ThePlayer.PlayerLevel.ToString() + "!");
+
+            switch (ThePlayer.PlayerLevel)
+            {
+                case 5:
+                    Console.WriteLine("At level 5, you get to choose your first specialization.  Which one will you choose?");
+                    listSpecializations();
+
+                    while (!ThePlayer.SpecializationChosen)
+                    {
+                        string userInput = Console.ReadLine().ToUpper();
+                        int userInputInteger;
+                        if (Int32.TryParse(userInput, out userInputInteger))
+                        {
+                            if (userInputInteger >= 0 && userInputInteger < Enum.GetValues(typeof(FirstSpecializations)).Length)
+                            {
+                                ThePlayer.Specialization = (FirstSpecializations)userInputInteger;
+                                Console.WriteLine("Congratulations, you are now specialized: " + Enum.GetName(typeof(FirstSpecializations), userInputInteger) + "!");
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void listSpecializations()
+        {
+            Array specializationValues = Enum.GetValues(typeof(FirstSpecializations));
+            for (int i = 0; i < specializationValues.Length; i++)
+            {
+                Console.WriteLine(i.ToString() + " - " + Enum.GetName(typeof(FirstSpecializations), specializationValues.GetValue(i)));
+            }
+            
         }
 
         public void ConnectTwoDoorways(int level)
@@ -804,9 +860,10 @@ namespace RogueLike
 
         public void GenerateRandomEnemyEncounter()
         {
-            Console.WriteLine("You encountered a level " + GetEnemyLevel().ToString() + " " + GetEnemyName() + "!");
-            Console.WriteLine("It has " + GetEnemyHealth(ThePlayer.DungeonLevel).ToString() + " health.");
-            Console.WriteLine("Would you like to fight or flee?");
+            CombatUnit cunit = new CombatUnit(this);
+            Console.WriteLine("You encountered an enemy!");
+            Console.WriteLine(cunit.ToString());
+            Console.WriteLine("FIGHT|ENEMYSTATS|FLEE");
 
             bool combatResolved = false;
             while (!combatResolved)
@@ -815,8 +872,14 @@ namespace RogueLike
 
                 switch (userInput.Trim().ToUpper())
                 {
+                    case "ENEMYSTATS":
+                        Console.WriteLine(cunit.FullEnemyStats());
+                        break;
                     case "FIGHT":
                         Console.WriteLine("You fought.");
+                        Console.WriteLine("Gained " + cunit.ExperienceWorth.ToString() + " experience and " + cunit.GoldWorth.ToString() + " gold!");
+                        ThePlayer.GiveExperiencePoints(cunit.ExperienceWorth);
+                        ThePlayer.GiveGold(cunit.GoldWorth);
                         combatResolved = true;
                         break;
                     case "FLEE":
@@ -829,24 +892,6 @@ namespace RogueLike
                 }
             }
             
-        }
-
-        public string GetEnemyName()
-        {
-            int enemy = RNG.Next(0, _enemyNames.Count);
-            return _enemyNames[enemy];
-        }
-
-        public int GetEnemyLevel()
-        {
-            int level = RNG.Next(1, ThePlayer.DungeonLevel + 2);
-            return level;
-        }
-
-        public int GetEnemyHealth(int level)
-        {
-            int healthPoints = RNG.Next(10, 21);
-            return (level+1) * healthPoints;
         }
     }
 }
