@@ -5,33 +5,75 @@ using System.Text;
 
 namespace RogueLike
 {
-    class Program
+    public class Program
     {
         private static bool _exit = false;
         private static OverallMap _ovMap;
         private static string RAN_INTO_WALL = "You ran into a wall.";
         private static string GAME_NAME = "Dungeon Adventure 2014";
+        public static bool _consoleMode = true;
 
-        static void Main(string[] args)
+        public delegate void InputNeededEventArgsEventHandler(InputNeededEventArgs e);
+
+        public static event InputNeededEventArgsEventHandler InputNeeded;
+        public static event OverallMap.DrawPortionEventHandler DrawPortion;
+
+        
+
+        public class InputNeededEventArgs: EventArgs
         {
-            Console.SetWindowSize(Console.LargestWindowWidth - 10, Console.LargestWindowHeight- 10);
-            Console.Title = GAME_NAME;
+            public string InputText;
+        }
+
+        protected static void OnInputNeeded(InputNeededEventArgs e)
+        {
+            InputNeeded?.Invoke(e);
+        }
+
+        public static void Main(string[] args)
+        {
+            if (args.Length == 1)
+                _consoleMode = false;
+
+            if (_consoleMode)
+            {
+                Console.SetWindowSize(Console.LargestWindowWidth - 10, Console.LargestWindowHeight - 10);
+                Console.Title = GAME_NAME;
+            }
 
             StartNewGame();
 
             while (!_exit)
             {
-                Console.Write(_ovMap.ThePlayer.LocationString());
-                Console.Write(">");
-                ProcessUserCommand();
+                if(_consoleMode)
+                {
+                    Console.Write(_ovMap.ThePlayer.LocationString());
+                    Console.Write(">");
+
+                    ProcessUserCommand(Console.ReadLine());
+                }
+                else
+                {
+                    InputNeededEventArgs i = new InputNeededEventArgs();
+                    OnInputNeeded(i);
+                    ProcessUserCommand(i.InputText);
+                }
+
             }
 
         }
 
-        public static void ProcessUserCommand()
+        private static void _ovMap_DrawPortion(OverallMap.DrawPortionEventArgs e)
         {
-            string userInput = Console.ReadLine();
-            userInput = userInput.Trim();
+            DrawPortion?.Invoke(e);
+        }
+
+        public static void ProcessUserCommand(string userInputText)
+        {
+            if (userInputText == null)
+                return;
+
+            string userInput = userInputText.Trim();
 
             string[] userInputArray = userInput.Split(" ".ToCharArray());
             bool reDraw = false;
@@ -125,12 +167,17 @@ namespace RogueLike
 
         public static void StartNewGame()
         {
-            Console.Clear();
+            if(_consoleMode)
+                Console.Clear();
 
             int seed = 0;
 #if DEBUG
-            Console.Write("Seed?");
-            string seedString = Console.ReadLine();
+            string seedString = "test";
+            if (_consoleMode)
+            {
+                Console.Write("Seed?");
+                seedString = Console.ReadLine();
+            }
 
             if (Int32.TryParse(seedString, out seed) == false)
                 seed = 0;
@@ -138,8 +185,12 @@ namespace RogueLike
                 seed = Convert.ToInt32(seedString);
 #endif
 
-            Console.Clear();
+            if (_consoleMode)
+                Console.Clear();
+
             _ovMap = new OverallMap(seed);
+            _ovMap.DrawPortion += _ovMap_DrawPortion;
+
             _ovMap.CreateLevel();
             _ovMap.DiscoverTilesAroundPlayer();
             _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);

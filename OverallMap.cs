@@ -20,7 +20,34 @@ namespace RogueLike
         private const int MAX_LVL_WIDTH = 125;
         private const int MIN_NUMBER_OF_ROOMS = 3;
         private const int MAX_NUMBER_OF_ROOMS = 10;
-        
+
+        public delegate void DrawPortionEventHandler(DrawPortionEventArgs e);
+
+        public event DrawPortionEventHandler DrawPortion;
+
+        public class DrawPortionEventArgs : EventArgs
+        {
+            public double XCoordinate = 0;
+            public double YCoordinate = 0;
+            public ConsoleColor BackgroundColor;
+            public ConsoleColor ForegroundColor;
+            public string StringData;
+        }
+
+        protected void OnDrawPortion(DrawPortionEventArgs e)
+        {
+            if(Program._consoleMode)
+            {
+                Console.BackgroundColor = e.BackgroundColor;
+                Console.ForegroundColor = e.ForegroundColor;
+                Console.Write(e.StringData);
+            }
+            else
+            {
+                DrawPortion?.Invoke(e);
+            }
+        }
+
         public enum FirstSpecializations
         {
             Warrior = 0,
@@ -151,6 +178,7 @@ namespace RogueLike
 
             GetMax(out maxX, out maxY, level);
 
+            DrawPortionEventArgs dpea = new DrawPortionEventArgs();
 
             for (int i = 0; i < maxY; i++)
             {
@@ -161,16 +189,28 @@ namespace RogueLike
 
                     Point tmpPoint = new Point(j, i);
 
+                    dpea.XCoordinate = j;
+                    dpea.YCoordinate = i;
+
                     if ((tmpPoint.X == 0 && tmpPoint.Y == 0) || (tmpPoint.X == 0 && tmpPoint.Y == maxY - 1) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == 0) || (tmpPoint.X == maxX - 1 && tmpPoint.Y == maxY - 1))
                     {
-                        Console.BackgroundColor = ConsoleColor.White;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.Write("*");
+                        dpea.BackgroundColor = ConsoleColor.White;
+                        dpea.ForegroundColor = ConsoleColor.Black;
+                        dpea.StringData="*";
+                        
+                        OnDrawPortion(dpea);
                     }
                     else if (tmpPoint.X == 0 || tmpPoint.X == maxX - 1)
                     {
                         Console.BackgroundColor = ConsoleColor.White;
                         Console.ForegroundColor = ConsoleColor.Black;
+
+                        dpea.BackgroundColor = ConsoleColor.White;
+                        dpea.ForegroundColor = ConsoleColor.Black;
+                        dpea.StringData = "-";
+
+                        OnDrawPortion(dpea);
+
                         if (tmpPoint.Y % 5 == 0)
                         {
                            Console.Write("-");
@@ -182,6 +222,13 @@ namespace RogueLike
                     {
                         Console.BackgroundColor = ConsoleColor.White;
                         Console.ForegroundColor = ConsoleColor.Black;
+
+                        dpea.BackgroundColor = ConsoleColor.White;
+                        dpea.ForegroundColor = ConsoleColor.Black;
+                        dpea.StringData = "|";
+
+                        OnDrawPortion(dpea);
+
                         if (tmpPoint.X % 5 == 0)
                         {
                             Console.Write("|");
@@ -196,6 +243,12 @@ namespace RogueLike
                         {
                             Console.BackgroundColor = ConsoleColor.DarkGreen;
                             Console.Write(":");
+
+                            dpea.BackgroundColor = ConsoleColor.DarkGreen;
+                            dpea.ForegroundColor = ConsoleColor.Black;
+                            dpea.StringData = ":";
+
+                            OnDrawPortion(dpea);
                         }
                         else
                         {
@@ -211,6 +264,11 @@ namespace RogueLike
 
                             if (tmp != "")
                             {
+                                dpea.BackgroundColor = ConsoleColor.White;
+                                dpea.ForegroundColor = ConsoleColor.Black;
+                                dpea.StringData = tmp;
+
+                                OnDrawPortion(dpea);
                                 Console.Write(tmp);
                             }
                             else
@@ -236,16 +294,28 @@ namespace RogueLike
 
                                 if (p != -1)
                                 {
+                                    dpea.BackgroundColor = ConsoleColor.White;
+                                    dpea.ForegroundColor = ConsoleColor.Black;
+                                    dpea.StringData = "#";
+
+                                    OnDrawPortion(dpea);
                                     Console.Write("#");
                                 }
                                 else
                                 {
+                                    dpea.BackgroundColor = ConsoleColor.White;
+                                    dpea.ForegroundColor = ConsoleColor.Black;
+                                    dpea.StringData = " ";
                                     Console.Write(" ");
                                 }  
                             }
                         }
                     }
                 }
+
+                dpea.BackgroundColor = ConsoleColor.White;
+                dpea.ForegroundColor = ConsoleColor.Black;
+                dpea.StringData = "\n";
 
                 Console.Write("\n");
 
