@@ -81,19 +81,23 @@ namespace RogueLike
             switch (userInputArray[0].ToUpper())
             {
                 case "MOVERIGHT":
-                    Console.WriteLine("Moving right...");
+                    if(_consoleMode)
+                        Console.WriteLine("Moving right...");
                     MoveCommand(1, 0, userInputArray, out reDraw);
                     break;
                 case "MOVELEFT":
-                    Console.WriteLine("Moving left...");
+                    if (_consoleMode)
+                        Console.WriteLine("Moving left...");
                     MoveCommand(-1, 0, userInputArray, out reDraw);
                     break;
                 case "MOVEUP":
-                    Console.WriteLine("Moving up...");
+                    if (_consoleMode)
+                        Console.WriteLine("Moving up...");
                     MoveCommand(0, -1, userInputArray, out reDraw);
                     break;
                 case "MOVEDOWN":
-                    Console.WriteLine("Moving down...");
+                    if (_consoleMode)
+                        Console.WriteLine("Moving down...");
                     MoveCommand(0, 1, userInputArray, out reDraw);
                     break;
                 case "EXIT":
@@ -103,29 +107,35 @@ namespace RogueLike
                     PrintHelp();
                     break;
                 case "DRAW":
-                    Console.Clear();
+                    if (_consoleMode)
+                        Console.Clear();
                     _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);
                     break;
                 case "SEED":
-                    Console.WriteLine(_ovMap.Seed.ToString());
+                    if (_consoleMode)
+                        Console.WriteLine(_ovMap.Seed.ToString());
                     break;
                 case "NEWGAME":
                     StartNewGame();
                     break;
 #if DEBUG
                 case "DRAWALL":
-                    Console.Clear();
+                    if (_consoleMode)
+                        Console.Clear();
                     _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, false);
                     break;
 #endif
                 case "STATS":
-                    _ovMap.ThePlayer.DrawStats();
+                    if (_consoleMode)
+                        _ovMap.ThePlayer.DrawStats();
                     break;
                 case "INVENTORY":
-                    _ovMap.ThePlayer.DrawInventory();
+                    if (_consoleMode)
+                        _ovMap.ThePlayer.DrawInventory();
                     break;
                 default:
-                    Console.WriteLine("Command not recognized.");
+                    if (_consoleMode)
+                        Console.WriteLine("Command not recognized.");
                     break;
             }
 

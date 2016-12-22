@@ -47,10 +47,44 @@ namespace RogueLikeWPF
                 r.Height = 10;
                 r.StrokeThickness = .4;
                 r.Stroke = new SolidColorBrush(Colors.Black);
+
+                switch (e.StringData)
+                {
+                    case ":":
+                        r.Fill = new SolidColorBrush(Colors.Blue);
+                        break;
+                    case "|":
+                    case "-":
+                    case "*":
+                        r.Fill = new SolidColorBrush(Colors.DarkGray);
+                        break;
+                    case "#":
+                        r.Fill = new SolidColorBrush(Colors.Brown);
+                        break;
+                    case " ":
+                        r.Fill = new SolidColorBrush(Colors.DarkBlue);
+                        break;
+
+                }
+
                 Canvas.SetLeft(r, e.XCoordinate * 10);
                 Canvas.SetTop(r, e.YCoordinate * 10);
 
                 canvasMain.Children.Add(r);
+
+                if(e.StringData == ":")
+                {
+                    System.Windows.Shapes.Ellipse c = new Ellipse();
+                    c.Width = 10;
+                    c.Height = 10;
+                    c.StrokeThickness = .4;
+
+                    c.Stroke = new SolidColorBrush(Colors.Yellow);
+                    Canvas.SetLeft(c, e.XCoordinate * 10);
+                    Canvas.SetTop(c, e.YCoordinate * 10);
+
+                    canvasMain.Children.Add(c);
+                }
             }
             else
             {
@@ -66,6 +100,29 @@ namespace RogueLikeWPF
         private void canvasMain_Loaded(object sender, RoutedEventArgs e)
         {
             _bw.RunWorkerAsync();
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch(e.Key)
+            {
+                case Key.Left:
+                    RogueLike.Program.ProcessUserCommand("MOVELEFT");
+                    RogueLike.Program.ProcessUserCommand("DRAW");
+                    break;
+                case Key.Right:
+                    RogueLike.Program.ProcessUserCommand("MOVERIGHT");
+                    RogueLike.Program.ProcessUserCommand("DRAW");
+                    break;
+                case Key.Up:
+                    RogueLike.Program.ProcessUserCommand("MOVEUP");
+                    RogueLike.Program.ProcessUserCommand("DRAW");
+                    break;
+                case Key.Down:
+                    RogueLike.Program.ProcessUserCommand("MOVEDOWN");
+                    RogueLike.Program.ProcessUserCommand("DRAW");
+                    break;
+            }
         }
     }
 }

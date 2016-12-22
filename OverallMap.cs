@@ -306,6 +306,8 @@ namespace RogueLike
                                     dpea.BackgroundColor = ConsoleColor.White;
                                     dpea.ForegroundColor = ConsoleColor.Black;
                                     dpea.StringData = " ";
+
+                                    OnDrawPortion(dpea);
                                     Console.Write(" ");
                                 }  
                             }
@@ -938,7 +940,7 @@ namespace RogueLike
             bool combatResolved = false;
             while (!combatResolved)
             {
-                string userInput = Console.ReadLine();
+                string userInput = "";// Console.ReadLine();
 
                 switch (userInput.Trim().ToUpper())
                 {
