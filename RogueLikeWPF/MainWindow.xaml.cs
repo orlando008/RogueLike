@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RogueLike;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace RogueLikeWPF
     public partial class MainWindow : Window
     {
         private bool _midDrawing = true;
+        private Ellipse _playerDot = null;
         private BackgroundWorker _bw = new BackgroundWorker();
         private List<RogueLike.OverallMap.DrawPortionEventArgs> ListOfThings = new List<RogueLike.OverallMap.DrawPortionEventArgs>();
 
@@ -30,95 +32,130 @@ namespace RogueLikeWPF
             InitializeComponent();
 
             RogueLike.Program.InputNeeded += Program_InputNeeded;
-            RogueLike.Program.DrawPortion += Program_DrawPortion;
-            RogueLike.Program.DrawBegin += Program_DrawBegin;
-            RogueLike.Program.DrawEnd += Program_DrawEnd; ;
+            RogueLike.Program.MapCreated += Program_MapCreated;
+            RogueLike.Program.PlacePlayer += Program_PlacePlayer;
 
             _bw.DoWork += _bw_DoWork;
            
         }
 
-        private void Program_DrawEnd(object sender, EventArgs e)
+        private void Program_PlacePlayer(object sender, EventArgs e)
         {
             if (canvasMain.Dispatcher.CheckAccess() == true)
             {
-                _midDrawing = false;
-                
-                canvasMain.Children.Clear();
-                foreach (RogueLike.OverallMap.DrawPortionEventArgs item in ListOfThings)
+                if (_playerDot == null)
                 {
-                    System.Windows.Shapes.Rectangle r = new Rectangle();
-                    r.Width = 10;
-                    r.Height = 10;
-                    r.StrokeThickness = .4;
-                    r.Stroke = new SolidColorBrush(Colors.Black);
+                    _playerDot = new Ellipse();
+                    _playerDot.Width = 10;
+                    _playerDot.Height = 10;
+                    _playerDot.StrokeThickness = .1;
+                    _playerDot.Stroke = new SolidColorBrush(Colors.Blue);
+                    _playerDot.Fill = new SolidColorBrush(Colors.Blue);
+                    canvasMain.Children.Add(_playerDot);
 
-                    switch (item.StringData)
-                    {
-                        case ":":
-                            r.Fill = new SolidColorBrush(Colors.Blue);
-                            break;
-                        case "|":
-                        case "-":
-                        case "*":
-                            r.Fill = new SolidColorBrush(Colors.DarkGray);
-                            break;
-                        case "#":
-                            r.Fill = new SolidColorBrush(Colors.Brown);
-                            break;
-                        case " ":
-                            r.Fill = new SolidColorBrush(Colors.DarkBlue);
-                            break;
-
-                    }
-
-                    Canvas.SetLeft(r, item.XCoordinate * 10);
-                    Canvas.SetTop(r, item.YCoordinate * 10);
-
-                    canvasMain.Children.Add(r);
-
-                    if (item.StringData == ":")
-                    {
-                        System.Windows.Shapes.Ellipse c = new Ellipse();
-                        c.Width = 10;
-                        c.Height = 10;
-                        c.StrokeThickness = .4;
-
-                        c.Stroke = new SolidColorBrush(Colors.Yellow);
-                        Canvas.SetLeft(c, item.XCoordinate * 10);
-                        Canvas.SetTop(c, item.YCoordinate * 10);
-
-                        canvasMain.Children.Add(c);
-                    }
+                    Canvas.SetLeft(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.X) * 10);
+                    Canvas.SetTop(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.Y) * 10);
                 }
-                
             }
             else
             {
-                this.Dispatcher.Invoke((Action)(() => Program_DrawEnd(sender,e)));
+                this.Dispatcher.Invoke((Action)(() => Program_PlacePlayer(null,null)));
+            }
+        }
+
+        private void Program_MapCreated(object sender, EventArgs e)
+        {
+            RogueLike.Program._ovMap.RoomDiscovered += _ovMap_RoomDiscovered;
+            RogueLike.Program._ovMap.HallDiscovered += _ovMap_HallDiscovered;
+        }
+
+        private void _ovMap_HallDiscovered(OverallMap.HallDiscoveredEventArgs e)
+        {
+            if (canvasMain.Dispatcher.CheckAccess() == true)
+            {
+                System.Windows.Shapes.Rectangle rct = new Rectangle();
+                rct.Width = 10;
+                rct.Height = 10;
+                rct.StrokeThickness = 1.5;
+                rct.Stroke = new SolidColorBrush(Colors.Goldenrod);
+                rct.Fill = new SolidColorBrush(Colors.Gold);
+
+                canvasMain.Children.Add(rct);
+
+                Canvas.SetLeft(rct, e.hallThatWasDiscovered.X * 10);
+                Canvas.SetTop(rct, e.hallThatWasDiscovered.Y * 10);
+            }
+            else
+            {
+                this.Dispatcher.Invoke((Action)(() => _ovMap_HallDiscovered(e)));
+            }
+        }
+
+        private void _ovMap_RoomDiscovered(OverallMap.RoomDiscoveredEventArgs e)
+        {
+            if (canvasMain.Dispatcher.CheckAccess() == true)
+            {
+                System.Windows.Shapes.Rectangle rct = new Rectangle();
+
+                switch (e.roomTileThatWasDiscovered.ThisTileType)
+                {
+                    case RogueLike.StructuralClasses.TileType.Floor:
+                        rct.Width = 10;
+                        rct.Height = 10;
+                        rct.StrokeThickness = .4;
+                        rct.Stroke = new SolidColorBrush(Colors.Brown);
+                        rct.Fill = new SolidColorBrush(Colors.Beige);
+
+                        canvasMain.Children.Add(rct);
+
+                        Canvas.SetLeft(rct, (e.roomTileThatWasDiscovered.ParentRoom.Origin.X + e.roomTileThatWasDiscovered.X) * 10);
+                        Canvas.SetTop(rct, (e.roomTileThatWasDiscovered.ParentRoom.Origin.Y + e.roomTileThatWasDiscovered.Y) * 10);
+
+                        break;
+
+                    case RogueLike.StructuralClasses.TileType.VerticalWall:
+                    case RogueLike.StructuralClasses.TileType.HorizontalWall:
+
+                        rct.Width = 10;
+                        rct.Height = 10;
+                        rct.StrokeThickness = 1.25;
+                        rct.Stroke = new SolidColorBrush(Colors.Brown);
+                        rct.Fill = new SolidColorBrush(Colors.Black);
+                        canvasMain.Children.Add(rct);
+
+                        Canvas.SetLeft(rct, (e.roomTileThatWasDiscovered.ParentRoom.Origin.X + e.roomTileThatWasDiscovered.X) * 10);
+                        Canvas.SetTop(rct, (e.roomTileThatWasDiscovered.ParentRoom.Origin.Y + e.roomTileThatWasDiscovered.Y) * 10);
+
+                        break;
+                    case RogueLike.StructuralClasses.TileType.Door:
+                        rct.Width = 10;
+                        rct.Height = 10;
+                        rct.StrokeThickness = 2.5;
+                        rct.Stroke = new SolidColorBrush(Colors.Green);
+                        rct.Fill = new SolidColorBrush(Colors.Silver);
+
+                        canvasMain.Children.Add(rct);
+
+                        Canvas.SetLeft(rct, (e.roomTileThatWasDiscovered.ParentRoom.Origin.X + e.roomTileThatWasDiscovered.X) * 10);
+                        Canvas.SetTop(rct, (e.roomTileThatWasDiscovered.ParentRoom.Origin.Y + e.roomTileThatWasDiscovered.Y) * 10);
+
+                        break;
+
+                }
+
+            }
+            else
+            {
+                this.Dispatcher.Invoke((Action)(() => _ovMap_RoomDiscovered(e)));
             }
 
+
         }
 
-        private void Program_DrawBegin(object sender, EventArgs e)
-        {
-            _midDrawing = true;
-            ListOfThings.Clear();
-        }
 
         private void _bw_DoWork(object sender, DoWorkEventArgs e)
         {
             RogueLike.Program.Main(new string[] { "test" });
-        }
-
-        private void Program_DrawPortion(RogueLike.OverallMap.DrawPortionEventArgs e)
-        {
-            RogueLike.OverallMap.DrawPortionEventArgs deep = new RogueLike.OverallMap.DrawPortionEventArgs();
-            deep.StringData = e.StringData;
-            deep.XCoordinate = e.XCoordinate;
-            deep.YCoordinate = e.YCoordinate;
-
-            ListOfThings.Add(deep);
         }
 
         private void Program_InputNeeded(RogueLike.Program.InputNeededEventArgs e)
@@ -137,21 +174,25 @@ namespace RogueLikeWPF
             {
                 case Key.Left:
                     RogueLike.Program.ProcessUserCommand("MOVELEFT");
-                    RogueLike.Program.ProcessUserCommand("DRAW");
                     break;
                 case Key.Right:
                     RogueLike.Program.ProcessUserCommand("MOVERIGHT");
-                    RogueLike.Program.ProcessUserCommand("DRAW");
                     break;
                 case Key.Up:
                     RogueLike.Program.ProcessUserCommand("MOVEUP");
-                    RogueLike.Program.ProcessUserCommand("DRAW");
                     break;
                 case Key.Down:
                     RogueLike.Program.ProcessUserCommand("MOVEDOWN");
-                    RogueLike.Program.ProcessUserCommand("DRAW");
                     break;
             }
+
+            if (_playerDot != null)
+            {
+                Canvas.SetLeft(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.X) * 10);
+                Canvas.SetTop(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.Y) * 10);
+                Canvas.SetZIndex(_playerDot, 99);
+            }
+
         }
     }
 }

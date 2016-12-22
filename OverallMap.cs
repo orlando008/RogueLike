@@ -22,8 +22,12 @@ namespace RogueLike
         private const int MAX_NUMBER_OF_ROOMS = 10;
 
         public delegate void DrawPortionEventHandler(DrawPortionEventArgs e);
+        public delegate void RoomDiscoveredEventHandler(RoomDiscoveredEventArgs e);
+        public delegate void HallDiscoveredEventHandler(HallDiscoveredEventArgs e);
 
         public event DrawPortionEventHandler DrawPortion;
+        public event RoomDiscoveredEventHandler RoomDiscovered;
+        public event HallDiscoveredEventHandler HallDiscovered;
 
         public event EventHandler DrawBegin;
         public event EventHandler DrawEnd;
@@ -35,6 +39,16 @@ namespace RogueLike
             public ConsoleColor BackgroundColor;
             public ConsoleColor ForegroundColor;
             public string StringData;
+        }
+
+        public class RoomDiscoveredEventArgs : EventArgs
+        {
+            public RoomTile roomTileThatWasDiscovered;
+        }
+
+        public class HallDiscoveredEventArgs : EventArgs
+        {
+            public Point hallThatWasDiscovered;
         }
 
         protected void OnDrawBegin(EventArgs e)
@@ -59,6 +73,16 @@ namespace RogueLike
             {
                 DrawPortion?.Invoke(e);
             }
+        }
+
+        protected void OnRoomDiscovered(RoomDiscoveredEventArgs e)
+        {
+            RoomDiscovered?.Invoke(e);
+        }
+
+        protected void OnHallDiscovered(HallDiscoveredEventArgs e)
+        {
+            HallDiscovered?.Invoke(e);
         }
 
         public enum FirstSpecializations
@@ -907,6 +931,9 @@ namespace RogueLike
                 if (roomTile != null)
                 {
                     roomTile.Discovered = true;
+                    RoomDiscoveredEventArgs e = new RoomDiscoveredEventArgs();
+                    e.roomTileThatWasDiscovered = roomTile;
+                    OnRoomDiscovered(e);
                     return;
                 }
 
@@ -917,6 +944,10 @@ namespace RogueLike
                 if (!LevelDiscoveredHallways.ContainsKey(level))
                     LevelDiscoveredHallways.Add(level, new List<Point>());
                 LevelDiscoveredHallways[level].Add(p);
+
+                HallDiscoveredEventArgs e = new HallDiscoveredEventArgs();
+                e.hallThatWasDiscovered = p;
+                OnHallDiscovered(e);
             }
         
         }

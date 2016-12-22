@@ -8,7 +8,7 @@ namespace RogueLike
     public class Program
     {
         private static bool _exit = false;
-        private static OverallMap _ovMap;
+        public static OverallMap _ovMap;
         private static string RAN_INTO_WALL = "You ran into a wall.";
         private static string GAME_NAME = "Dungeon Adventure 2014";
         public static bool _consoleMode = true;
@@ -20,6 +20,9 @@ namespace RogueLike
 
         public static event EventHandler DrawBegin;
         public static event EventHandler DrawEnd;
+
+        public static event EventHandler MapCreated;
+        public static event EventHandler PlacePlayer;
 
         public class InputNeededEventArgs: EventArgs
         {
@@ -34,6 +37,16 @@ namespace RogueLike
         protected static void OnDrawBegin(EventArgs e)
         {
             DrawBegin?.Invoke(null, e);
+        }
+
+        protected static void OnMapCreated(EventArgs e)
+        {
+            MapCreated?.Invoke(null, e);
+        }
+
+        protected static void OnPlacePlayer(EventArgs e)
+        {
+            PlacePlayer?.Invoke(null, e);
         }
 
         protected static void OnDrawEnd(EventArgs e)
@@ -211,10 +224,13 @@ namespace RogueLike
             _ovMap.DrawPortion += _ovMap_DrawPortion;
             _ovMap.DrawBegin += _ovMap_DrawBegin;
             _ovMap.DrawEnd += _ovMap_DrawEnd;
+            OnMapCreated(null);
 
             _ovMap.CreateLevel();
             _ovMap.DiscoverTilesAroundPlayer();
             _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);
+
+            OnPlacePlayer(null);
         }
 
         private static void _ovMap_DrawEnd(object sender, EventArgs e)

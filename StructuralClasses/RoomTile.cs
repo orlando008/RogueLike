@@ -19,10 +19,52 @@ namespace RogueLike.StructuralClasses
         TileType _tileType;
         bool _connected = false;
         bool _discovered = false;
+        Room _parentRoom = null;
+        int _x;
+        int _y;
 
-        public RoomTile(TileType tyleType)
+        public RoomTile(Room parentRoom, int x, int y, TileType tyleType)
         {
+            _x = x;
+            _y = y;
             _tileType = tyleType;
+            _parentRoom = parentRoom;
+        }
+
+        public int X
+        {
+            get
+            {
+                return _x;
+            }
+            set
+            {
+                _x = value;
+            }
+        }
+
+        public int Y
+        {
+            get
+            {
+                return _y;
+            }
+            set
+            {
+                _y = value;
+            }
+        }
+
+        public Room ParentRoom
+        {
+            get
+            {
+                return _parentRoom;
+            }
+            set
+            {
+                _parentRoom = value;
+            }
         }
 
         public TileType ThisTileType

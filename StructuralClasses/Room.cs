@@ -73,7 +73,7 @@ namespace RogueLike
             {
                 for (int y = 0; y < _roomLayout.GetLength(1); y++)
                 {
-                    _roomLayout[x, y] = new RoomTile(TileType.HallwayFloor);
+                    _roomLayout[x, y] = new RoomTile(this, x, y, TileType.HallwayFloor);
                 }
             }
         }
@@ -86,15 +86,15 @@ namespace RogueLike
                 {
                     if (x == 0 || x + 1 == _roomLayout.GetLength(0))
                     {
-                        _roomLayout[x, y] = new RoomTile(TileType.VerticalWall);
+                        _roomLayout[x, y] = new RoomTile(this, x, y, TileType.VerticalWall);
                     }
                     else if (y == 0 || y + 1 == _roomLayout.GetLength(1))
                     {
-                        _roomLayout[x, y] = new RoomTile(TileType.HorizontalWall);
+                        _roomLayout[x, y] = new RoomTile(this, x, y,TileType.HorizontalWall);
                     }
                     else
                     {
-                        _roomLayout[x, y] = new RoomTile(TileType.Floor);
+                        _roomLayout[x, y] = new RoomTile(this, x, y, TileType.Floor);
                     }
                     
                 }
