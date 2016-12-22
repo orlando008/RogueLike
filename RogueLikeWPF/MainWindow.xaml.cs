@@ -21,16 +21,89 @@ namespace RogueLikeWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool _midDrawing = true;
         private BackgroundWorker _bw = new BackgroundWorker();
+        private List<RogueLike.OverallMap.DrawPortionEventArgs> ListOfThings = new List<RogueLike.OverallMap.DrawPortionEventArgs>();
+
         public MainWindow()
         {
             InitializeComponent();
 
             RogueLike.Program.InputNeeded += Program_InputNeeded;
             RogueLike.Program.DrawPortion += Program_DrawPortion;
+            RogueLike.Program.DrawBegin += Program_DrawBegin;
+            RogueLike.Program.DrawEnd += Program_DrawEnd; ;
 
             _bw.DoWork += _bw_DoWork;
            
+        }
+
+        private void Program_DrawEnd(object sender, EventArgs e)
+        {
+            if (canvasMain.Dispatcher.CheckAccess() == true)
+            {
+                _midDrawing = false;
+                
+                canvasMain.Children.Clear();
+                foreach (RogueLike.OverallMap.DrawPortionEventArgs item in ListOfThings)
+                {
+                    System.Windows.Shapes.Rectangle r = new Rectangle();
+                    r.Width = 10;
+                    r.Height = 10;
+                    r.StrokeThickness = .4;
+                    r.Stroke = new SolidColorBrush(Colors.Black);
+
+                    switch (item.StringData)
+                    {
+                        case ":":
+                            r.Fill = new SolidColorBrush(Colors.Blue);
+                            break;
+                        case "|":
+                        case "-":
+                        case "*":
+                            r.Fill = new SolidColorBrush(Colors.DarkGray);
+                            break;
+                        case "#":
+                            r.Fill = new SolidColorBrush(Colors.Brown);
+                            break;
+                        case " ":
+                            r.Fill = new SolidColorBrush(Colors.DarkBlue);
+                            break;
+
+                    }
+
+                    Canvas.SetLeft(r, item.XCoordinate * 10);
+                    Canvas.SetTop(r, item.YCoordinate * 10);
+
+                    canvasMain.Children.Add(r);
+
+                    if (item.StringData == ":")
+                    {
+                        System.Windows.Shapes.Ellipse c = new Ellipse();
+                        c.Width = 10;
+                        c.Height = 10;
+                        c.StrokeThickness = .4;
+
+                        c.Stroke = new SolidColorBrush(Colors.Yellow);
+                        Canvas.SetLeft(c, item.XCoordinate * 10);
+                        Canvas.SetTop(c, item.YCoordinate * 10);
+
+                        canvasMain.Children.Add(c);
+                    }
+                }
+                
+            }
+            else
+            {
+                this.Dispatcher.Invoke((Action)(() => Program_DrawEnd(sender,e)));
+            }
+
+        }
+
+        private void Program_DrawBegin(object sender, EventArgs e)
+        {
+            _midDrawing = true;
+            ListOfThings.Clear();
         }
 
         private void _bw_DoWork(object sender, DoWorkEventArgs e)
@@ -40,56 +113,12 @@ namespace RogueLikeWPF
 
         private void Program_DrawPortion(RogueLike.OverallMap.DrawPortionEventArgs e)
         {
-            if(canvasMain.Dispatcher.CheckAccess() == true)
-            {
-                System.Windows.Shapes.Rectangle r = new Rectangle();
-                r.Width = 10;
-                r.Height = 10;
-                r.StrokeThickness = .4;
-                r.Stroke = new SolidColorBrush(Colors.Black);
+            RogueLike.OverallMap.DrawPortionEventArgs deep = new RogueLike.OverallMap.DrawPortionEventArgs();
+            deep.StringData = e.StringData;
+            deep.XCoordinate = e.XCoordinate;
+            deep.YCoordinate = e.YCoordinate;
 
-                switch (e.StringData)
-                {
-                    case ":":
-                        r.Fill = new SolidColorBrush(Colors.Blue);
-                        break;
-                    case "|":
-                    case "-":
-                    case "*":
-                        r.Fill = new SolidColorBrush(Colors.DarkGray);
-                        break;
-                    case "#":
-                        r.Fill = new SolidColorBrush(Colors.Brown);
-                        break;
-                    case " ":
-                        r.Fill = new SolidColorBrush(Colors.DarkBlue);
-                        break;
-
-                }
-
-                Canvas.SetLeft(r, e.XCoordinate * 10);
-                Canvas.SetTop(r, e.YCoordinate * 10);
-
-                canvasMain.Children.Add(r);
-
-                if(e.StringData == ":")
-                {
-                    System.Windows.Shapes.Ellipse c = new Ellipse();
-                    c.Width = 10;
-                    c.Height = 10;
-                    c.StrokeThickness = .4;
-
-                    c.Stroke = new SolidColorBrush(Colors.Yellow);
-                    Canvas.SetLeft(c, e.XCoordinate * 10);
-                    Canvas.SetTop(c, e.YCoordinate * 10);
-
-                    canvasMain.Children.Add(c);
-                }
-            }
-            else
-            {
-                this.Dispatcher.Invoke((Action)(() => Program_DrawPortion(e)));
-            }
+            ListOfThings.Add(deep);
         }
 
         private void Program_InputNeeded(RogueLike.Program.InputNeededEventArgs e)

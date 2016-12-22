@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="650" Width="1000" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid>
-        <Canvas x:Name="canvasMain" Loaded="canvasMain_Loaded" ></Canvas>
+        <Canvas x:Name="canvasMain" Loaded="canvasMain_Loaded" Background="gray"></Canvas>
     </Grid>
 </Window>

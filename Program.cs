@@ -18,7 +18,8 @@ namespace RogueLike
         public static event InputNeededEventArgsEventHandler InputNeeded;
         public static event OverallMap.DrawPortionEventHandler DrawPortion;
 
-        
+        public static event EventHandler DrawBegin;
+        public static event EventHandler DrawEnd;
 
         public class InputNeededEventArgs: EventArgs
         {
@@ -28,6 +29,16 @@ namespace RogueLike
         protected static void OnInputNeeded(InputNeededEventArgs e)
         {
             InputNeeded?.Invoke(e);
+        }
+
+        protected static void OnDrawBegin(EventArgs e)
+        {
+            DrawBegin?.Invoke(null, e);
+        }
+
+        protected static void OnDrawEnd(EventArgs e)
+        {
+            DrawEnd?.Invoke(null, e);
         }
 
         public static void Main(string[] args)
@@ -54,9 +65,7 @@ namespace RogueLike
                 }
                 else
                 {
-                    InputNeededEventArgs i = new InputNeededEventArgs();
-                    OnInputNeeded(i);
-                    ProcessUserCommand(i.InputText);
+                    _exit = true;
                 }
 
             }
@@ -200,10 +209,22 @@ namespace RogueLike
 
             _ovMap = new OverallMap(seed);
             _ovMap.DrawPortion += _ovMap_DrawPortion;
+            _ovMap.DrawBegin += _ovMap_DrawBegin;
+            _ovMap.DrawEnd += _ovMap_DrawEnd;
 
             _ovMap.CreateLevel();
             _ovMap.DiscoverTilesAroundPlayer();
             _ovMap.DrawLevelDirect(_ovMap.ThePlayer.DungeonLevel, true);
+        }
+
+        private static void _ovMap_DrawEnd(object sender, EventArgs e)
+        {
+            OnDrawEnd(e);
+        }
+
+        private static void _ovMap_DrawBegin(object sender, EventArgs e)
+        {
+            OnDrawBegin(e);
         }
 
         public static void MoveCommand(int xDirection, int yDirection, string[] userInputArray, out bool reDraw)

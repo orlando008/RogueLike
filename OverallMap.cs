@@ -25,6 +25,9 @@ namespace RogueLike
 
         public event DrawPortionEventHandler DrawPortion;
 
+        public event EventHandler DrawBegin;
+        public event EventHandler DrawEnd;
+
         public class DrawPortionEventArgs : EventArgs
         {
             public double XCoordinate = 0;
@@ -32,6 +35,16 @@ namespace RogueLike
             public ConsoleColor BackgroundColor;
             public ConsoleColor ForegroundColor;
             public string StringData;
+        }
+
+        protected void OnDrawBegin(EventArgs e)
+        {
+            DrawBegin?.Invoke(null,e);
+        }
+
+        protected void OnDrawEnd(EventArgs e)
+        {
+            DrawEnd?.Invoke(null, e);
         }
 
         protected void OnDrawPortion(DrawPortionEventArgs e)
@@ -173,6 +186,8 @@ namespace RogueLike
 
         public void DrawLevelDirect(int level, bool onlyDiscovered)
         {
+            OnDrawBegin(null);
+
             int maxY = 0;
             int maxX = 0;
 
@@ -324,6 +339,8 @@ namespace RogueLike
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
             }
+
+            OnDrawEnd(null);
         }
 
         public void DrawLevelInOneString(int level, bool onlyDiscovered)
@@ -960,6 +977,7 @@ namespace RogueLike
                         break;
                     default:
                         Console.WriteLine("Command not recognized in combat.");
+                        combatResolved = true;
                         break;
                 }
             }
