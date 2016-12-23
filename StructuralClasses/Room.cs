@@ -38,6 +38,14 @@ namespace RogueLike
             FillInRoomLayoutForRoom();
         }
 
+        public OverallMap ParentMap
+        {
+            get
+            {
+                return _parentMap;
+            }
+        }
+
         public Point Size
         {
             get

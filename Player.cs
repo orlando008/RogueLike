@@ -16,6 +16,7 @@ namespace RogueLike
         OverallMap _overallMap;
         int _visionRadius = 1;
         int _health = 100;
+        int _maxHealth = 100;
         int _mana = 100;
         int _healthPotions = 1;
         int _manaPotions = 1;
@@ -104,6 +105,31 @@ namespace RogueLike
             {
                 return _gold;
             }
+        }
+
+        public int Health
+        {
+            get
+            {
+                return _health;
+            }
+        }
+
+        public int MaxHealth
+        {
+            get
+            {
+                return _maxHealth;
+            }
+        }
+
+        public decimal HealthPercentage
+        {
+            get
+            {
+                return Convert.ToDecimal(_health) / Convert.ToDecimal(_maxHealth) * 100;
+            }
+            set { }
         }
 
         public bool MovePlayer(int xDirection, int yDirection, out bool encounteredEnemy)

@@ -75,7 +75,7 @@ namespace RogueLike
             }
         }
 
-        protected void OnRoomDiscovered(RoomDiscoveredEventArgs e)
+        public void OnRoomDiscovered(RoomDiscoveredEventArgs e)
         {
             RoomDiscovered?.Invoke(e);
         }
@@ -931,9 +931,6 @@ namespace RogueLike
                 if (roomTile != null)
                 {
                     roomTile.Discovered = true;
-                    RoomDiscoveredEventArgs e = new RoomDiscoveredEventArgs();
-                    e.roomTileThatWasDiscovered = roomTile;
-                    OnRoomDiscovered(e);
                     return;
                 }
 

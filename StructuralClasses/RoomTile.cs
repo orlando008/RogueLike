@@ -100,6 +100,13 @@ namespace RogueLike.StructuralClasses
             set
             {
                 _discovered = value;
+                if (value)
+                {
+                    OverallMap.RoomDiscoveredEventArgs e = new OverallMap.RoomDiscoveredEventArgs();
+                    e.roomTileThatWasDiscovered = this;
+                    ParentRoom.ParentMap.OnRoomDiscovered(e);
+                }
+                    
             }
         }
 

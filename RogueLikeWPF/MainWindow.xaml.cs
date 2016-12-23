@@ -78,6 +78,9 @@ namespace RogueLikeWPF
 
                     Canvas.SetLeft(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.X) * 10);
                     Canvas.SetTop(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.Y) * 10);
+
+
+                    DrawOutline();
                 }
             }
             else
@@ -91,6 +94,74 @@ namespace RogueLikeWPF
             RogueLike.Program._ovMap.RoomDiscovered += _ovMap_RoomDiscovered;
             RogueLike.Program._ovMap.HallDiscovered += _ovMap_HallDiscovered;
             NotifyPropertyChanged("");
+        }
+
+        private void DrawOutline()
+        {
+            if (canvasMain.Dispatcher.CheckAccess() == true)
+            {
+                int maxX = 0;
+                int maxY = 0;
+                TheMap.GetMax(out maxX, out maxY, TheMap.ThePlayer.DungeonLevel);
+
+                for (int i = 0; i < maxX; i++)
+                {
+                    System.Windows.Shapes.Rectangle rct = new Rectangle();
+                    rct.Width = 10;
+                    rct.Height = 10;
+                    rct.StrokeThickness = 1.5;
+                    rct.Stroke = new SolidColorBrush(Colors.Gray);
+                    rct.Fill = new SolidColorBrush(Colors.LightSlateGray);
+
+                    canvasMain.Children.Add(rct);
+
+                    Canvas.SetLeft(rct, i * 10);
+                    Canvas.SetTop(rct, 0 * 10);
+
+                    System.Windows.Shapes.Rectangle rct2 = new Rectangle();
+                    rct2.Width = 10;
+                    rct2.Height = 10;
+                    rct2.StrokeThickness = 1.5;
+                    rct2.Stroke = new SolidColorBrush(Colors.Gray);
+                    rct2.Fill = new SolidColorBrush(Colors.LightSlateGray);
+
+                    canvasMain.Children.Add(rct2);
+
+                    Canvas.SetLeft(rct2, i * 10);
+                    Canvas.SetTop(rct2, maxY * 10);
+                }
+
+                for (int i = 0; i <= maxY; i++)
+                {
+                    System.Windows.Shapes.Rectangle rct = new Rectangle();
+                    rct.Width = 10;
+                    rct.Height = 10;
+                    rct.StrokeThickness = 1.5;
+                    rct.Stroke = new SolidColorBrush(Colors.Gray);
+                    rct.Fill = new SolidColorBrush(Colors.LightSlateGray);
+
+                    canvasMain.Children.Add(rct);
+
+                    Canvas.SetLeft(rct, 0 * 10);
+                    Canvas.SetTop(rct, i * 10);
+
+                    System.Windows.Shapes.Rectangle rct2 = new Rectangle();
+                    rct2.Width = 10;
+                    rct2.Height = 10;
+                    rct2.StrokeThickness = 1.5;
+                    rct2.Stroke = new SolidColorBrush(Colors.Gray);
+                    rct2.Fill = new SolidColorBrush(Colors.LightSlateGray);
+
+                    canvasMain.Children.Add(rct2);
+
+                    Canvas.SetLeft(rct2, maxX * 10);
+                    Canvas.SetTop(rct2, i * 10);
+                }
+            }
+            else
+            {
+                this.Dispatcher.Invoke((Action)(() => DrawOutline()));
+            }
         }
 
         private void _ovMap_HallDiscovered(OverallMap.HallDiscoveredEventArgs e)
@@ -195,7 +266,7 @@ namespace RogueLikeWPF
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            switch(e.Key)
+            switch (e.Key)
             {
                 case Key.Left:
                     RogueLike.Program.ProcessUserCommand("MOVELEFT");
