@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,12 +21,20 @@ namespace RogueLikeWPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window,INotifyPropertyChanged
     {
         private bool _midDrawing = true;
         private Ellipse _playerDot = null;
         private BackgroundWorker _bw = new BackgroundWorker();
         private List<RogueLike.OverallMap.DrawPortionEventArgs> ListOfThings = new List<RogueLike.OverallMap.DrawPortionEventArgs>();
+
+        public RogueLike.OverallMap TheMap
+        {
+            get
+            {
+                return RogueLike.Program._ovMap;
+            }
+        }
 
         public MainWindow()
         {
@@ -36,7 +45,21 @@ namespace RogueLikeWPF
             RogueLike.Program.PlacePlayer += Program_PlacePlayer;
 
             _bw.DoWork += _bw_DoWork;
-           
+            this.DataContext = this;
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.
+        // The CallerMemberName attribute that is applied to the optional propertyName
+        // parameter causes the property name of the caller to be substituted as an argument.
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private void Program_PlacePlayer(object sender, EventArgs e)
@@ -67,6 +90,7 @@ namespace RogueLikeWPF
         {
             RogueLike.Program._ovMap.RoomDiscovered += _ovMap_RoomDiscovered;
             RogueLike.Program._ovMap.HallDiscovered += _ovMap_HallDiscovered;
+            NotifyPropertyChanged("");
         }
 
         private void _ovMap_HallDiscovered(OverallMap.HallDiscoveredEventArgs e)
@@ -156,6 +180,7 @@ namespace RogueLikeWPF
         private void _bw_DoWork(object sender, DoWorkEventArgs e)
         {
             RogueLike.Program.Main(new string[] { "test" });
+            NotifyPropertyChanged("");
         }
 
         private void Program_InputNeeded(RogueLike.Program.InputNeededEventArgs e)
@@ -193,6 +218,7 @@ namespace RogueLikeWPF
                 Canvas.SetZIndex(_playerDot, 99);
             }
 
+            NotifyPropertyChanged("");
         }
     }
 }

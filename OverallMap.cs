@@ -17,7 +17,7 @@ namespace RogueLike
         private Player _player;
         public int _seed = 0;
         private const int MAX_LVL_HEIGHT = 50;
-        private const int MAX_LVL_WIDTH = 125;
+        private const int MAX_LVL_WIDTH = 80;
         private const int MIN_NUMBER_OF_ROOMS = 3;
         private const int MAX_NUMBER_OF_ROOMS = 10;
 
