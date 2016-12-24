@@ -49,7 +49,7 @@ namespace RogueLike.InteractableObjects
 
             _attackPower = ovMap.RNG.Next(5 * _dungeonLevel, (10 * _dungeonLevel) + 1);
             _defensePower = ovMap.RNG.Next(2 * _dungeonLevel, (4 * _dungeonLevel) + 1);
-            _experienceWorth = _dungeonLevel + 250;
+            _experienceWorth = _dungeonLevel + 5;
             _goldWorth = (int)(_dungeonLevel * 1.5);
             _enemyForm = (EnemyForm)ovMap.RNG.Next(0, maxEnemyForm + 1);
             _type = (ElementalType)ovMap.RNG.Next(0, maxElementalType + 1);

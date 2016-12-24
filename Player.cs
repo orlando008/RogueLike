@@ -17,6 +17,7 @@ namespace RogueLike
         int _visionRadius = 1;
         int _health = 100;
         int _maxHealth = 100;
+        int _maxMana = 100;
         int _mana = 100;
         int _healthPotions = 1;
         int _manaPotions = 1;
@@ -115,11 +116,28 @@ namespace RogueLike
             }
         }
 
+        public int Mana
+        {
+            get
+            {
+                return _mana;
+            }
+        }
+
+
         public int MaxHealth
         {
             get
             {
                 return _maxHealth;
+            }
+        }
+
+        public int MaxMana
+        {
+            get
+            {
+                return _maxMana;
             }
         }
 
@@ -131,6 +149,25 @@ namespace RogueLike
             }
             set { }
         }
+
+        public decimal ManaPercentage
+        {
+            get
+            {
+                return Convert.ToDecimal(_mana) / Convert.ToDecimal(_maxMana) * 100;
+            }
+            set { }
+        }
+
+        public decimal ProgressTowardsNextLevel
+        {
+            get
+            {
+                return Convert.ToDecimal(_playerExperience) / Convert.ToDecimal(_experiencePerLevel) * 100;
+            }
+            set { }
+        }
+
 
         public bool MovePlayer(int xDirection, int yDirection, out bool encounteredEnemy)
         {
@@ -191,7 +228,7 @@ namespace RogueLike
                 int levelsGained = _playerExperience / _experiencePerLevel;
                 _playerExperience = _playerExperience - (_experiencePerLevel * (_playerExperience / _experiencePerLevel));
 
-                for (int i = 0; i < levelsGained - 1; i++)
+                for (int i = 0; i < levelsGained; i++)
                 {
                     _playerLevel += 1;
                     OnLeveledUp(EventArgs.Empty);

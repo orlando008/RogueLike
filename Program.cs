@@ -245,6 +245,12 @@ namespace RogueLike
 
         public static void MoveCommand(int xDirection, int yDirection, string[] userInputArray, out bool reDraw)
         {
+            if (_ovMap.CombatResolved == false)
+            {
+                reDraw = false;
+                return;
+            }
+                
             int lengthOfMove = 1;
             reDraw = false;
             bool encounteredEnemy = false;
@@ -262,6 +268,10 @@ namespace RogueLike
                     {
                         _ovMap.GenerateRandomEnemyEncounter();
                         break;
+                    }
+                    else
+                    {
+                        _ovMap.OnNothingEncountered(null);
                     }
                 }
                 else

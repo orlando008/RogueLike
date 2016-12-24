@@ -20,17 +20,21 @@ namespace RogueLike
         private const int MAX_LVL_WIDTH = 80;
         private const int MIN_NUMBER_OF_ROOMS = 3;
         private const int MAX_NUMBER_OF_ROOMS = 10;
+        private bool _combatResolved = true;
 
         public delegate void DrawPortionEventHandler(DrawPortionEventArgs e);
         public delegate void RoomDiscoveredEventHandler(RoomDiscoveredEventArgs e);
         public delegate void HallDiscoveredEventHandler(HallDiscoveredEventArgs e);
+        public delegate void CombatEncounteredEventHandler(CombatEncounteredEventArgs e);
 
         public event DrawPortionEventHandler DrawPortion;
         public event RoomDiscoveredEventHandler RoomDiscovered;
         public event HallDiscoveredEventHandler HallDiscovered;
+        public event CombatEncounteredEventHandler CombatEncountered;
 
         public event EventHandler DrawBegin;
         public event EventHandler DrawEnd;
+        public event EventHandler NothingEncountered;
 
         public class DrawPortionEventArgs : EventArgs
         {
@@ -46,6 +50,11 @@ namespace RogueLike
             public RoomTile roomTileThatWasDiscovered;
         }
 
+        public class CombatEncounteredEventArgs : EventArgs
+        {
+            public CombatUnit combatUnit;
+        }
+
         public class HallDiscoveredEventArgs : EventArgs
         {
             public Point hallThatWasDiscovered;
@@ -59,6 +68,11 @@ namespace RogueLike
         protected void OnDrawEnd(EventArgs e)
         {
             DrawEnd?.Invoke(null, e);
+        }
+
+        public void OnNothingEncountered(EventArgs e)
+        {
+            NothingEncountered?.Invoke(null, e);
         }
 
         protected void OnDrawPortion(DrawPortionEventArgs e)
@@ -84,6 +98,12 @@ namespace RogueLike
         {
             HallDiscovered?.Invoke(e);
         }
+
+        protected void OnCombatEncountered(CombatEncounteredEventArgs e)
+        {
+            CombatEncountered?.Invoke(e);
+        }
+
 
         public enum FirstSpecializations
         {
@@ -124,6 +144,14 @@ namespace RogueLike
                     
 
                 return _rng;
+            }
+        }
+
+        public bool CombatResolved
+        {
+            get
+            {
+                return _combatResolved;
             }
         }
 
@@ -975,40 +1003,59 @@ namespace RogueLike
             return false;
         }
 
+        public void ResolveCombat(CombatUnit cunit)
+        {
+            _combatResolved = true;
+            ThePlayer.GiveExperiencePoints(cunit.ExperienceWorth);
+            ThePlayer.GiveGold(cunit.GoldWorth);
+        }
+
+        public void FleeCombat(CombatUnit cunit)
+        {
+            _combatResolved = true;
+        }
+
         public void GenerateRandomEnemyEncounter()
         {
+            _combatResolved = false;
             CombatUnit cunit = new CombatUnit(this);
-            Console.WriteLine("You encountered an enemy!");
-            Console.WriteLine(cunit.ToString());
-            Console.WriteLine("FIGHT|ENEMYSTATS|FLEE");
 
-            bool combatResolved = false;
-            while (!combatResolved)
-            {
-                string userInput = "";// Console.ReadLine();
+            CombatEncounteredEventArgs e = new CombatEncounteredEventArgs();
+            e.combatUnit = cunit;
 
-                switch (userInput.Trim().ToUpper())
-                {
-                    case "ENEMYSTATS":
-                        Console.WriteLine(cunit.FullEnemyStats());
-                        break;
-                    case "FIGHT":
-                        Console.WriteLine("You fought.");
-                        Console.WriteLine("Gained " + cunit.ExperienceWorth.ToString() + " experience and " + cunit.GoldWorth.ToString() + " gold!");
-                        ThePlayer.GiveExperiencePoints(cunit.ExperienceWorth);
-                        ThePlayer.GiveGold(cunit.GoldWorth);
-                        combatResolved = true;
-                        break;
-                    case "FLEE":
-                        Console.WriteLine("You ran away.");
-                        combatResolved = true;
-                        break;
-                    default:
-                        Console.WriteLine("Command not recognized in combat.");
-                        combatResolved = true;
-                        break;
-                }
-            }
+            OnCombatEncountered(e);
+
+            //Console.WriteLine("You encountered an enemy!");
+            //Console.WriteLine(cunit.ToString());
+            //Console.WriteLine("FIGHT|ENEMYSTATS|FLEE");
+
+            //bool combatResolved = false;
+            //while (!combatResolved)
+            //{
+            //    string userInput = "";// Console.ReadLine();
+
+            //    switch (userInput.Trim().ToUpper())
+            //    {
+            //        case "ENEMYSTATS":
+            //            Console.WriteLine(cunit.FullEnemyStats());
+            //            break;
+            //        case "FIGHT":
+            //            Console.WriteLine("You fought.");
+            //            Console.WriteLine("Gained " + cunit.ExperienceWorth.ToString() + " experience and " + cunit.GoldWorth.ToString() + " gold!");
+            //            ThePlayer.GiveExperiencePoints(cunit.ExperienceWorth);
+            //            ThePlayer.GiveGold(cunit.GoldWorth);
+            //            combatResolved = true;
+            //            break;
+            //        case "FLEE":
+            //            Console.WriteLine("You ran away.");
+            //            combatResolved = true;
+            //            break;
+            //        default:
+            //            Console.WriteLine("Command not recognized in combat.");
+            //            combatResolved = true;
+            //            break;
+            //    }
+            //}
             
         }
     }

@@ -1,4 +1,5 @@
 ﻿using RogueLike;
+using RogueLike.InteractableObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +28,7 @@ namespace RogueLikeWPF
         private Ellipse _playerDot = null;
         private BackgroundWorker _bw = new BackgroundWorker();
         private List<RogueLike.OverallMap.DrawPortionEventArgs> ListOfThings = new List<RogueLike.OverallMap.DrawPortionEventArgs>();
+        private CombatUnit _currentCombatUnit;
 
         public RogueLike.OverallMap TheMap
         {
@@ -93,7 +95,24 @@ namespace RogueLikeWPF
         {
             RogueLike.Program._ovMap.RoomDiscovered += _ovMap_RoomDiscovered;
             RogueLike.Program._ovMap.HallDiscovered += _ovMap_HallDiscovered;
+            RogueLike.Program._ovMap.CombatEncountered += _ovMap_CombatEncountered;
+            RogueLike.Program._ovMap.NothingEncountered += _ovMap_NothingEncountered;
             NotifyPropertyChanged("");
+        }
+
+        private void _ovMap_NothingEncountered(object sender, EventArgs e)
+        {
+            stackPanelFightFlee.Visibility = Visibility.Collapsed;
+            this.lblCurrentActivity.Content = "Nothing unusual here...";
+            this.lblCurrentActivityDetail.Content = "";
+        }
+
+        private void _ovMap_CombatEncountered(OverallMap.CombatEncounteredEventArgs e)
+        {
+            _currentCombatUnit = e.combatUnit;
+            stackPanelFightFlee.Visibility = Visibility.Visible;
+            this.lblCurrentActivity.Content = "You encountered: " + e.combatUnit.ToString();
+            this.lblCurrentActivityDetail.Content = e.combatUnit.FullEnemyStats();
         }
 
         private void DrawOutline()
@@ -104,59 +123,56 @@ namespace RogueLikeWPF
                 int maxY = 0;
                 TheMap.GetMax(out maxX, out maxY, TheMap.ThePlayer.DungeonLevel);
 
-                for (int i = 0; i < maxX; i++)
-                {
-                    System.Windows.Shapes.Rectangle rct = new Rectangle();
-                    rct.Width = 10;
-                    rct.Height = 10;
-                    rct.StrokeThickness = 1.5;
-                    rct.Stroke = new SolidColorBrush(Colors.Gray);
-                    rct.Fill = new SolidColorBrush(Colors.LightSlateGray);
+                System.Windows.Shapes.Rectangle rct = new Rectangle();
+                rct.Width = maxX * 10;
+                rct.Height = 10;
+                rct.StrokeThickness = 1.5;
+                rct.Stroke = new SolidColorBrush(Colors.Gray);
+                rct.Fill = new SolidColorBrush(Colors.Gray);
 
-                    canvasMain.Children.Add(rct);
+                canvasMain.Children.Add(rct);
 
-                    Canvas.SetLeft(rct, i * 10);
-                    Canvas.SetTop(rct, 0 * 10);
+                Canvas.SetLeft(rct, 0);
+                Canvas.SetTop(rct, 0 * 10);
 
-                    System.Windows.Shapes.Rectangle rct2 = new Rectangle();
-                    rct2.Width = 10;
-                    rct2.Height = 10;
-                    rct2.StrokeThickness = 1.5;
-                    rct2.Stroke = new SolidColorBrush(Colors.Gray);
-                    rct2.Fill = new SolidColorBrush(Colors.LightSlateGray);
 
-                    canvasMain.Children.Add(rct2);
 
-                    Canvas.SetLeft(rct2, i * 10);
-                    Canvas.SetTop(rct2, maxY * 10);
-                }
+                System.Windows.Shapes.Rectangle rct2 = new Rectangle();
+                rct2.Width = maxX * 10;
+                rct2.Height = 10;
+                rct2.StrokeThickness = 1.5;
+                rct2.Stroke = new SolidColorBrush(Colors.Gray);
+                rct2.Fill = new SolidColorBrush(Colors.Gray);
 
-                for (int i = 0; i <= maxY; i++)
-                {
-                    System.Windows.Shapes.Rectangle rct = new Rectangle();
-                    rct.Width = 10;
-                    rct.Height = 10;
-                    rct.StrokeThickness = 1.5;
-                    rct.Stroke = new SolidColorBrush(Colors.Gray);
-                    rct.Fill = new SolidColorBrush(Colors.LightSlateGray);
+                canvasMain.Children.Add(rct2);
 
-                    canvasMain.Children.Add(rct);
+                Canvas.SetLeft(rct2, 0);
+                Canvas.SetTop(rct2, maxY * 10);
 
-                    Canvas.SetLeft(rct, 0 * 10);
-                    Canvas.SetTop(rct, i * 10);
 
-                    System.Windows.Shapes.Rectangle rct2 = new Rectangle();
-                    rct2.Width = 10;
-                    rct2.Height = 10;
-                    rct2.StrokeThickness = 1.5;
-                    rct2.Stroke = new SolidColorBrush(Colors.Gray);
-                    rct2.Fill = new SolidColorBrush(Colors.LightSlateGray);
+                System.Windows.Shapes.Rectangle rct3 = new Rectangle();
+                rct3.Width = 10;
+                rct3.Height = maxY * 10;
+                rct3.StrokeThickness = 1.5;
+                rct3.Stroke = new SolidColorBrush(Colors.Gray);
+                rct3.Fill = new SolidColorBrush(Colors.Gray);
 
-                    canvasMain.Children.Add(rct2);
+                canvasMain.Children.Add(rct3);
 
-                    Canvas.SetLeft(rct2, maxX * 10);
-                    Canvas.SetTop(rct2, i * 10);
-                }
+                Canvas.SetLeft(rct3, 0);
+                Canvas.SetTop(rct3, 0);
+
+                System.Windows.Shapes.Rectangle rct4 = new Rectangle();
+                rct4.Width = 10;
+                rct4.Height = maxY * 10 + 10;
+                rct4.StrokeThickness = 1.5;
+                rct4.Stroke = new SolidColorBrush(Colors.Gray);
+                rct4.Fill = new SolidColorBrush(Colors.Gray);
+
+                canvasMain.Children.Add(rct4);
+
+                Canvas.SetLeft(rct4, maxX * 10);
+                Canvas.SetTop(rct4, 0);
             }
             else
             {
@@ -289,6 +305,28 @@ namespace RogueLikeWPF
                 Canvas.SetZIndex(_playerDot, 99);
             }
 
+            NotifyPropertyChanged("");
+        }
+
+        private void btnFight_Click(object sender, RoutedEventArgs e)
+        {
+            stackPanelFightFlee.Visibility = Visibility.Collapsed;
+            Program._ovMap.ResolveCombat(_currentCombatUnit);
+            this.lblCurrentActivity.Content = "You defeated " + _currentCombatUnit.ToString();
+            this.lblCurrentActivityDetail.Content = "Received " + _currentCombatUnit.ExperienceWorth.ToString() + " exp." + System.Environment.NewLine + " " + _currentCombatUnit.GoldWorth.ToString() + " gold.";
+
+            _currentCombatUnit = null;
+            NotifyPropertyChanged("");
+        }
+
+        private void btnFlee_Click(object sender, RoutedEventArgs e)
+        {
+            stackPanelFightFlee.Visibility = Visibility.Collapsed;
+            this.lblCurrentActivity.Content = "You escaped but gained no experience.";
+            this.lblCurrentActivityDetail.Content = "";
+
+            Program._ovMap.FleeCombat(_currentCombatUnit);
+            _currentCombatUnit = null;
             NotifyPropertyChanged("");
         }
     }
