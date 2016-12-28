@@ -14,13 +14,10 @@ namespace RogueLike.InteractableObjects
 
     public enum EnemyForm
     {
-        Human = 0,
-        Skeleton,
+        Skeleton=0,
         Spider,
         Orc,
         Goblin,
-        Bat,
-        Bear,
         Troll,
         Witch,
         Warlock
@@ -35,7 +32,7 @@ namespace RogueLike.InteractableObjects
         private int _experienceWorth = 0; //dungeonLevel * 2
         private int _goldWorth = 0; //dungeonLevel * 1.5
         private ElementalType _type = ElementalType.Fire;
-        private EnemyForm _enemyForm = EnemyForm.Bat;
+        private EnemyForm _enemyForm = EnemyForm.Goblin;
         private int _dungeonLevel = 1;
 
         public CombatUnit(OverallMap ovMap)
@@ -102,6 +99,14 @@ namespace RogueLike.InteractableObjects
             get
             {
                 return _goldWorth;
+            }
+        }
+
+        public Uri ImageSource
+        {
+            get
+            {
+                return new Uri("pack://application:,,,/RogueLike;;component/Images/Enemies/" + GetEnemyFormName() + ".png");
             }
         }
     }

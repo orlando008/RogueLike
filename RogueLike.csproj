@@ -55,6 +55,17 @@
     <Compile Include="StructuralClasses\Room.cs" />
     <Compile Include="StructuralClasses\RoomTile.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\goblin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\orc.png" />
+    <Resource Include="Images\Enemies\skeleton.png" />
+    <Resource Include="Images\Enemies\spider.png" />
+    <Resource Include="Images\Enemies\troll.png" />
+    <Resource Include="Images\Enemies\warlock.png" />
+    <Resource Include="Images\Enemies\witch.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

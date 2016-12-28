@@ -21,6 +21,7 @@ namespace RogueLike
         private const int MIN_NUMBER_OF_ROOMS = 3;
         private const int MAX_NUMBER_OF_ROOMS = 10;
         private bool _combatResolved = true;
+        private CombatUnit _combatUnit;
 
         public delegate void DrawPortionEventHandler(DrawPortionEventArgs e);
         public delegate void RoomDiscoveredEventHandler(RoomDiscoveredEventArgs e);
@@ -152,6 +153,14 @@ namespace RogueLike
             get
             {
                 return _combatResolved;
+            }
+        }
+
+        public CombatUnit CurrentCombatUnit
+        {
+            get
+            {
+                return _combatUnit;
             }
         }
 
@@ -1018,10 +1027,10 @@ namespace RogueLike
         public void GenerateRandomEnemyEncounter()
         {
             _combatResolved = false;
-            CombatUnit cunit = new CombatUnit(this);
+            _combatUnit = new CombatUnit(this);
 
             CombatEncounteredEventArgs e = new CombatEncounteredEventArgs();
-            e.combatUnit = cunit;
+            e.combatUnit = _combatUnit;
 
             OnCombatEncountered(e);
 

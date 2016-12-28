@@ -116,6 +116,7 @@ namespace RogueLike
             }
         }
 
+
         public int Mana
         {
             get
@@ -168,6 +169,24 @@ namespace RogueLike
             set { }
         }
 
+        public decimal ExperienceTowardsNextLevel
+        {
+            get
+            {
+                return Convert.ToDecimal(_playerExperience);
+            }
+            set { }
+        }
+
+
+        public decimal ExperiencePerLevel
+        {
+            get
+            {
+                return Convert.ToDecimal(_experiencePerLevel);
+            }
+            set { }
+        }
 
         public bool MovePlayer(int xDirection, int yDirection, out bool encounteredEnemy)
         {

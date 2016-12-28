@@ -111,8 +111,10 @@ namespace RogueLikeWPF
         {
             _currentCombatUnit = e.combatUnit;
             stackPanelFightFlee.Visibility = Visibility.Visible;
+            imgCombatUnit.Visibility = Visibility.Visible;
             this.lblCurrentActivity.Content = "You encountered: " + e.combatUnit.ToString();
             this.lblCurrentActivityDetail.Content = e.combatUnit.FullEnemyStats();
+            NotifyPropertyChanged("");
         }
 
         private void DrawOutline()
@@ -310,7 +312,9 @@ namespace RogueLikeWPF
 
         private void btnFight_Click(object sender, RoutedEventArgs e)
         {
+            imgCombatUnit.Visibility = Visibility.Collapsed;
             stackPanelFightFlee.Visibility = Visibility.Collapsed;
+
             Program._ovMap.ResolveCombat(_currentCombatUnit);
             this.lblCurrentActivity.Content = "You defeated " + _currentCombatUnit.ToString();
             this.lblCurrentActivityDetail.Content = "Received " + _currentCombatUnit.ExperienceWorth.ToString() + " exp." + System.Environment.NewLine + " " + _currentCombatUnit.GoldWorth.ToString() + " gold.";
@@ -321,6 +325,7 @@ namespace RogueLikeWPF
 
         private void btnFlee_Click(object sender, RoutedEventArgs e)
         {
+            imgCombatUnit.Visibility = Visibility.Collapsed;
             stackPanelFightFlee.Visibility = Visibility.Collapsed;
             this.lblCurrentActivity.Content = "You escaped but gained no experience.";
             this.lblCurrentActivityDetail.Content = "";
