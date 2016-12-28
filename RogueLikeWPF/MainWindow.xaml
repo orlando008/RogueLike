@@ -1,10 +1,10 @@
-﻿<Window x:Class="RogueLikeWPF.MainWindow"
+﻿<Window x:Class="Shadows.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RogueLikeWPF"
-        xmlns:rl="clr-namespace:RogueLike;assembly=RogueLike"
+        xmlns:local="clr-namespace:Shadows"
+        xmlns:rl="clr-namespace:Shadows;assembly=Shadows"
         mc:Ignorable="d" Icon="Images/S.png"
         Title="Shadows" WindowState="Maximized" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid Background="Black">

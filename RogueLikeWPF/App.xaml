@@ -1,7 +1,7 @@
-﻿<Application x:Class="RogueLikeWPF.App"
+﻿<Application x:Class="Shadows.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:RogueLikeWPF"
+             xmlns:local="clr-namespace:Shadows"
              StartupUri="MainMenu.xaml">
     <Application.Resources>
          

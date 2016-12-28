@@ -7,8 +7,8 @@
     <ProjectGuid>{CCE1296B-3B83-4B8A-9D58-856B17B6C8B3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RogueLikeWPF</RootNamespace>
-    <AssemblyName>RogueLikeWPF</AssemblyName>
+    <RootNamespace>Shadows</RootNamespace>
+    <AssemblyName>Shadows</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -65,9 +65,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="InteractableObjects\CombatUnit.cs" />
+    <Compile Include="InteractableObjects\Enemy.cs" />
+    <Compile Include="InteractableObjects\Interactable.cs" />
+    <Compile Include="InteractableObjects\Item.cs" />
+    <Compile Include="OverallMap.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="StoryMessageScreen.xaml.cs">
       <DependentUpon>StoryMessageScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StructuralClasses\Room.cs" />
+    <Compile Include="StructuralClasses\RoomTile.cs" />
     <Page Include="MainMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -120,12 +129,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RogueLike.csproj">
-      <Project>{d0a3cef2-4199-4258-937a-c05898465212}</Project>
-      <Name>RogueLike</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\S.png" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +136,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Ok-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\goblin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\orc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\skeleton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\spider.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\troll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\warlock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemies\witch.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

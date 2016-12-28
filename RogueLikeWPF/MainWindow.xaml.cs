@@ -1,5 +1,5 @@
-﻿using RogueLike;
-using RogueLike.InteractableObjects;
+﻿using Shadows;
+using Shadows.InteractableObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RogueLikeWPF
+namespace Shadows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -29,7 +29,7 @@ namespace RogueLikeWPF
         private CombatUnit _currentCombatUnit;
         private Program _program;
 
-        public RogueLike.OverallMap TheMap
+        public Shadows.OverallMap TheMap
         {
             get
             {
@@ -226,7 +226,7 @@ namespace RogueLikeWPF
 
                 switch (e.roomTileThatWasDiscovered.ThisTileType)
                 {
-                    case RogueLike.StructuralClasses.TileType.Floor:
+                    case Shadows.StructuralClasses.TileType.Floor:
                         rct.Width = 10;
                         rct.Height = 10;
                         rct.StrokeThickness = .4;
@@ -240,8 +240,8 @@ namespace RogueLikeWPF
 
                         break;
 
-                    case RogueLike.StructuralClasses.TileType.VerticalWall:
-                    case RogueLike.StructuralClasses.TileType.HorizontalWall:
+                    case Shadows.StructuralClasses.TileType.VerticalWall:
+                    case Shadows.StructuralClasses.TileType.HorizontalWall:
 
                         rct.Width = 10;
                         rct.Height = 10;
@@ -254,7 +254,7 @@ namespace RogueLikeWPF
                         Canvas.SetTop(rct, (e.roomTileThatWasDiscovered.ParentRoom.Origin.Y + e.roomTileThatWasDiscovered.Y) * 10);
 
                         break;
-                    case RogueLike.StructuralClasses.TileType.Door:
+                    case Shadows.StructuralClasses.TileType.Door:
                         rct.Width = 10;
                         rct.Height = 10;
                         rct.StrokeThickness = 2.5;
