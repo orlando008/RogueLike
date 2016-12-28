@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RogueLikeWPF"
         xmlns:rl="clr-namespace:RogueLike;assembly=RogueLike"
-        mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized" PreviewKeyDown="Window_PreviewKeyDown">
+        mc:Ignorable="d" Icon="Images/S.png"
+        Title="Shadows" WindowState="Maximized" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1000"/>

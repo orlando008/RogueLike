@@ -24,17 +24,16 @@ namespace RogueLikeWPF
     /// </summary>
     public partial class MainWindow : Window,INotifyPropertyChanged
     {
-        private bool _midDrawing = true;
         private Ellipse _playerDot = null;
         private BackgroundWorker _bw = new BackgroundWorker();
-        private List<RogueLike.OverallMap.DrawPortionEventArgs> ListOfThings = new List<RogueLike.OverallMap.DrawPortionEventArgs>();
         private CombatUnit _currentCombatUnit;
+        private Program _program;
 
         public RogueLike.OverallMap TheMap
         {
             get
             {
-                return RogueLike.Program._ovMap;
+                return _program._ovMap;
             }
         }
 
@@ -42,14 +41,29 @@ namespace RogueLikeWPF
         {
             InitializeComponent();
 
-            RogueLike.Program.InputNeeded += Program_InputNeeded;
-            RogueLike.Program.MapCreated += Program_MapCreated;
-            RogueLike.Program.PlacePlayer += Program_PlacePlayer;
+            _program = new Program();
+
+            _program.MapCreated += Program_MapCreated;
+            _program.PlacePlayer += Program_PlacePlayer;
+            _program.StoryMessage += _program_StoryMessage;
 
             _bw.DoWork += _bw_DoWork;
             this.DataContext = this;
         }
 
+        private void _program_StoryMessage(Program.StoryMessageEventArgs e)
+        {
+            if (canvasMain.Dispatcher.CheckAccess() == true)
+            {
+                StoryMessageScreen sms = new StoryMessageScreen(e.StoryMessage);
+                sms.ShowDialog();
+            }
+            else
+            {
+                this.Dispatcher.Invoke((Action)(() => _program_StoryMessage(e)));
+            }
+
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -78,8 +92,8 @@ namespace RogueLikeWPF
                     _playerDot.Fill = new SolidColorBrush(Colors.Blue);
                     canvasMain.Children.Add(_playerDot);
 
-                    Canvas.SetLeft(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.X) * 10);
-                    Canvas.SetTop(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.Y) * 10);
+                    Canvas.SetLeft(_playerDot, (_program._ovMap.ThePlayer.Location.X) * 10);
+                    Canvas.SetTop(_playerDot, (_program._ovMap.ThePlayer.Location.Y) * 10);
 
 
                     DrawOutline();
@@ -93,10 +107,10 @@ namespace RogueLikeWPF
 
         private void Program_MapCreated(object sender, EventArgs e)
         {
-            RogueLike.Program._ovMap.RoomDiscovered += _ovMap_RoomDiscovered;
-            RogueLike.Program._ovMap.HallDiscovered += _ovMap_HallDiscovered;
-            RogueLike.Program._ovMap.CombatEncountered += _ovMap_CombatEncountered;
-            RogueLike.Program._ovMap.NothingEncountered += _ovMap_NothingEncountered;
+            _program._ovMap.RoomDiscovered += _ovMap_RoomDiscovered;
+            _program._ovMap.HallDiscovered += _ovMap_HallDiscovered;
+            _program._ovMap.CombatEncountered += _ovMap_CombatEncountered;
+            _program._ovMap.NothingEncountered += _ovMap_NothingEncountered;
             NotifyPropertyChanged("");
         }
 
@@ -268,13 +282,8 @@ namespace RogueLikeWPF
 
         private void _bw_DoWork(object sender, DoWorkEventArgs e)
         {
-            RogueLike.Program.Main(new string[] { "test" });
+            _program.StartNewGame();
             NotifyPropertyChanged("");
-        }
-
-        private void Program_InputNeeded(RogueLike.Program.InputNeededEventArgs e)
-        {
-            //MessageBox.Show(">");
         }
 
         private void canvasMain_Loaded(object sender, RoutedEventArgs e)
@@ -287,23 +296,23 @@ namespace RogueLikeWPF
             switch (e.Key)
             {
                 case Key.Left:
-                    RogueLike.Program.ProcessUserCommand("MOVELEFT");
+                    _program.ProcessUserCommand("MOVELEFT");
                     break;
                 case Key.Right:
-                    RogueLike.Program.ProcessUserCommand("MOVERIGHT");
+                    _program.ProcessUserCommand("MOVERIGHT");
                     break;
                 case Key.Up:
-                    RogueLike.Program.ProcessUserCommand("MOVEUP");
+                    _program.ProcessUserCommand("MOVEUP");
                     break;
                 case Key.Down:
-                    RogueLike.Program.ProcessUserCommand("MOVEDOWN");
+                    _program.ProcessUserCommand("MOVEDOWN");
                     break;
             }
 
             if (_playerDot != null)
             {
-                Canvas.SetLeft(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.X) * 10);
-                Canvas.SetTop(_playerDot, (RogueLike.Program._ovMap.ThePlayer.Location.Y) * 10);
+                Canvas.SetLeft(_playerDot, (_program._ovMap.ThePlayer.Location.X) * 10);
+                Canvas.SetTop(_playerDot, (_program._ovMap.ThePlayer.Location.Y) * 10);
                 Canvas.SetZIndex(_playerDot, 99);
             }
 
@@ -315,7 +324,7 @@ namespace RogueLikeWPF
             imgCombatUnit.Visibility = Visibility.Collapsed;
             stackPanelFightFlee.Visibility = Visibility.Collapsed;
 
-            Program._ovMap.ResolveCombat(_currentCombatUnit);
+            _program._ovMap.ResolveCombat(_currentCombatUnit);
             this.lblCurrentActivity.Content = "You defeated " + _currentCombatUnit.ToString();
             this.lblCurrentActivityDetail.Content = "Received " + _currentCombatUnit.ExperienceWorth.ToString() + " exp." + System.Environment.NewLine + " " + _currentCombatUnit.GoldWorth.ToString() + " gold.";
 
@@ -330,7 +339,7 @@ namespace RogueLikeWPF
             this.lblCurrentActivity.Content = "You escaped but gained no experience.";
             this.lblCurrentActivityDetail.Content = "";
 
-            Program._ovMap.FleeCombat(_currentCombatUnit);
+            _program._ovMap.FleeCombat(_currentCombatUnit);
             _currentCombatUnit = null;
             NotifyPropertyChanged("");
         }
