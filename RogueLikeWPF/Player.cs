@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using static Shadows.EquipmentGenerationMethods;
+using static Shadows.EquipmentEnumerations;
 
 namespace Shadows
 {
@@ -41,16 +43,90 @@ namespace Shadows
             _overallMap = ovMap;
 
             _playersEquipment = new List<Equipment>();
-            _playersEquipment.Add(new Equipment(Equipment.EquipmentType.Pants, Equipment.EquipmentPrefix.Tattered, Equipment.EquipmentSuffix.None));
-            _playersEquipment.Add(new Equipment(Equipment.EquipmentType.Chest, Equipment.EquipmentPrefix.Tattered, Equipment.EquipmentSuffix.None));
-            _playersEquipment.Add(new Weapon(Equipment.EquipmentPrefix.Tattered, Equipment.EquipmentSuffix.None, Weapon.WeaponTypes.Dagger));
+            _playersEquipment.Add(new Equipment(EquipmentType.Pants, EquipmentPrefix.None, EquipmentSuffix.None));
+            _playersEquipment.Add(new Equipment(EquipmentType.Chest, EquipmentPrefix.None, EquipmentSuffix.None));
+            _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.Dagger));
+            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Shield));
+
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
         }
 
         public Equipment EquippedWeapon
         {
             get
             {
-                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == Equipment.EquipmentType.Weapon);
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Weapon);
+            }
+        }
+
+        public Equipment EquippedOffHand
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.OffHand);
+            }
+        }
+
+        public Equipment EquippedNecklace
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Necklace);
+            }
+        }
+
+        public Equipment EquippedRing1
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Ring);
+            }
+        }
+
+        public Equipment EquippedRing2
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Ring);
+            }
+        }
+
+        public Equipment EquippedBelt
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Belt);
+            }
+        }
+
+
+        public Equipment EquippedBoots
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Boots);
+            }
+        }
+
+        public Equipment EquippedHelmet
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Helmet);
             }
         }
 
@@ -58,7 +134,7 @@ namespace Shadows
         {
             get
             {
-                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == Equipment.EquipmentType.Chest);
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Chest);
             }
         }
 
@@ -66,7 +142,7 @@ namespace Shadows
         {
             get
             {
-                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == Equipment.EquipmentType.Pants);
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == EquipmentType.Pants);
             }
         }
 

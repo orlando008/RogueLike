@@ -3,23 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Shadows.EquipmentEnumerations;
+using static Shadows.EquipmentGenerationMethods;
 
 namespace Shadows
 {
     public class Weapon:Equipment
     {
-        public enum WeaponTypes
-        {
-            Dagger = 0,
-            ShortSword,
-            LongSword,
-            ShortBow,
-            LongBow,
-            CrossBow,
-            Wand,
-            Stave,
-            Staff
-        }
 
         private WeaponTypes _weaponType;
         private string _name;

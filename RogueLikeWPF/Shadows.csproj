@@ -65,10 +65,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Equipment.cs" />
-    <Compile Include="EquipmentControl.xaml.cs">
+    <Compile Include="Equipment\Equipment.cs" />
+    <Compile Include="Equipment\EquipmentControl.xaml.cs">
       <DependentUpon>EquipmentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Equipment\EquipmentEnumerations.cs" />
+    <Compile Include="Equipment\EquipmentGenerationMethods.cs" />
+    <Compile Include="Equipment\OffHand.cs" />
     <Compile Include="InteractableObjects\CombatUnit.cs" />
     <Compile Include="InteractableObjects\Enemy.cs" />
     <Compile Include="InteractableObjects\Interactable.cs" />
@@ -81,8 +84,8 @@
     </Compile>
     <Compile Include="StructuralClasses\Room.cs" />
     <Compile Include="StructuralClasses\RoomTile.cs" />
-    <Compile Include="Weapon.cs" />
-    <Page Include="EquipmentControl.xaml">
+    <Compile Include="Equipment\Weapon.cs" />
+    <Page Include="Equipment\EquipmentControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

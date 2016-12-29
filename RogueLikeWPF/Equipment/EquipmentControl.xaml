@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Shadows"
-             mc:Ignorable="d" BorderThickness="5" >
+             mc:Ignorable="d" BorderThickness="5" MaxWidth="300" >
     <UserControl.BorderBrush>
         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
             <GradientStop Color="Black" Offset="0"/>
@@ -43,6 +43,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -97,7 +98,31 @@
             </Grid>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Vertical">
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Vertical" Margin="0,0,0,10">
+            <Label Style="{StaticResource AreaLabel}">Ring</Label>
+            <Grid>
+                <Rectangle Style="{StaticResource BackingRectangle}"/>
+                <Image x:Name="imgRing1" ToolTip="{Binding Path=TheMap.ThePlayer.EquippedRing1.Name}" Source="{Binding Path=TheMap.ThePlayer.EquippedRing1.ImageSource}" Style="{StaticResource gearImage}"></Image>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+            <Label Style="{StaticResource AreaLabel}">Belt</Label>
+            <Grid>
+                <Rectangle Style="{StaticResource BackingRectangle}"/>
+                <Image x:Name="imgBelt" ToolTip="{Binding Path=TheMap.ThePlayer.EquippedBelt.Name}" Source="{Binding Path=TheMap.ThePlayer.EquippedBelt.ImageSource}" Style="{StaticResource gearImage}"></Image>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Vertical" Margin="0,0,0,10">
+            <Label Style="{StaticResource AreaLabel}">Ring</Label>
+            <Grid>
+                <Rectangle Style="{StaticResource BackingRectangle}"/>
+                <Image x:Name="imgRing2" ToolTip="{Binding Path=TheMap.ThePlayer.EquippedRing2.Name}" Source="{Binding Path=TheMap.ThePlayer.EquippedRing2.ImageSource}" Style="{StaticResource gearImage}"></Image>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Vertical">
             <Label Style="{StaticResource AreaLabel}">Gloves</Label>
             <Grid>
                 <Rectangle Style="{StaticResource BackingRectangle}"/>
@@ -105,7 +130,7 @@
             </Grid>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical">
             <Label Style="{StaticResource AreaLabel}">Pants</Label>
             <Grid>
                 <Rectangle Style="{StaticResource BackingRectangle}"/>
@@ -113,7 +138,7 @@
             </Grid>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Vertical">
+        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Vertical" Margin="0,0,0,10">
             <Label Style="{StaticResource AreaLabel}">Boots</Label>
             <Grid>
                 <Rectangle Style="{StaticResource BackingRectangle}"/>

@@ -152,7 +152,7 @@
                 <Button x:Name="btnFlee" Width="50" Click="btnFlee_Click">Flee</Button>
             </StackPanel>
 
-            <StackPanel>
+            <StackPanel HorizontalAlignment="Left">
                 <local:EquipmentControl></local:EquipmentControl>
             </StackPanel>
             

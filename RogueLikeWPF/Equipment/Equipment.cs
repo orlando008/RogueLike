@@ -3,40 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Shadows.EquipmentEnumerations;
+using static Shadows.EquipmentGenerationMethods;
 
 namespace Shadows
 {
     public class Equipment
     {
-        public enum EquipmentType
-        {
-            Shoulders = 0,
-            Helmet,
-            Necklace,
-            Weapon,
-            Chest,
-            OffHand,
-            Gloves,
-            Pants,
-            Boots
-        }
-
-        public enum EquipmentPrefix
-        {
-            None = 0,
-            Tattered,
-            Worn,
-            Sturdy
-        }
-
-        public enum EquipmentSuffix
-        {
-            None = 0,
-            OfMight,
-            OfIntellect,
-            OfSpeed
-        }
-
         private EquipmentType _equipmentType;
         private EquipmentPrefix _equipmentPrefix;
         private EquipmentSuffix _equipmentSuffix;
