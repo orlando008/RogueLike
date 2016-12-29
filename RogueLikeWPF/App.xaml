@@ -4,6 +4,37 @@
              xmlns:local="clr-namespace:Shadows"
              StartupUri="MainMenu.xaml">
     <Application.Resources>
-         
+        <RadialGradientBrush x:Key="RadialGradientBackgroundDark" RadiusX="0.8">
+            <GradientStop Color="#FF024ED6" Offset="0.031"/>
+            <GradientStop Color="#FF001868" Offset="0.811"/>
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="RadialGradientBackgroundLight" RadiusX="0.8">
+            <GradientStop Color="#FF0A1E42" Offset="0.031"/>
+            <GradientStop Color="#FF5988EC" Offset="0.811"/>
+        </RadialGradientBrush>
+
+        <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundDark}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Margin" Value="5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundLight}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>

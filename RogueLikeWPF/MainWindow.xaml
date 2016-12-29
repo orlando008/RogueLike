@@ -151,6 +151,10 @@
                 <Button x:Name="btnFight" Width="50" Click="btnFight_Click">Fight</Button>
                 <Button x:Name="btnFlee" Width="50" Click="btnFlee_Click">Flee</Button>
             </StackPanel>
+
+            <StackPanel>
+                <local:EquipmentControl></local:EquipmentControl>
+            </StackPanel>
             
         </StackPanel>
 

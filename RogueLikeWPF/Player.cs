@@ -28,6 +28,8 @@ namespace Shadows
         Shadows.OverallMap.MageSpecializations _mageSpecialization;
         Shadows.OverallMap.ArcherSpecializations _archerSpecialization;
 
+        private List<Equipment> _playersEquipment;
+
         public Player(OverallMap ovMap)
         {
             int hallway = ovMap.RNG.Next(0, ovMap.LevelHallways[0].Count - 1);
@@ -37,6 +39,35 @@ namespace Shadows
             _playerLevel = 1;
             _playerExperience = 0;
             _overallMap = ovMap;
+
+            _playersEquipment = new List<Equipment>();
+            _playersEquipment.Add(new Equipment(Equipment.EquipmentType.Pants, Equipment.EquipmentPrefix.Tattered, Equipment.EquipmentSuffix.None));
+            _playersEquipment.Add(new Equipment(Equipment.EquipmentType.Chest, Equipment.EquipmentPrefix.Tattered, Equipment.EquipmentSuffix.None));
+            _playersEquipment.Add(new Weapon(Equipment.EquipmentPrefix.Tattered, Equipment.EquipmentSuffix.None, Weapon.WeaponTypes.Dagger));
+        }
+
+        public Equipment EquippedWeapon
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == Equipment.EquipmentType.Weapon);
+            }
+        }
+
+        public Equipment EquippedChest
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == Equipment.EquipmentType.Chest);
+            }
+        }
+
+        public Equipment EquippedPants
+        {
+            get
+            {
+                return _playersEquipment.FirstOrDefault(x => x.EquipmentType1 == Equipment.EquipmentType.Pants);
+            }
         }
 
         public Point Location

@@ -7,18 +7,18 @@
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Title="Shadows" Height="300" Width="300" FontFamily="Viner Hand ITC" Icon="Images/S.png">
     <Window.Resources>
-        <SolidColorBrush x:Key="mouseOverColor" Color="Red" />
+
     </Window.Resources>
     
-    <StackPanel >
-        <StackPanel.Background>
+    <DockPanel LastChildFill="True" >
+        <DockPanel.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="#FF12274B" Offset="0.036"/>
                 <GradientStop Color="#FF190C6E" Offset="0.811"/>
             </LinearGradientBrush>
-        </StackPanel.Background>
+        </DockPanel.Background>
 
-        <Label FontSize="44" HorizontalAlignment="Center" Background="{x:Null}" BorderThickness="0,0,0,5">
+        <Label DockPanel.Dock="Top" FontSize="44" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" Background="{x:Null}" BorderThickness="0,0,0,5">
             <Label.Foreground>
                 <LinearGradientBrush EndPoint="0.5,0.76" StartPoint="0.5,1">
                     <GradientStop Color="Black" Offset="0.034"/>
@@ -27,24 +27,17 @@
             </Label.Foreground> Shadows
         </Label>
 
-        <Button x:Name="btnNew" Width="150" Height="50" Foreground="White" BorderThickness="4" BorderBrush="Black" Click="btnNew_Click">
-            <Button.Background>
-                <RadialGradientBrush>
-                    <GradientStop Color="#FF0A1E42" Offset="0.031"/>
-                    <GradientStop Color="#FF00004D" Offset="0.811"/>
-                </RadialGradientBrush>
-            </Button.Background>
-            <Button.Content>New Game</Button.Content>
-        </Button>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <Button x:Name="btnNew" Style="{StaticResource MenuButtonStyle}" Click="btnNew_Click">
+                <Button.Content>New Game</Button.Content>
+            </Button>
 
-        <Button Width="150" Height="50" Foreground="White" BorderThickness="4" BorderBrush="Black">
-            <Button.Background>
-                <RadialGradientBrush>
-                    <GradientStop Color="#FF0A1E42" Offset="0.031"/>
-                    <GradientStop Color="#FF00004D" Offset="0.811"/>
-                </RadialGradientBrush>
-            </Button.Background>
-            <Button.Content>Load Game</Button.Content>
-        </Button>
-    </StackPanel>
+            <Button Style="{StaticResource MenuButtonStyle}">
+                <Button.Content>Load Game</Button.Content>
+            </Button>
+        </StackPanel>
+
+
+
+    </DockPanel>
 </Window>
