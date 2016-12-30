@@ -14,6 +14,11 @@
             <GradientStop Color="#FF5988EC" Offset="0.811"/>
         </RadialGradientBrush>
 
+        <LinearGradientBrush x:Key="DialogBackgroundGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF12274B" Offset="0.036"/>
+            <GradientStop Color="Black" Offset="0.811"/>
+        </LinearGradientBrush>
+
         <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundDark}"/>
             <Setter Property="Template">
@@ -29,6 +34,29 @@
             <Setter Property="Height" Value="50"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Margin" Value="5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundLight}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TinyButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundDark}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="12"/>
             <Setter Property="Margin" Value="5"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">

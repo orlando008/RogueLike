@@ -26,7 +26,16 @@ namespace Shadows
 
         private void btnNew_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mw = new MainWindow();
+            CharacterCreation cc = new CharacterCreation();
+            cc.Owner = Application.Current.MainWindow;
+            cc.ShowInTaskbar = false;
+            cc.ShowDialog();
+
+            if (cc.Canceled)
+                return;
+     
+            MainWindow mw = new MainWindow(cc.CharacterChoice);
+            mw.Owner = Application.Current.MainWindow;
             mw.ShowDialog();
         }
     }

@@ -63,32 +63,20 @@ namespace Shadows
                 case "MOVEDOWN":
                     MoveCommand(0, 1, userInputArray);
                     break;
-                case "EXIT":
-                    break;
-                case "HELP":
-                    break;
-                case "DRAW":
-                    break;
-                case "NEWGAME":
-                    StartNewGame();
-                    break;
-#if DEBUG
-                case "DRAWALL":
-                    break;
-#endif
+
                 default:
                     break;
             }
         }
 
-        public void StartNewGame()
+        public void StartNewGame(CommonEnumerations.BaseClassTypes bct)
         {
             int seed = 0;
 
             _ovMap = new OverallMap(seed);
             OnMapCreated(null);
 
-            _ovMap.CreateLevel();
+            _ovMap.CreateLevel(bct);
             _ovMap.DiscoverTilesAroundPlayer();
 
             OnPlacePlayer(null);

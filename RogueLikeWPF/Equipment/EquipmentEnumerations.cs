@@ -38,12 +38,61 @@ namespace Shadows
 
         public enum OffHandTypes
         {
-            Shield = 0,
             Buckler,
             Aegis,
             Arrows,
             Bolts,
-            Tome
+            Tome, //Mage
+            Skull //Mage
+        }
+
+        public enum ChestTypes
+        {
+            Armor, //Warrior
+            Vest, //Rogue
+            Tunic //Mage
+        }
+
+        public enum PantsTypes
+        {
+            Gaiters, //Warrior
+            Leggings, //Rogue
+            Stockings //Mage
+        }
+
+        public enum BootsTypes
+        {
+            Greaves, //Warrior
+            Boots, //Rogue
+            Slippers //Mage   
+        }
+
+        public enum GlovesTypes
+        {
+            Gauntlets, //Warrior
+            Gloves, //Rogue
+            Handwraps //Mage
+        }
+
+        public enum BeltTypes
+        {
+            Waistguard, //Warrior
+            Sash, //Mage
+            Belt //Rogue
+        }
+
+        public enum HelmetTypes
+        {
+            Helm, //Warrior
+            Hood, //Rogue
+            Diadem //Mage
+        }
+
+        public enum ShoulderTypes
+        {
+            Pauldrons, //Warrior
+            Spaulders, //Rogue
+            Mantle //Mage
         }
 
         public enum EquipmentPrefix

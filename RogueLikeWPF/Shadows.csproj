@@ -65,6 +65,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CharacterCreation.xaml.cs">
+      <DependentUpon>CharacterCreation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CommonEnumerations.cs" />
     <Compile Include="Equipment\Equipment.cs" />
     <Compile Include="Equipment\EquipmentControl.xaml.cs">
       <DependentUpon>EquipmentControl.xaml</DependentUpon>
@@ -85,6 +89,10 @@
     <Compile Include="StructuralClasses\Room.cs" />
     <Compile Include="StructuralClasses\RoomTile.cs" />
     <Compile Include="Equipment\Weapon.cs" />
+    <Page Include="CharacterCreation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Equipment\EquipmentControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -171,13 +179,25 @@
     <Resource Include="Images\Enemies\witch.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Weapons\dagger.png" />
+    <Resource Include="Images\Weapons\Dagger.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Pants\pants.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Chest\chest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Weapons\Crossbow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Weapons\LongBow.png" />
+    <Resource Include="Images\Weapons\LongSword.png" />
+    <Resource Include="Images\Weapons\ShortBow.png" />
+    <Resource Include="Images\Weapons\ShortSword.png" />
+    <Resource Include="Images\Weapons\Staff.png" />
+    <Resource Include="Images\Weapons\Stave.png" />
+    <Resource Include="Images\Weapons\Wand.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

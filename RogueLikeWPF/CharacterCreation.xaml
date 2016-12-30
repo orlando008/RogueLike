@@ -1,0 +1,35 @@
+﻿<Window x:Class="Shadows.CharacterCreation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Shadows"
+        mc:Ignorable="d"
+        Title="CharacterCreation" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner"
+        AllowsTransparency="True" WindowStyle="None" FontFamily="Viner Hand ITC" Foreground="White"
+        Background="{StaticResource DialogBackgroundGradient}">
+
+    <Border BorderBrush="White" BorderThickness="2">
+        <DockPanel LastChildFill="True">
+            <Button x:Name="btnExit" Click="btnExit_Click"  DockPanel.Dock="Top" Width="20" Height="20" Style="{StaticResource TinyButtonStyle}" HorizontalAlignment="Right">X</Button>
+            <StackPanel Margin="10,0,10,10">
+                <TextBlock Foreground="White" x:Name="lblStoryMessage" TextWrapping="Wrap" Margin="5" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    Choose:
+                </TextBlock>
+
+                <Button x:Name="btnWarrior" Style="{StaticResource MenuButtonStyle}" Click="btnWarrior_Click">
+                    <Button.Content>Warrior</Button.Content>
+                </Button>
+
+                <Button x:Name="btnRogue" Style="{StaticResource MenuButtonStyle}" Click="btnRogue_Click">
+                    <Button.Content>Rogue</Button.Content>
+                </Button>
+                
+                <Button x:Name="btnMage" Style="{StaticResource MenuButtonStyle}" Click="btnMage_Click">
+                    <Button.Content>Mage</Button.Content>
+                </Button>
+            </StackPanel>
+       
+        </DockPanel>
+    </Border>
+</Window>

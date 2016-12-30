@@ -110,15 +110,6 @@ namespace Shadows
             Equipped = false;
 
             _imageSource = new Uri("pack://application:,,,/Images/Weapons/dagger.png");
-
-            if(et == EquipmentType.Pants)
-            {
-                _imageSource = new Uri("pack://application:,,,/Images/Pants/pants.png");
-            }
-            else if(et == EquipmentType.Chest)
-            {
-                _imageSource = new Uri("pack://application:,,,/Images/Chest/chest.png");
-            }
         }
 
         protected string GetStringValueOfPrefix(EquipmentPrefix eprefix)

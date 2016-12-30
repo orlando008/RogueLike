@@ -21,18 +21,15 @@ namespace Shadows
         int _maxHealth = 100;
         int _maxMana = 100;
         int _mana = 100;
-        int _healthPotions = 1;
-        int _manaPotions = 1;
         int _gold = 10;
         bool _specializationChosen = false;
         Shadows.OverallMap.FirstSpecializations _specialization1;
-        Shadows.OverallMap.WarriorSpecializations _warriorSpecialization;
-        Shadows.OverallMap.MageSpecializations _mageSpecialization;
-        Shadows.OverallMap.ArcherSpecializations _archerSpecialization;
+
+        CommonEnumerations.BaseClassTypes _baseClassType;
 
         private List<Equipment> _playersEquipment;
 
-        public Player(OverallMap ovMap)
+        public Player(OverallMap ovMap, CommonEnumerations.BaseClassTypes chosenClass)
         {
             int hallway = ovMap.RNG.Next(0, ovMap.LevelHallways[0].Count - 1);
 
@@ -41,28 +38,46 @@ namespace Shadows
             _playerLevel = 1;
             _playerExperience = 0;
             _overallMap = ovMap;
+            _baseClassType = chosenClass;
 
             _playersEquipment = new List<Equipment>();
             _playersEquipment.Add(new Equipment(EquipmentType.Pants, EquipmentPrefix.None, EquipmentSuffix.None));
             _playersEquipment.Add(new Equipment(EquipmentType.Chest, EquipmentPrefix.None, EquipmentSuffix.None));
-            _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.Dagger));
-            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Shield));
 
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
-            _playersEquipment.Add(GenerateRandomPieceOfEquipment(_overallMap));
+            switch(chosenClass)
+            {
+                case CommonEnumerations.BaseClassTypes.Warrior:
+                    GiveStartingWarriorEquipment();
+                    break;
+                case CommonEnumerations.BaseClassTypes.Rogue:
+                    GiveStartingRogueEquipment();
+                    break;
+                case CommonEnumerations.BaseClassTypes.Mage:
+                    GiveStartingMageEquipment();
+                    break;
+            }
+            
+            
+            _playersEquipment.Add(new Equipment(EquipmentType.Boots, EquipmentPrefix.None, EquipmentSuffix.None));
+            _playersEquipment.Add(new Equipment(EquipmentType.Belt, EquipmentPrefix.None, EquipmentSuffix.None));
+        }
+
+        private void GiveStartingWarriorEquipment()
+        {
+            _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.ShortSword));
+            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Buckler));
+        }
+
+        private void GiveStartingRogueEquipment()
+        {
+            _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.ShortBow));
+            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Arrows));
+        }
+
+        private void GiveStartingMageEquipment()
+        {
+            _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.Wand));
+            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Tome));
         }
 
         public Equipment EquippedWeapon
@@ -295,6 +310,19 @@ namespace Shadows
             set { }
         }
 
+        public CommonEnumerations.BaseClassTypes BaseClassType
+        {
+            get
+            {
+                return _baseClassType;
+            }
+
+            set
+            {
+                _baseClassType = value;
+            }
+        }
+
         public bool MovePlayer(int xDirection, int yDirection, out bool encounteredEnemy)
         {
             Point newLocation = new Point(_location.X + xDirection, _location.Y + yDirection);
@@ -321,30 +349,6 @@ namespace Shadows
             return "Currently in dungeon level " + _dungeonLevel.ToString() + " at (" + _location.X.ToString() + "," + _location.Y.ToString() + ")";
         }
 
-        public void DrawStats()
-        {
-            Console.WriteLine("Level: " + _playerLevel.ToString());
-            Console.WriteLine("Experience To Next Level: " + (_experiencePerLevel - _playerExperience).ToString());
-            Console.WriteLine("Location: " + _location.ToString());
-            Console.WriteLine("Health: " + _health.ToString());
-            Console.WriteLine("Mana: " + _mana.ToString());
-
-            if(SpecializationChosen)
-                Console.WriteLine("Specialization: " + Enum.GetName(typeof(Shadows.OverallMap.FirstSpecializations), _specialization1));
-        }
-
-        public void DrawInventory()
-        {
-            Console.WriteLine("Inventory:");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Gold - " + _gold.ToString());
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Health Potions - " + _healthPotions.ToString());
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Mana Potions - " + _healthPotions.ToString());
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
         public void GiveExperiencePoints(int exp)
         {
             _playerExperience += exp;
@@ -357,6 +361,7 @@ namespace Shadows
                 for (int i = 0; i < levelsGained; i++)
                 {
                     _playerLevel += 1;
+                    _experiencePerLevel = Convert.ToInt32(Convert.ToDouble(_experiencePerLevel) * 1.5);
                     OnLeveledUp(EventArgs.Empty);
                 }   
             }

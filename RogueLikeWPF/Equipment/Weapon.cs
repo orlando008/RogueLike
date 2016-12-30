@@ -13,6 +13,7 @@ namespace Shadows
 
         private WeaponTypes _weaponType;
         private string _name;
+        private Uri _imageSource;
 
         public WeaponTypes WeaponType
         {
@@ -40,6 +41,20 @@ namespace Shadows
             }
         }
 
+        public override Uri ImageSource
+        {
+            get
+            {
+                return _imageSource;
+            }
+
+            set
+            {
+                _imageSource = value;
+            }
+        }
+
+
         public Weapon(EquipmentPrefix ep, EquipmentSuffix es, WeaponTypes wt)
             :base(EquipmentType.Weapon, ep, es)
         {
@@ -50,6 +65,8 @@ namespace Shadows
 
 
             Name = prefix + " " + name + " " + suffix;
+
+            ImageSource = new Uri("pack://application:,,,/Images/Weapons/" + GetWeaponName(wt) + ".png");
         }
 
         private string GetWeaponName(WeaponTypes wt)

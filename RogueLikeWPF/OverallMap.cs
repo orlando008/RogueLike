@@ -75,27 +75,6 @@ namespace Shadows
             Archer
         }
 
-        public enum WarriorSpecializations
-        {
-            Duelist = 0,
-            Paladin,
-            Vanguard
-        }
-
-        public enum MageSpecializations
-        {
-            Summoner = 0,
-            Mystic,
-            Elementalist
-        }
-
-        public enum ArcherSpecializations
-        {
-            Trapper = 0,
-            Hunter,
-            Bowman
-        }
-
         public Random RNG
         {
             get
@@ -207,7 +186,7 @@ namespace Shadows
             maxX += 5;
         }
 
-        public void CreateLevel()
+        public void CreateLevel(CommonEnumerations.BaseClassTypes bct)
         {
             int numberOfRooms = RNG.Next(MIN_NUMBER_OF_ROOMS, MAX_NUMBER_OF_ROOMS);
 
@@ -235,7 +214,7 @@ namespace Shadows
             while (GetCountOfUnconnectedDoors(Levels.Count-1) > 0)
                 ConnectTwoDoorways(Levels.Count-1);
 
-            PlacePlayerOnMap();
+            PlacePlayerOnMap(bct);
             DiscoverTilesAroundPlayer();
         }
 
@@ -292,9 +271,9 @@ namespace Shadows
             return new Point(-1, -1);
         }
 
-        public void PlacePlayerOnMap()
+        public void PlacePlayerOnMap(CommonEnumerations.BaseClassTypes bct)
         {
-            _player = new Player(this);
+            _player = new Player(this, bct);
             _player.LeveledUp += new EventHandler(_player_LeveledUp);
         }
 

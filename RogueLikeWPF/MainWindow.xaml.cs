@@ -28,6 +28,7 @@ namespace Shadows
         private BackgroundWorker _bw = new BackgroundWorker();
         private CombatUnit _currentCombatUnit;
         private Program _program;
+        private CommonEnumerations.BaseClassTypes _chosenBaseClass;
 
         public Shadows.OverallMap TheMap
         {
@@ -37,10 +38,11 @@ namespace Shadows
             }
         }
 
-        public MainWindow()
+        public MainWindow(CommonEnumerations.BaseClassTypes bct)
         {
             InitializeComponent();
 
+            _chosenBaseClass = bct;
             _program = new Program();
 
             _program.MapCreated += Program_MapCreated;
@@ -282,7 +284,7 @@ namespace Shadows
 
         private void _bw_DoWork(object sender, DoWorkEventArgs e)
         {
-            _program.StartNewGame();
+            _program.StartNewGame(_chosenBaseClass);
             NotifyPropertyChanged("");
         }
 
