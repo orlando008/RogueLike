@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:Shadows"
              StartupUri="MainMenu.xaml">
     <Application.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        
         <RadialGradientBrush x:Key="RadialGradientBackgroundDark" RadiusX="0.8">
             <GradientStop Color="#FF024ED6" Offset="0.031"/>
             <GradientStop Color="#FF001868" Offset="0.811"/>

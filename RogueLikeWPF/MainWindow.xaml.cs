@@ -57,8 +57,11 @@ namespace Shadows
         {
             if (canvasMain.Dispatcher.CheckAccess() == true)
             {
-                StoryMessageScreen sms = new StoryMessageScreen(e.StoryMessage);
-                sms.ShowDialog();
+                Paragraph p = new Paragraph();
+                p.Inlines.Add(new Run(e.StoryMessage));
+                p.Foreground = new SolidColorBrush(Colors.White);
+                p.Margin = new Thickness(0);
+                combatTextBox.Document.Blocks.Add(p);
             }
             else
             {
@@ -114,6 +117,7 @@ namespace Shadows
             _program._ovMap.CombatEncountered += _ovMap_CombatEncountered;
             _program._ovMap.NothingEncountered += _ovMap_NothingEncountered;
             NotifyPropertyChanged("");
+
         }
 
         private void _ovMap_NothingEncountered(object sender, EventArgs e)
@@ -127,7 +131,6 @@ namespace Shadows
         {
             _currentCombatUnit = e.combatUnit;
             stackPanelFightFlee.Visibility = Visibility.Visible;
-            imgCombatUnit.Visibility = Visibility.Visible;
             this.lblCurrentActivity.Content = "You encountered: " + e.combatUnit.ToString();
             this.lblCurrentActivityDetail.Content = e.combatUnit.FullEnemyStats();
             NotifyPropertyChanged("");
@@ -139,7 +142,7 @@ namespace Shadows
             {
                 int maxX = 0;
                 int maxY = 0;
-                TheMap.GetMax(out maxX, out maxY, TheMap.ThePlayer.DungeonLevel);
+                TheMap.GetMax(out maxX, out maxY, TheMap.ThePlayer.DungeonLevel-1);
 
                 System.Windows.Shapes.Rectangle rct = new Rectangle();
                 rct.Width = maxX * 10;
@@ -323,7 +326,6 @@ namespace Shadows
 
         private void btnFight_Click(object sender, RoutedEventArgs e)
         {
-            imgCombatUnit.Visibility = Visibility.Collapsed;
             stackPanelFightFlee.Visibility = Visibility.Collapsed;
 
             _program._ovMap.ResolveCombat(_currentCombatUnit);
@@ -336,7 +338,6 @@ namespace Shadows
 
         private void btnFlee_Click(object sender, RoutedEventArgs e)
         {
-            imgCombatUnit.Visibility = Visibility.Collapsed;
             stackPanelFightFlee.Visibility = Visibility.Collapsed;
             this.lblCurrentActivity.Content = "You escaped but gained no experience.";
             this.lblCurrentActivityDetail.Content = "";

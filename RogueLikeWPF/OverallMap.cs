@@ -68,11 +68,11 @@ namespace Shadows
         }
 
 
-        public enum FirstSpecializations
+        public enum ClassTypes
         {
             Warrior = 0,
             Mage,
-            Archer
+            Rogue
         }
 
         public Random RNG
@@ -158,6 +158,39 @@ namespace Shadows
                 return _levelDiscoveredHallways;
             }
         }
+
+        public double PixelWidth
+        {
+            get
+            {
+                if (ThePlayer == null)
+                    return 50;
+                else
+                {
+                    int maxX = 0;
+                    int maxY = 0;
+                    GetMax(out maxX, out maxY, ThePlayer.DungeonLevel - 1);
+                    return maxX;
+                }                 
+            }
+        }
+
+        public double PixelHeight
+        {
+            get
+            {
+                if (ThePlayer == null)
+                    return 50;
+                else
+                {
+                    int maxX = 0;
+                    int maxY = 0;
+                    GetMax(out maxX, out maxY, ThePlayer.DungeonLevel - 1);
+                    return maxY;
+                }
+            }
+        }
+
 
         public OverallMap(int seed)
         {
@@ -280,38 +313,6 @@ namespace Shadows
         private void _player_LeveledUp(object sender, EventArgs e)
         {
             Console.WriteLine("Achieved Level " + ThePlayer.PlayerLevel.ToString() + "!");
-
-            switch (ThePlayer.PlayerLevel)
-            {
-                case 5:
-                    Console.WriteLine("At level 5, you get to choose your first specialization.  Which one will you choose?");
-                    listSpecializations();
-
-                    while (!ThePlayer.SpecializationChosen)
-                    {
-                        string userInput = Console.ReadLine().ToUpper();
-                        int userInputInteger;
-                        if (Int32.TryParse(userInput, out userInputInteger))
-                        {
-                            if (userInputInteger >= 0 && userInputInteger < Enum.GetValues(typeof(FirstSpecializations)).Length)
-                            {
-                                ThePlayer.Specialization = (FirstSpecializations)userInputInteger;
-                                Console.WriteLine("Congratulations, you are now specialized: " + Enum.GetName(typeof(FirstSpecializations), userInputInteger) + "!");
-                            }
-                        }
-                    }
-                    break;
-            }
-        }
-
-        private void listSpecializations()
-        {
-            Array specializationValues = Enum.GetValues(typeof(FirstSpecializations));
-            for (int i = 0; i < specializationValues.Length; i++)
-            {
-                Console.WriteLine(i.ToString() + " - " + Enum.GetName(typeof(FirstSpecializations), specializationValues.GetValue(i)));
-            }
-            
         }
 
         public void ConnectTwoDoorways(int level)
@@ -633,7 +634,7 @@ namespace Shadows
 
             foreach (Point p in pointsToDiscover)
             {
-                DiscoverTileAtPoint(p, ThePlayer.DungeonLevel);
+                DiscoverTileAtPoint(p, ThePlayer.DungeonLevel-1);
             }
         }
 
@@ -712,40 +713,9 @@ namespace Shadows
             CombatEncounteredEventArgs e = new CombatEncounteredEventArgs();
             e.combatUnit = _combatUnit;
 
+            this._player.CombatPosition = 3;
+            _combatUnit.CombatPosition = 7;
             OnCombatEncountered(e);
-
-            //Console.WriteLine("You encountered an enemy!");
-            //Console.WriteLine(cunit.ToString());
-            //Console.WriteLine("FIGHT|ENEMYSTATS|FLEE");
-
-            //bool combatResolved = false;
-            //while (!combatResolved)
-            //{
-            //    string userInput = "";// Console.ReadLine();
-
-            //    switch (userInput.Trim().ToUpper())
-            //    {
-            //        case "ENEMYSTATS":
-            //            Console.WriteLine(cunit.FullEnemyStats());
-            //            break;
-            //        case "FIGHT":
-            //            Console.WriteLine("You fought.");
-            //            Console.WriteLine("Gained " + cunit.ExperienceWorth.ToString() + " experience and " + cunit.GoldWorth.ToString() + " gold!");
-            //            ThePlayer.GiveExperiencePoints(cunit.ExperienceWorth);
-            //            ThePlayer.GiveGold(cunit.GoldWorth);
-            //            combatResolved = true;
-            //            break;
-            //        case "FLEE":
-            //            Console.WriteLine("You ran away.");
-            //            combatResolved = true;
-            //            break;
-            //        default:
-            //            Console.WriteLine("Command not recognized in combat.");
-            //            combatResolved = true;
-            //            break;
-            //    }
-            //}
-            
         }
     }
 }

@@ -82,8 +82,11 @@ namespace Shadows
             OnPlacePlayer(null);
 
             StoryMessageEventArgs smea = new StoryMessageEventArgs();
-            smea.StoryMessage = "You wake up in dressed in rags in a dimly lit hallway.  How did you get here?";
-
+            smea.StoryMessage = "You've arrived at the Ruins of the Shadow seeking riches and glory.";
+            OnStoryMessage(smea);
+            smea.StoryMessage = "As you enter the underground catacombs the door seals itself behind you...";    
+            OnStoryMessage(smea);
+            smea.StoryMessage = "You briefly doubt yourself... was this really worth it?";
             OnStoryMessage(smea);
         }
 

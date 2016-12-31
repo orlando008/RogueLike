@@ -68,6 +68,12 @@
     <Compile Include="CharacterCreation.xaml.cs">
       <DependentUpon>CharacterCreation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Combat\BasicAttack.cs" />
+    <Compile Include="Combat\CombatAction.cs" />
+    <Compile Include="Combat\CombatDialog.xaml.cs">
+      <DependentUpon>CombatDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Combat\CombatEnumerations.cs" />
     <Compile Include="CommonEnumerations.cs" />
     <Compile Include="Equipment\Equipment.cs" />
     <Compile Include="Equipment\EquipmentControl.xaml.cs">
@@ -90,6 +96,10 @@
     <Compile Include="StructuralClasses\RoomTile.cs" />
     <Compile Include="Equipment\Weapon.cs" />
     <Page Include="CharacterCreation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Combat\CombatDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

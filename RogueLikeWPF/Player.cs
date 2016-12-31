@@ -14,16 +14,16 @@ namespace Shadows
         int _dungeonLevel;
         int _playerLevel;
         int _playerExperience = 0;
-        int _experiencePerLevel = 100;
+        int _experiencePerLevel = 0;
         OverallMap _overallMap;
         int _visionRadius = 1;
-        int _health = 100;
-        int _maxHealth = 100;
-        int _maxMana = 100;
-        int _mana = 100;
+        int _health = 6;
+        int _maxHealth = 6;
         int _gold = 10;
-        bool _specializationChosen = false;
-        Shadows.OverallMap.FirstSpecializations _specialization1;
+        int _combatPosition;
+        int _baseSTR = 0;
+        int _baseDEX = 0;
+        int _baseINT = 0;
 
         CommonEnumerations.BaseClassTypes _baseClassType;
 
@@ -41,8 +41,6 @@ namespace Shadows
             _baseClassType = chosenClass;
 
             _playersEquipment = new List<Equipment>();
-            _playersEquipment.Add(new Equipment(EquipmentType.Pants, EquipmentPrefix.None, EquipmentSuffix.None));
-            _playersEquipment.Add(new Equipment(EquipmentType.Chest, EquipmentPrefix.None, EquipmentSuffix.None));
 
             switch(chosenClass)
             {
@@ -55,29 +53,34 @@ namespace Shadows
                 case CommonEnumerations.BaseClassTypes.Mage:
                     GiveStartingMageEquipment();
                     break;
-            }
-            
-            
-            _playersEquipment.Add(new Equipment(EquipmentType.Boots, EquipmentPrefix.None, EquipmentSuffix.None));
-            _playersEquipment.Add(new Equipment(EquipmentType.Belt, EquipmentPrefix.None, EquipmentSuffix.None));
+            }      
         }
 
         private void GiveStartingWarriorEquipment()
         {
+            _baseDEX = 4;
+            _baseSTR = 5;
+            _baseINT = 3;
+
             _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.ShortSword));
-            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Buckler));
         }
 
         private void GiveStartingRogueEquipment()
         {
+            _baseDEX = 5;
+            _baseSTR = 4;
+            _baseINT = 3;
+
             _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.ShortBow));
-            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Arrows));
         }
 
         private void GiveStartingMageEquipment()
         {
+            _baseDEX = 4;
+            _baseSTR = 3;
+            _baseINT = 5;
+
             _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.Wand));
-            _playersEquipment.Add(new OffHand(EquipmentPrefix.None, EquipmentSuffix.None, OffHandTypes.Tome));
         }
 
         public Equipment EquippedWeapon
@@ -169,32 +172,11 @@ namespace Shadows
             }
         }
 
-        public Shadows.OverallMap.FirstSpecializations Specialization
-        {
-            get
-            {
-                return _specialization1;
-            }
-            set
-            {
-                _specialization1 = value;
-                _specializationChosen = true;
-            }
-        }
-
-        public bool SpecializationChosen
-        {
-            get
-            {
-                return _specializationChosen;
-            }
-        }
-
         public int DungeonLevel
         {
             get
             {
-                return _dungeonLevel;
+                return _dungeonLevel + 1;
             }
         }
 
@@ -238,29 +220,11 @@ namespace Shadows
             }
         }
 
-
-        public int Mana
-        {
-            get
-            {
-                return _mana;
-            }
-        }
-
-
         public int MaxHealth
         {
             get
             {
                 return _maxHealth;
-            }
-        }
-
-        public int MaxMana
-        {
-            get
-            {
-                return _maxMana;
             }
         }
 
@@ -273,20 +237,11 @@ namespace Shadows
             set { }
         }
 
-        public decimal ManaPercentage
-        {
-            get
-            {
-                return Convert.ToDecimal(_mana) / Convert.ToDecimal(_maxMana) * 100;
-            }
-            set { }
-        }
-
         public decimal ProgressTowardsNextLevel
         {
             get
             {
-                return Convert.ToDecimal(_playerExperience) / Convert.ToDecimal(_experiencePerLevel) * 100;
+                return Convert.ToDecimal(_playerExperience) / Convert.ToDecimal(ExperiencePerLevel) * 100;
             }
             set { }
         }
@@ -305,7 +260,7 @@ namespace Shadows
         {
             get
             {
-                return Convert.ToDecimal(_experiencePerLevel);
+                return Convert.ToDecimal(5 * _playerLevel + (5 * (_playerLevel - 1)));
             }
             set { }
         }
@@ -320,6 +275,19 @@ namespace Shadows
             set
             {
                 _baseClassType = value;
+            }
+        }
+
+        public int CombatPosition
+        {
+            get
+            {
+                return _combatPosition;
+            }
+
+            set
+            {
+                _combatPosition = value;
             }
         }
 
@@ -353,17 +321,10 @@ namespace Shadows
         {
             _playerExperience += exp;
 
-            if (_playerExperience >= _experiencePerLevel)
+            while(_playerExperience >= ExperiencePerLevel)
             {
-                int levelsGained = _playerExperience / _experiencePerLevel;
-                _playerExperience = _playerExperience - (_experiencePerLevel * (_playerExperience / _experiencePerLevel));
-
-                for (int i = 0; i < levelsGained; i++)
-                {
-                    _playerLevel += 1;
-                    _experiencePerLevel = Convert.ToInt32(Convert.ToDouble(_experiencePerLevel) * 1.5);
-                    OnLeveledUp(EventArgs.Empty);
-                }   
+                _playerLevel += 1;
+                OnLeveledUp(EventArgs.Empty);
             }
         }
 

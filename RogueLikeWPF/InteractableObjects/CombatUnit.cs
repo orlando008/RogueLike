@@ -5,13 +5,6 @@ using System.Text;
 
 namespace Shadows.InteractableObjects
 {
-    public enum ElementalType
-    {
-        Fire = 0,
-        Water,
-        Wind
-    }
-
     public enum EnemyForm
     {
         Skeleton=0,
@@ -31,25 +24,24 @@ namespace Shadows.InteractableObjects
         private int _defensePower = 0; //Min: 2 * dungeon level \ Max: 4 * dungeonLevel
         private int _experienceWorth = 0; //dungeonLevel * 2
         private int _goldWorth = 0; //dungeonLevel * 1.5
-        private ElementalType _type = ElementalType.Fire;
         private EnemyForm _enemyForm = EnemyForm.Goblin;
         private int _dungeonLevel = 1;
+        int _combatPosition;
+        private OverallMap _ovMap;
 
         public CombatUnit(OverallMap ovMap)
         {
+            _ovMap = ovMap;
             _dungeonLevel = ovMap.ThePlayer.DungeonLevel;
             if(_dungeonLevel == 0)
                 _dungeonLevel = 1;
 
             int maxEnemyForm = (int)Enum.GetValues(typeof(EnemyForm)).Cast<EnemyForm>().Max();
-            int maxElementalType = (int)Enum.GetValues(typeof(ElementalType)).Cast<ElementalType>().Max();
-
             _attackPower = ovMap.RNG.Next(5 * _dungeonLevel, (10 * _dungeonLevel) + 1);
             _defensePower = ovMap.RNG.Next(2 * _dungeonLevel, (4 * _dungeonLevel) + 1);
             _experienceWorth = _dungeonLevel + 5;
             _goldWorth = (int)(_dungeonLevel * 1.5);
             _enemyForm = (EnemyForm)ovMap.RNG.Next(0, maxEnemyForm + 1);
-            _type = (ElementalType)ovMap.RNG.Next(0, maxElementalType + 1);
             _health = _dungeonLevel * 5;
             _speed = _dungeonLevel * 2;
         }
@@ -57,7 +49,7 @@ namespace Shadows.InteractableObjects
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(GetElementalTypeName() + " " + GetEnemyFormName());
+            sb.AppendLine(GetEnemyFormName());
           
             return sb.ToString();
         }
@@ -67,22 +59,10 @@ namespace Shadows.InteractableObjects
             return Enum.GetName(typeof(EnemyForm), _enemyForm);
         }
 
-        public string GetElementalTypeName()
-        {
-            return Enum.GetName(typeof(ElementalType), _type);
-        }
-
         public string FullEnemyStats()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(GetElementalTypeName() + " " + GetEnemyFormName());
-            sb.AppendLine("Speed: " + _speed.ToString());
-            sb.AppendLine("Health: " + _health.ToString());
-            sb.AppendLine("Attack Power: " + _attackPower.ToString());
-            sb.AppendLine("Defense Power: " + _defensePower.ToString());
-            sb.AppendLine("Worth " + _experienceWorth.ToString() + " experience points.");
-            sb.AppendLine("Holding " + _goldWorth.ToString() + " gold.");
-
+            sb.AppendLine(GetEnemyFormName());
             return sb.ToString();
         }
 
@@ -107,6 +87,19 @@ namespace Shadows.InteractableObjects
             get
             {
                 return new Uri("pack://application:,,,/Images/Enemies/" + GetEnemyFormName() + ".png");
+            }
+        }
+
+        public int CombatPosition
+        {
+            get
+            {
+                return _combatPosition;
+            }
+
+            set
+            {
+                _combatPosition = value;
             }
         }
     }
