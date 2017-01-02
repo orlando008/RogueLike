@@ -122,17 +122,11 @@ namespace Shadows
 
         private void _ovMap_NothingEncountered(object sender, EventArgs e)
         {
-            stackPanelFightFlee.Visibility = Visibility.Collapsed;
-            this.lblCurrentActivity.Content = "Nothing unusual here...";
-            this.lblCurrentActivityDetail.Content = "";
         }
 
         private void _ovMap_CombatEncountered(OverallMap.CombatEncounteredEventArgs e)
         {
             _currentCombatUnit = e.combatUnit;
-            stackPanelFightFlee.Visibility = Visibility.Visible;
-            this.lblCurrentActivity.Content = "You encountered: " + e.combatUnit.ToString();
-            this.lblCurrentActivityDetail.Content = e.combatUnit.FullEnemyStats();
             NotifyPropertyChanged("");
         }
 
@@ -321,29 +315,6 @@ namespace Shadows
                 Canvas.SetZIndex(_playerDot, 99);
             }
 
-            NotifyPropertyChanged("");
-        }
-
-        private void btnFight_Click(object sender, RoutedEventArgs e)
-        {
-            stackPanelFightFlee.Visibility = Visibility.Collapsed;
-
-            _program._ovMap.ResolveCombat(_currentCombatUnit);
-            this.lblCurrentActivity.Content = "You defeated " + _currentCombatUnit.ToString();
-            this.lblCurrentActivityDetail.Content = "Received " + _currentCombatUnit.ExperienceWorth.ToString() + " exp." + System.Environment.NewLine + " " + _currentCombatUnit.GoldWorth.ToString() + " gold.";
-
-            _currentCombatUnit = null;
-            NotifyPropertyChanged("");
-        }
-
-        private void btnFlee_Click(object sender, RoutedEventArgs e)
-        {
-            stackPanelFightFlee.Visibility = Visibility.Collapsed;
-            this.lblCurrentActivity.Content = "You escaped but gained no experience.";
-            this.lblCurrentActivityDetail.Content = "";
-
-            _program._ovMap.FleeCombat(_currentCombatUnit);
-            _currentCombatUnit = null;
             NotifyPropertyChanged("");
         }
     }

@@ -14,12 +14,14 @@ namespace Shadows
         private Dictionary<int, List<Room>> _levels;
         private Dictionary<int, List<Point>> _levelHallways;
         private Dictionary<int, List<Point>> _levelDiscoveredHallways;
+        private Dictionary<int, List<Point>> _enemyLocations;
+
         private Player _player;
         public int _seed = 0;
         private const int MAX_LVL_HEIGHT = 50;
-        private const int MAX_LVL_WIDTH = 80;
-        private const int MIN_NUMBER_OF_ROOMS = 3;
-        private const int MAX_NUMBER_OF_ROOMS = 10;
+        private const int MAX_LVL_WIDTH = 60;
+        private const int MIN_NUMBER_OF_ROOMS = 8;
+        private const int MAX_NUMBER_OF_ROOMS = 8;
         private bool _combatResolved = true;
         private CombatUnit _combatUnit;
 
@@ -199,24 +201,8 @@ namespace Shadows
 
         public void GetMax(out int maxX, out int maxY, int level)
         {
-            maxX = 0;
-            maxY = 0;
-
-            foreach (Room room in _levels[level])
-            {
-                if (room.Origin.Y + room.Size.Y > maxY)
-                {
-                    maxY = room.Origin.Y + room.Size.Y;
-                }
-
-                if (room.Origin.X + room.Size.X > maxX)
-                {
-                    maxX = room.Origin.X + room.Size.X;
-                }
-            }
-
-            maxY += 5;
-            maxX += 5;
+            maxX = 75;
+            maxY = 60;
         }
 
         public void CreateLevel(CommonEnumerations.BaseClassTypes bct)
@@ -247,8 +233,25 @@ namespace Shadows
             while (GetCountOfUnconnectedDoors(Levels.Count-1) > 0)
                 ConnectTwoDoorways(Levels.Count-1);
 
+
+            //DiscoverTilesAroundPlayer();
+
+            foreach (Room r in Levels[Levels.Count - 1])
+            {
+                r.DiscoverAllTilesInRoom();
+            }
+
+            LevelDiscoveredHallways.Add(Levels.Count-1, new List<Point>());
+            foreach (Point p in LevelHallways[Levels.Count - 1])
+            {
+                LevelDiscoveredHallways[Levels.Count - 1].Add(new Point(p.X, p.Y));
+
+                HallDiscoveredEventArgs e = new HallDiscoveredEventArgs();
+                e.hallThatWasDiscovered = p;
+                OnHallDiscovered(e);
+            }
+
             PlacePlayerOnMap(bct);
-            DiscoverTilesAroundPlayer();
         }
 
         public int GetCountOfUnconnectedDoors(int level)
@@ -707,7 +710,7 @@ namespace Shadows
 
         public void GenerateRandomEnemyEncounter()
         {
-            _combatResolved = false;
+            //_combatResolved = false;
             _combatUnit = new CombatUnit(this);
 
             CombatEncounteredEventArgs e = new CombatEncounteredEventArgs();

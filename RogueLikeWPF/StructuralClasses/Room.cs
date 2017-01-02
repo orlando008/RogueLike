@@ -21,7 +21,7 @@ namespace Shadows
         private Point _size;
         private List<Point> _roomStrings;
         private const int MIN_ROOM_WIDTH = 5;
-        private const int MAX_ROOM_WIDTH = 15;
+        private const int MAX_ROOM_WIDTH = 10;
 
         public Room(OverallMap parentMap)
         {
@@ -109,6 +109,17 @@ namespace Shadows
             }
         }
 
+        public void DiscoverAllTilesInRoom()
+        {
+            for (int x = 0; x < _roomLayout.GetLength(0); x++)
+            {
+                for (int y = 0; y < _roomLayout.GetLength(1); y++)
+                {
+                    _roomLayout[x, y].Discovered = true;
+                }
+            }
+        }
+
         public void FitIntoStringDictionary()
         {
             _roomStrings = new List<Point>();
@@ -150,36 +161,41 @@ namespace Shadows
 
         public void AddDoorwayToRoom()
         {
-            int numberOfDoors = _parentMap.RNG.Next(1, 4);
+            int numberOfDoors = _parentMap.RNG.Next(1, 7);
 
             bool westWallHasDoor = false;
             bool eastWallHasDoor = false;
             bool northWallHasDoor = false;
             bool southWallHasDoor = false;
 
-            while (!westWallHasDoor && !eastWallHasDoor && !northWallHasDoor && !southWallHasDoor)
+            switch (numberOfDoors)
             {
-                if (_parentMap.RNG.Next(1, 3) == 2)
-                {
+                case 1:
                     westWallHasDoor = true;
-                }
-
-                if (_parentMap.RNG.Next(1, 3) == 2)
-                {
                     eastWallHasDoor = true;
-                }
-
-                if (_parentMap.RNG.Next(1, 3) == 2)
-                {
+                    break;
+                case 2:
                     northWallHasDoor = true;
-                }
-
-                if (_parentMap.RNG.Next(1, 3) == 2)
-                {
                     southWallHasDoor = true;
-                }
+                    break;
+                case 3:
+                    westWallHasDoor = true;
+                    southWallHasDoor = true;
+                    break;
+                case 4:
+                    eastWallHasDoor = true;
+                    northWallHasDoor = true;
+                    break;
+                case 5:
+                    westWallHasDoor = true;
+                    northWallHasDoor = true;
+                    break;
+                case 6:
+                    eastWallHasDoor = true;
+                    southWallHasDoor = true;
+                    break;
             }
-
+            
 
             int tileToPlaceDoor;
             
