@@ -74,6 +74,7 @@
       <DependentUpon>CombatDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Combat\CombatEnumerations.cs" />
+    <Compile Include="Combat\CombatLogic.cs" />
     <Compile Include="CommonEnumerations.cs" />
     <Compile Include="Equipment\Equipment.cs" />
     <Compile Include="Equipment\EquipmentControl.xaml.cs">
@@ -82,10 +83,7 @@
     <Compile Include="Equipment\EquipmentEnumerations.cs" />
     <Compile Include="Equipment\EquipmentGenerationMethods.cs" />
     <Compile Include="Equipment\OffHand.cs" />
-    <Compile Include="InteractableObjects\CombatUnit.cs" />
-    <Compile Include="InteractableObjects\Enemy.cs" />
-    <Compile Include="InteractableObjects\Interactable.cs" />
-    <Compile Include="InteractableObjects\Item.cs" />
+    <Compile Include="Combat\CombatUnit.cs" />
     <Compile Include="OverallMap.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
@@ -212,6 +210,9 @@
   <ItemGroup>
     <Resource Include="Images\leftArrow.png" />
     <Resource Include="Images\rightArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="InteractableObjects\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
-namespace Shadows.InteractableObjects
+namespace Shadows
 {
     public enum EnemyForm
     {
-        Skeleton=0,
-        Spider,
-        Orc,
         Goblin,
+        Orc,
         Troll,
+        SkeletonArcher,
+        GhostHuntress,
+        DemonSniper,
         Witch,
-        Warlock
+        Warlock,
+        EtherealSpirit
     }
 
-    public class CombatUnit
+    public class CombatUnit : ICombatEntity
     {
         private int _speed = 0;
         private int _health = 1;
@@ -59,7 +62,8 @@ namespace Shadows.InteractableObjects
 
         public string GetEnemyFormName()
         {
-            return Enum.GetName(typeof(EnemyForm), _enemyForm);
+            string fullEnumName = Enum.GetName(typeof(EnemyForm), _enemyForm);
+            return Regex.Replace(fullEnumName, "(\\B[A-Z])", " $1");
         }
 
         public string FullEnemyStats()
@@ -67,6 +71,61 @@ namespace Shadows.InteractableObjects
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(GetEnemyFormName());
             return sb.ToString();
+        }
+
+        int ICombatEntity.GetCurrentHealthPoints()
+        {
+            throw new NotImplementedException();
+        }
+
+        int ICombatEntity.GetCurrentActionPoints()
+        {
+            throw new NotImplementedException();
+        }
+
+        int ICombatEntity.GetCurrentMovementPoints()
+        {
+            throw new NotImplementedException();
+        }
+
+        int ICombatEntity.GetCurrentSTR()
+        {
+            throw new NotImplementedException();
+        }
+
+        int ICombatEntity.GetCurrentDEX()
+        {
+            throw new NotImplementedException();
+        }
+
+        int ICombatEntity.GetCurrentINT()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICombatEntity.InitializeBattleValues()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICombatEntity.ActionPointAdjustment(int numberOfPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICombatEntity.MovementPointAdjustment(int numberOfPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICombatEntity.BeginTurn()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICombatEntity.GiveEntityTheCombatLogic(CombatLogic clog)
+        {
+            throw new NotImplementedException();
         }
 
         public int ExperienceWorth

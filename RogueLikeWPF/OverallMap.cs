@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using Shadows.StructuralClasses;
-using Shadows.InteractableObjects;
 
 namespace Shadows
 {
@@ -488,10 +487,20 @@ namespace Shadows
 
                                         //if two doorways can't be connected, try to connect to another hallway
                                         pointsBetweenDoors.Clear();
-                                        int hallway = RNG.Next(0, LevelHallways[level].Count-1);
-                                        room2DoorWayGlobal = new Point(LevelHallways[level][hallway].X, LevelHallways[level][hallway].Y);
-                                        room2 = null;
-                                        tries++;
+
+                                        if(LevelHallways[level].Count > 0)
+                                        {
+                                            int hallway = RNG.Next(0, LevelHallways[level].Count - 1);
+                                            room2DoorWayGlobal = new Point(LevelHallways[level][hallway].X, LevelHallways[level][hallway].Y);
+                                            room2 = null;
+                                            tries++;
+                                        }
+                                        else
+                                        {
+                                            //Try to connect to a different door.
+                                            GetRoomAndUnconnectedDoorway(out room2, out room2DoorWay, room1, level);
+                                        }
+
                                         
                                         //Console.WriteLine("Doors at (" + room1DoorWayGlobal.X.ToString() + "," + room1DoorWayGlobal.Y.ToString() + ") could not be connected to doorway at (" + room2DoorWayGlobal.X.ToString() + "," + room2DoorWayGlobal.Y.ToString() + ")");
                                     }
@@ -658,16 +667,16 @@ namespace Shadows
 
             pointsToDiscover.Add(ThePlayer.Location);
 
-            for (int i = 1; i <= ThePlayer.VisionRadius; i++)
+            //Start at (Player.X - Vision Radius, Player.Y - VisionRadius)
+            //Rect Width = Vision Radius*2 + 1
+            //Rect Height = Vision Radius*2 + 1
+
+            for (int xCoord = (ThePlayer.Location.X - ThePlayer.VisionRadius); xCoord <= (ThePlayer.Location.X + ThePlayer.VisionRadius); xCoord++)
             {
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X, ThePlayer.Location.Y + i));
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X, ThePlayer.Location.Y - i));
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X + i, ThePlayer.Location.Y + i));
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X - i, ThePlayer.Location.Y - i));
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X - i, ThePlayer.Location.Y + i));
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X + i, ThePlayer.Location.Y - i));
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X + i, ThePlayer.Location.Y));
-                pointsToDiscover.Add(new Point(ThePlayer.Location.X - i, ThePlayer.Location.Y));
+                for (int yCoord = (ThePlayer.Location.Y - ThePlayer.VisionRadius); yCoord <= (ThePlayer.Location.Y + ThePlayer.VisionRadius); yCoord++)
+                {
+                    pointsToDiscover.Add(new Point(xCoord, yCoord));
+                }
             }
 
             foreach (Point p in pointsToDiscover)

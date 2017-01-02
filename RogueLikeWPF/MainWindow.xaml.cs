@@ -1,5 +1,4 @@
 ﻿using Shadows;
-using Shadows.InteractableObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -137,10 +136,17 @@ namespace Shadows
             _currentCombatUnit = e.combatUnit;
 
             Paragraph p = new Paragraph();
-            p.Inlines.Add(new Run("You entered a battle with a " + e.combatUnit.GetEnemyFormName()));
-            p.Foreground = new SolidColorBrush(Colors.LightPink);
-            p.Margin = new Thickness(0);
-            combatTextBox.Document.Blocks.Add(p);
+            string enemyName = e.combatUnit.GetEnemyFormName();
+            string aOrAn = "a";
+            if(enemyName.StartsWith("A") || enemyName.StartsWith("E") || enemyName.StartsWith("I") || enemyName.StartsWith("O") || enemyName.StartsWith("U") || enemyName.StartsWith("H"))
+            {
+                aOrAn = "an";
+            }
+
+            string msg = "You entered a battle with " + aOrAn + " " + enemyName + ".";
+            Program.StoryMessageEventArgs sme = new Program.StoryMessageEventArgs(msg, Colors.LightPink);
+
+            _program_StoryMessage(sme);
 
             UIElement uietodelete = null;
             foreach (UIElement uie in canvasMain.Children)

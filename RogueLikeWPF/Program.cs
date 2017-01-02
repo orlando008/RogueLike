@@ -64,16 +64,16 @@ namespace Shadows
             switch (userInputArray[0].ToUpper())
             {
                 case "MOVERIGHT":
-                    MoveCommand(1, 0, userInputArray);
+                    MoveCommand(1, 0);
                     break;
                 case "MOVELEFT":
-                    MoveCommand(-1, 0, userInputArray);
+                    MoveCommand(-1, 0);
                     break;
                 case "MOVEUP":
-                    MoveCommand(0, -1, userInputArray);
+                    MoveCommand(0, -1);
                     break;
                 case "MOVEDOWN":
-                    MoveCommand(0, 1, userInputArray);
+                    MoveCommand(0, 1);
                     break;
 
                 default:
@@ -103,28 +103,17 @@ namespace Shadows
             OnStoryMessage(smea);
         }
 
-        public void MoveCommand(int xDirection, int yDirection, string[] userInputArray)
+        public void MoveCommand(int xDirection, int yDirection)
         {
             if (_ovMap.CombatResolved == false)
             {
                 return;
             }
-                
-            int lengthOfMove = 1;
-            bool encounteredEnemy = false;
 
-            if (userInputArray.Length > 1)
-                lengthOfMove = Convert.ToInt32(userInputArray[1]);
-
-            for (int i = 0; i < lengthOfMove; i++)
+            if (_ovMap.ThePlayer.MovePlayerNonCombat(xDirection, yDirection))
             {
-                if (_ovMap.ThePlayer.MovePlayer(xDirection, yDirection, out encounteredEnemy))
-                {
-                    _ovMap.DiscoverTilesAroundPlayer();
-                }
+                _ovMap.DiscoverTilesAroundPlayer();
             }
-
-            _ovMap.DiscoverTilesAroundPlayer();
         }
     }
 }

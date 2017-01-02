@@ -8,7 +8,7 @@ using static Shadows.EquipmentEnumerations;
 
 namespace Shadows
 {
-    public class Player
+    public class Player : ICombatEntity
     {
         Point _location;
         int _dungeonLevel;
@@ -16,14 +16,19 @@ namespace Shadows
         int _playerExperience = 0;
         int _experiencePerLevel = 0;
         OverallMap _overallMap;
-        int _visionRadius = 1;
+        int _visionRadius = 3;
         int _health = 6;
+        int _currentActionPoints = 0;
+        int _currentMovementPoints = 0;
         int _maxHealth = 6;
         int _gold = 10;
         int _combatPosition;
         int _baseSTR = 0;
         int _baseDEX = 0;
         int _baseINT = 0;
+        int _adjustedSTR = 0;
+        int _adjustedDEX = 0;
+        int _adjustedINT = 0;
 
         CommonEnumerations.BaseClassTypes _baseClassType;
 
@@ -424,7 +429,7 @@ namespace Shadows
             }
         }
 
-        public bool MovePlayer(int xDirection, int yDirection, out bool encounteredEnemy)
+        public bool MovePlayerNonCombat(int xDirection, int yDirection)
         {
             Point newLocation = new Point(_location.X + xDirection, _location.Y + yDirection);
             if (_overallMap.IsPointTraversable(newLocation, _dungeonLevel))
@@ -435,23 +440,17 @@ namespace Shadows
                 {
                     if (_overallMap.EnemyLocations[DungeonLevel - 1].FirstOrDefault(e => e.DungeonCoordinate == _location) != null)
                     {
-                        encounteredEnemy = true;
                         OverallMap.CombatEncounteredEventArgs ce = new OverallMap.CombatEncounteredEventArgs();
                         ce.combatUnit = _overallMap.EnemyLocations[DungeonLevel - 1].FirstOrDefault(e => e.DungeonCoordinate == _location);
                         _overallMap.OnCombatEncountered(ce);
                     }
-                    else
-                        encounteredEnemy = false;
 
                 }
-                else
-                    encounteredEnemy = false;
 
                 return true;
             }
             else
             {
-                encounteredEnemy = false;
                 return false;   
             }      
         }
@@ -486,6 +485,66 @@ namespace Shadows
             {
                 handler(this, e);
             }
+        }
+
+        int ICombatEntity.GetCurrentHealthPoints()
+        {
+            return _health;
+        }
+
+        int ICombatEntity.GetCurrentActionPoints()
+        {
+            return _currentActionPoints;
+        }
+
+        int ICombatEntity.GetCurrentMovementPoints()
+        {
+            return _currentMovementPoints;
+        }
+
+        int ICombatEntity.GetCurrentSTR()
+        {
+            return _baseSTR;
+        }
+
+        int ICombatEntity.GetCurrentDEX()
+        {
+            return _baseDEX;
+        }
+
+        int ICombatEntity.GetCurrentINT()
+        {
+            return _baseINT;
+        }
+
+        void ICombatEntity.InitializeBattleValues()
+        {
+            _adjustedSTR = _baseSTR;
+            _adjustedDEX = _baseDEX;
+            _adjustedINT = _baseINT;
+            _health = 6;
+            _currentActionPoints = 0;
+            _currentMovementPoints = 0;
+        }
+
+        void ICombatEntity.MovementPointAdjustment(int numberOfPoints)
+        {
+            _currentMovementPoints += numberOfPoints;
+        }
+
+        void ICombatEntity.ActionPointAdjustment(int numberOfPoints)
+        {
+            _currentActionPoints += numberOfPoints;
+        }
+
+        void ICombatEntity.BeginTurn()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICombatEntity.GiveEntityTheCombatLogic(CombatLogic clog)
+        {
+            throw new NotImplementedException();
         }
     }
 }
