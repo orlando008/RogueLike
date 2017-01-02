@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -28,12 +29,14 @@ namespace Shadows.InteractableObjects
         private int _dungeonLevel = 1;
         int _combatPosition;
         private OverallMap _ovMap;
+        private Point _dungeonCoordinate;
 
-        public CombatUnit(OverallMap ovMap)
+        public CombatUnit(OverallMap ovMap, Point dungeonCoordinate)
         {
             _ovMap = ovMap;
             _dungeonLevel = ovMap.ThePlayer.DungeonLevel;
-            if(_dungeonLevel == 0)
+            DungeonCoordinate = dungeonCoordinate;
+            if (_dungeonLevel == 0)
                 _dungeonLevel = 1;
 
             int maxEnemyForm = (int)Enum.GetValues(typeof(EnemyForm)).Cast<EnemyForm>().Max();
@@ -100,6 +103,108 @@ namespace Shadows.InteractableObjects
             set
             {
                 _combatPosition = value;
+            }
+        }
+
+        public Point DungeonCoordinate
+        {
+            get
+            {
+                return _dungeonCoordinate;
+            }
+
+            set
+            {
+                _dungeonCoordinate = value;
+            }
+        }
+
+        public bool InCombatPosition1
+        {
+            get
+            {
+                return (_combatPosition == 1);
+            }
+        }
+
+        public bool InCombatPosition2
+        {
+            get
+            {
+                return (_combatPosition == 2);
+            }
+        }
+
+        public bool InCombatPosition3
+        {
+            get
+            {
+                return (_combatPosition == 3);
+            }
+        }
+
+        public bool InCombatPosition4
+        {
+            get
+            {
+                return (_combatPosition == 4);
+            }
+        }
+
+        public bool InCombatPosition5
+        {
+            get
+            {
+                return (_combatPosition == 5);
+            }
+        }
+
+        public bool InCombatPosition6
+        {
+            get
+            {
+                return (_combatPosition == 6);
+            }
+        }
+
+        public bool InCombatPosition7
+        {
+            get
+            {
+                return (_combatPosition == 7);
+            }
+        }
+
+        public bool InCombatPosition8
+        {
+            get
+            {
+                return (_combatPosition == 8);
+            }
+        }
+
+        public bool InCombatPosition9
+        {
+            get
+            {
+                return (_combatPosition == 9);
+            }
+        }
+
+
+        public bool InCombatPosition10
+        {
+            get
+            {
+                return (_combatPosition == 10);
+            }
+        }
+
+        public bool InCombatPosition11
+        {
+            get
+            {
+                return (_combatPosition == 11);
             }
         }
     }

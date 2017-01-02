@@ -14,7 +14,7 @@ namespace Shadows
         private Dictionary<int, List<Room>> _levels;
         private Dictionary<int, List<Point>> _levelHallways;
         private Dictionary<int, List<Point>> _levelDiscoveredHallways;
-        private Dictionary<int, List<Point>> _enemyLocations;
+        private Dictionary<int, List<CombatUnit>> _enemyLocations;
 
         private Player _player;
         public int _seed = 0;
@@ -28,11 +28,18 @@ namespace Shadows
         public delegate void RoomDiscoveredEventHandler(RoomDiscoveredEventArgs e);
         public delegate void HallDiscoveredEventHandler(HallDiscoveredEventArgs e);
         public delegate void CombatEncounteredEventHandler(CombatEncounteredEventArgs e);
+        public delegate void StoryMessageEventHandler(Program.StoryMessageEventArgs e);
 
         public event RoomDiscoveredEventHandler RoomDiscovered;
         public event HallDiscoveredEventHandler HallDiscovered;
         public event CombatEncounteredEventHandler CombatEncountered;
         public event EventHandler NothingEncountered;
+        public event StoryMessageEventHandler StoryMessage;
+
+        public void OnStoryMessage(Program.StoryMessageEventArgs e)
+        {
+            StoryMessage?.Invoke(e);
+        }
 
         public class RoomDiscoveredEventArgs : EventArgs
         {
@@ -56,15 +63,27 @@ namespace Shadows
 
         public void OnRoomDiscovered(RoomDiscoveredEventArgs e)
         {
+            if (ThePlayer.Location.Equals(new Point(e.roomTileThatWasDiscovered.X + e.roomTileThatWasDiscovered.ParentRoom.Origin.X, e.roomTileThatWasDiscovered.Y + e.roomTileThatWasDiscovered.ParentRoom.Origin.Y)) == false)
+            {
+                if (RNG.Next(1, 101) < 40)
+                    this.GenerateRandomEnemyEncounter(new Point(e.roomTileThatWasDiscovered.X + e.roomTileThatWasDiscovered.ParentRoom.Origin.X, e.roomTileThatWasDiscovered.Y + e.roomTileThatWasDiscovered.ParentRoom.Origin.Y));
+            }
+
             RoomDiscovered?.Invoke(e);
         }
 
         protected void OnHallDiscovered(HallDiscoveredEventArgs e)
         {
+            if(ThePlayer.Location.Equals(e.hallThatWasDiscovered) == false)
+            {
+                if (RNG.Next(1, 101) < 5)
+                    this.GenerateRandomEnemyEncounter(e.hallThatWasDiscovered);
+            }
+
             HallDiscovered?.Invoke(e);
         }
 
-        protected void OnCombatEncountered(CombatEncounteredEventArgs e)
+        public void OnCombatEncountered(CombatEncounteredEventArgs e)
         {
             CombatEncountered?.Invoke(e);
         }
@@ -193,6 +212,21 @@ namespace Shadows
             }
         }
 
+        public Dictionary<int, List<CombatUnit>> EnemyLocations
+        {
+            get
+            {
+                if (_enemyLocations == null)
+                    _enemyLocations = new Dictionary<int, List<CombatUnit>>();
+
+                return _enemyLocations;
+            }
+
+            set
+            {
+                _enemyLocations = value;
+            }
+        }
 
         public OverallMap(int seed)
         {
@@ -235,6 +269,7 @@ namespace Shadows
 
 
             //DiscoverTilesAroundPlayer();
+            PlacePlayerOnMap(bct);
 
             foreach (Room r in Levels[Levels.Count - 1])
             {
@@ -242,16 +277,16 @@ namespace Shadows
             }
 
             LevelDiscoveredHallways.Add(Levels.Count-1, new List<Point>());
-            foreach (Point p in LevelHallways[Levels.Count - 1])
-            {
-                LevelDiscoveredHallways[Levels.Count - 1].Add(new Point(p.X, p.Y));
+            //foreach (Point p in LevelHallways[Levels.Count - 1])
+            //{
+            //    LevelDiscoveredHallways[Levels.Count - 1].Add(new Point(p.X, p.Y));
 
-                HallDiscoveredEventArgs e = new HallDiscoveredEventArgs();
-                e.hallThatWasDiscovered = p;
-                OnHallDiscovered(e);
-            }
+            //    HallDiscoveredEventArgs e = new HallDiscoveredEventArgs();
+            //    e.hallThatWasDiscovered = p;
+            //    OnHallDiscovered(e);
+            //}
 
-            PlacePlayerOnMap(bct);
+            
         }
 
         public int GetCountOfUnconnectedDoors(int level)
@@ -522,7 +557,7 @@ namespace Shadows
                     return false;
             }
 
-            if (pointToTry.X < 1 || pointToTry.X > maxX || pointToTry.Y < 1 || pointToTry.Y > maxY)
+            if (pointToTry.X < 1 || pointToTry.X >= maxX || pointToTry.Y < 1 || pointToTry.Y >= maxY)
                 return false;
 
             foreach (Room r in _levels[level])
@@ -651,8 +686,11 @@ namespace Shadows
 
                 if (roomTile != null)
                 {
-                    roomTile.Discovered = true;
-                    return;
+                    if(roomTile.Discovered == false)
+                    {
+                        roomTile.Discovered = true;
+                        return;
+                    }
                 }
 
             }
@@ -661,11 +699,15 @@ namespace Shadows
             {
                 if (!LevelDiscoveredHallways.ContainsKey(level))
                     LevelDiscoveredHallways.Add(level, new List<Point>());
-                LevelDiscoveredHallways[level].Add(p);
 
-                HallDiscoveredEventArgs e = new HallDiscoveredEventArgs();
-                e.hallThatWasDiscovered = p;
-                OnHallDiscovered(e);
+                if(!LevelDiscoveredHallways[level].Contains(p))
+                {
+                    LevelDiscoveredHallways[level].Add(p);
+                    HallDiscoveredEventArgs e = new HallDiscoveredEventArgs();
+                    e.hallThatWasDiscovered = p;
+                    OnHallDiscovered(e);
+                }
+
             }
         
         }
@@ -708,17 +750,25 @@ namespace Shadows
             _combatResolved = true;
         }
 
-        public void GenerateRandomEnemyEncounter()
+        public void GenerateRandomEnemyEncounter(Point dungeonCoordinate)
         {
             //_combatResolved = false;
-            _combatUnit = new CombatUnit(this);
+            _combatUnit = new CombatUnit(this, dungeonCoordinate);
+
+            if (!EnemyLocations.ContainsKey(ThePlayer.DungeonLevel - 1))
+            {
+                EnemyLocations.Add(ThePlayer.DungeonLevel - 1, new List<CombatUnit>());
+            }
+                
+
+            EnemyLocations[ThePlayer.DungeonLevel-1].Add(_combatUnit);
 
             CombatEncounteredEventArgs e = new CombatEncounteredEventArgs();
             e.combatUnit = _combatUnit;
 
-            this._player.CombatPosition = 3;
-            _combatUnit.CombatPosition = 7;
-            OnCombatEncountered(e);
+            this._player.CombatPosition = 4;
+            _combatUnit.CombatPosition = 8;
+            //OnCombatEncountered(e);
         }
     }
 }

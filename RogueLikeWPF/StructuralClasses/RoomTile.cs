@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -107,6 +108,14 @@ namespace Shadows.StructuralClasses
                     ParentRoom.ParentMap.OnRoomDiscovered(e);
                 }
                     
+            }
+        }
+
+        public Point DungeonCoordinate
+        {
+            get
+            {
+                return new Point(X + _parentRoom.Origin.X, Y + _parentRoom.Origin.Y);
             }
         }
 

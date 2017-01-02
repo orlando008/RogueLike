@@ -56,6 +56,49 @@ namespace Shadows
             }      
         }
 
+        public void MoveCombatRight()
+        {
+            if(_combatPosition < 11)
+            {
+                if(_overallMap.CurrentCombatUnit.CombatPosition != _combatPosition + 1)
+                {
+                    _combatPosition = _combatPosition + 1;
+                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You advanced 1 step.", System.Windows.Media.Colors.LightPink));
+                }
+                else
+                {
+                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                }
+                    
+            }
+            else
+            {
+                _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
+            }
+                
+        }
+
+        public void MoveCombatLeft()
+        {
+            if(_combatPosition > 1)
+            {
+                if (_overallMap.CurrentCombatUnit.CombatPosition != _combatPosition - 1)
+                {
+                    _combatPosition = _combatPosition - 1;
+                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You back up 1 step.", System.Windows.Media.Colors.LightPink));
+                }
+                else
+                {
+                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                }
+                    
+            }
+            else
+            {
+                _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
+            }
+        }
+
         private void GiveStartingWarriorEquipment()
         {
             _baseDEX = 4;
@@ -291,6 +334,96 @@ namespace Shadows
             }
         }
 
+
+        public bool InCombatPosition1
+        {
+            get
+            {
+                return (_combatPosition == 1);
+            }
+        }
+
+        public bool InCombatPosition2
+        {
+            get
+            {
+                return (_combatPosition == 2);
+            }
+        }
+
+        public bool InCombatPosition3
+        {
+            get
+            {
+                return (_combatPosition == 3);
+            }
+        }
+
+        public bool InCombatPosition4
+        {
+            get
+            {
+                return (_combatPosition == 4);
+            }
+        }
+
+        public bool InCombatPosition5
+        {
+            get
+            {
+                return (_combatPosition == 5);
+            }
+        }
+
+        public bool InCombatPosition6
+        {
+            get
+            {
+                return (_combatPosition == 6);
+            }
+        }
+
+        public bool InCombatPosition7
+        {
+            get
+            {
+                return (_combatPosition == 7);
+            }
+        }
+
+        public bool InCombatPosition8
+        {
+            get
+            {
+                return (_combatPosition == 8);
+            }
+        }
+
+        public bool InCombatPosition9
+        {
+            get
+            {
+                return (_combatPosition == 9);
+            }
+        }
+
+
+        public bool InCombatPosition10
+        {
+            get
+            {
+                return (_combatPosition == 10);
+            }
+        }
+
+        public bool InCombatPosition11
+        {
+            get
+            {
+                return (_combatPosition == 11);
+            }
+        }
+
         public bool MovePlayer(int xDirection, int yDirection, out bool encounteredEnemy)
         {
             Point newLocation = new Point(_location.X + xDirection, _location.Y + yDirection);
@@ -298,11 +431,22 @@ namespace Shadows
             {
                 _location = newLocation;
 
-                if (_overallMap.RNG.Next(0, 101) > 70)
-                    encounteredEnemy = true;
+                if (_overallMap.EnemyLocations.ContainsKey(DungeonLevel - 1))
+                {
+                    if (_overallMap.EnemyLocations[DungeonLevel - 1].FirstOrDefault(e => e.DungeonCoordinate == _location) != null)
+                    {
+                        encounteredEnemy = true;
+                        OverallMap.CombatEncounteredEventArgs ce = new OverallMap.CombatEncounteredEventArgs();
+                        ce.combatUnit = _overallMap.EnemyLocations[DungeonLevel - 1].FirstOrDefault(e => e.DungeonCoordinate == _location);
+                        _overallMap.OnCombatEncountered(ce);
+                    }
+                    else
+                        encounteredEnemy = false;
+
+                }
                 else
                     encounteredEnemy = false;
-               
+
                 return true;
             }
             else

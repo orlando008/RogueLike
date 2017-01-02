@@ -24,5 +24,17 @@ namespace Shadows
         {
             InitializeComponent();
         }
+
+        private void btnMoveLeft_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindow)this.DataContext).TheMap.ThePlayer.MoveCombatLeft();
+            ((MainWindow)this.DataContext).RefreshAllProperties();
+        }
+
+        private void btnMoveRight_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindow)this.DataContext).TheMap.ThePlayer.MoveCombatRight();
+            ((MainWindow)this.DataContext).RefreshAllProperties();
+        }
     }
 }

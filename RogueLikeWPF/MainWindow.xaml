@@ -14,7 +14,11 @@
         </Grid.ColumnDefinitions>
 
         <DockPanel Grid.Column="0" Margin="0" LastChildFill="True">
-            <Canvas DockPanel.Dock="Top" x:Name="canvasMain" Loaded="canvasMain_Loaded" Width="800" Height="650" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Grid DockPanel.Dock="Top">
+                <Canvas DockPanel.Dock="Top" x:Name="canvasMain" Loaded="canvasMain_Loaded" Width="800" Height="650" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                <local:CombatDialog x:Name="cbatDialogControl" Visibility="Collapsed"></local:CombatDialog>
+            </Grid>
 
             <RichTextBox x:Name="combatTextBox" Background="{StaticResource DialogBackgroundGradient}" Foreground="White" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible">
 

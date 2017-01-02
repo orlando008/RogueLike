@@ -7,19 +7,12 @@ using System.Drawing;
 
 namespace Shadows
 {
-    public enum RoomType
-    {
-        Hallway = 0,
-        Room = 1
-    }
-
     public class Room
     {
         private RoomTile[,] _roomLayout = null;
         private OverallMap _parentMap;
         private Point _origin;
         private Point _size;
-        private List<Point> _roomStrings;
         private const int MIN_ROOM_WIDTH = 5;
         private const int MAX_ROOM_WIDTH = 10;
 
@@ -63,7 +56,6 @@ namespace Shadows
             set
             {
                 _origin = value;
-                FitIntoStringDictionary();
             }
         }
 
@@ -72,17 +64,6 @@ namespace Shadows
             get
             {
                 return _roomLayout;
-            }
-        }
-
-        private void FillInRoomLayoutForHallway()
-        {
-            for (int x = 0; x < _roomLayout.GetLength(0); x++)
-            {
-                for (int y = 0; y < _roomLayout.GetLength(1); y++)
-                {
-                    _roomLayout[x, y] = new RoomTile(this, x, y, TileType.HallwayFloor);
-                }
             }
         }
 
@@ -118,31 +99,6 @@ namespace Shadows
                     _roomLayout[x, y].Discovered = true;
                 }
             }
-        }
-
-        public void FitIntoStringDictionary()
-        {
-            _roomStrings = new List<Point>();
-            for (int x = 0; x < _roomLayout.GetLength(0); x++)
-            {
-                for (int y = 0; y < _roomLayout.GetLength(1); y++)
-                {
-                    Point tmpPoint = new Point(Origin.X + x, Origin.Y + y);
-                    _roomStrings.Add(tmpPoint);
-                }
-            }
-        }
-
-        public string GetStringAtPoint(Point thePoint, bool onlyDiscovered)
-        {
-            RoomTile rt = GetRoomTileAtPoint(thePoint);
-
-            if (rt == null)
-                return "";
-            else if (rt.Discovered == false && onlyDiscovered)
-                return "";
-            else
-                return rt.ToString();
         }
 
         public RoomTile GetRoomTileAtPoint(Point thePoint)
@@ -222,11 +178,6 @@ namespace Shadows
                 tileToPlaceDoor = _parentMap.RNG.Next(1, this.Size.X-1);
                 _roomLayout[tileToPlaceDoor, this.Size.Y - 1].ThisTileType = TileType.Door;
             }
-        }
-
-        public void GetUnconnectedDoorway()
-        {
-
         }
     }
 }

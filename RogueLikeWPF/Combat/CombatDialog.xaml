@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Shadows"
              mc:Ignorable="d" 
+             Width="800" Height="600"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <RadialGradientBrush x:Key="radialBacker">
@@ -131,6 +132,21 @@
                 <Ellipse Style="{StaticResource EnemyEllipse}" Visibility="{Binding TheMap.CurrentCombatUnit.InCombatPosition11, Converter={StaticResource BoolToVis}}"></Ellipse>
                 <Ellipse Style="{StaticResource PlayerEllipse}" Visibility="{Binding TheMap.ThePlayer.InCombatPosition11, Converter={StaticResource BoolToVis}}"></Ellipse>
             </Grid>
+
+            <StackPanel Orientation="Vertical" Grid.Row="1" Grid.ColumnSpan="13">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                    <Button x:Name="btnMoveLeft" Background="{StaticResource RadialGradientBackgroundDark}" Click="btnMoveLeft_Click">
+                        <Button.Content>
+                            <Image Width="24" Height="24" Source="/Shadows;component/Images/leftArrow.png"></Image>
+                        </Button.Content>
+                    </Button>
+                    <Button x:Name="btnMoveRight" Background="{StaticResource RadialGradientBackgroundDark}" Click="btnMoveRight_Click">
+                        <Button.Content>
+                            <Image Width="24" Height="24" Source="/Shadows;component/Images/rightArrow.png"></Image>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
         </Grid>        
     </GroupBox>
 

@@ -38,6 +38,18 @@ namespace Shadows
         public class StoryMessageEventArgs : EventArgs
         {
             public string StoryMessage;
+            public System.Windows.Media.Color messageColor;
+
+            public StoryMessageEventArgs()
+            {
+
+            }
+
+            public StoryMessageEventArgs(string storyMessage, System.Windows.Media.Color msgColor)
+            {
+                this.StoryMessage = storyMessage;
+                this.messageColor = msgColor;
+            }
         }
 
         public void ProcessUserCommand(string userInputText)
@@ -83,6 +95,7 @@ namespace Shadows
 
             StoryMessageEventArgs smea = new StoryMessageEventArgs();
             smea.StoryMessage = "You've arrived at the Ruins of the Shadow seeking riches and glory.";
+            smea.messageColor = System.Windows.Media.Colors.White;
             OnStoryMessage(smea);
             smea.StoryMessage = "As you enter the underground catacombs the door seals itself behind you...";    
             OnStoryMessage(smea);
@@ -108,16 +121,6 @@ namespace Shadows
                 if (_ovMap.ThePlayer.MovePlayer(xDirection, yDirection, out encounteredEnemy))
                 {
                     _ovMap.DiscoverTilesAroundPlayer();
-
-                    if (encounteredEnemy)
-                    {
-                        _ovMap.GenerateRandomEnemyEncounter();
-                        break;
-                    }
-                    else
-                    {
-                        _ovMap.OnNothingEncountered(null);
-                    }
                 }
             }
 
