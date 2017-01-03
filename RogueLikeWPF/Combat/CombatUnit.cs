@@ -22,10 +22,7 @@ namespace Shadows
 
     public class CombatUnit : ICombatEntity
     {
-        private int _speed = 0;
         private int _health = 1;
-        private int _attackPower = 0;  //Min: 5 * dungeon level \ Max: 10 * dungeonLevel
-        private int _defensePower = 0; //Min: 2 * dungeon level \ Max: 4 * dungeonLevel
         private int _experienceWorth = 0; //dungeonLevel * 2
         private int _goldWorth = 0; //dungeonLevel * 1.5
         private EnemyForm _enemyForm = EnemyForm.Goblin;
@@ -33,6 +30,14 @@ namespace Shadows
         int _combatPosition;
         private OverallMap _ovMap;
         private Point _dungeonCoordinate;
+        int _baseSTR = 0;
+        int _baseDEX = 0;
+        int _baseINT = 0;
+        int _adjustedSTR = 0;
+        int _adjustedDEX = 0;
+        int _adjustedINT = 0;
+        int _currentActionPoints = 0;
+        int _currentMovementPoints = 0;
 
         public CombatUnit(OverallMap ovMap, Point dungeonCoordinate)
         {
@@ -43,13 +48,10 @@ namespace Shadows
                 _dungeonLevel = 1;
 
             int maxEnemyForm = (int)Enum.GetValues(typeof(EnemyForm)).Cast<EnemyForm>().Max();
-            _attackPower = ovMap.RNG.Next(5 * _dungeonLevel, (10 * _dungeonLevel) + 1);
-            _defensePower = ovMap.RNG.Next(2 * _dungeonLevel, (4 * _dungeonLevel) + 1);
-            _experienceWorth = _dungeonLevel + 5;
-            _goldWorth = (int)(_dungeonLevel * 1.5);
+            _experienceWorth = _dungeonLevel;
+            _goldWorth = (int)(_dungeonLevel);
             _enemyForm = (EnemyForm)ovMap.RNG.Next(0, maxEnemyForm + 1);
-            _health = _dungeonLevel * 5;
-            _speed = _dungeonLevel * 2;
+            _health = 6;
         }
 
         public override string ToString()
@@ -75,57 +77,59 @@ namespace Shadows
 
         int ICombatEntity.GetCurrentHealthPoints()
         {
-            throw new NotImplementedException();
+            return _health;
         }
 
         int ICombatEntity.GetCurrentActionPoints()
         {
-            throw new NotImplementedException();
+            return _currentActionPoints;   
         }
 
         int ICombatEntity.GetCurrentMovementPoints()
         {
-            throw new NotImplementedException();
+            return _currentMovementPoints;
         }
 
         int ICombatEntity.GetCurrentSTR()
         {
-            throw new NotImplementedException();
+            return _adjustedSTR;
         }
 
         int ICombatEntity.GetCurrentDEX()
         {
-            throw new NotImplementedException();
+            return _adjustedDEX;
         }
 
         int ICombatEntity.GetCurrentINT()
         {
-            throw new NotImplementedException();
+            return _adjustedINT;
         }
 
         void ICombatEntity.InitializeBattleValues()
         {
-            throw new NotImplementedException();
+            
         }
 
         void ICombatEntity.ActionPointAdjustment(int numberOfPoints)
         {
-            throw new NotImplementedException();
+            
         }
 
         void ICombatEntity.MovementPointAdjustment(int numberOfPoints)
         {
-            throw new NotImplementedException();
+            
         }
 
         void ICombatEntity.BeginTurn()
         {
-            throw new NotImplementedException();
+            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Enemy turn begins.", System.Windows.Media.Colors.LightPink));
+            _ovMap.CurrentCombatLogic.AwardMovementPoints(isPlayer: false);
+            _ovMap.CurrentCombatLogic.AwardActionPoints(isPlayer: false);
         }
 
         void ICombatEntity.GiveEntityTheCombatLogic(CombatLogic clog)
         {
-            throw new NotImplementedException();
+            
         }
 
         public int ExperienceWorth

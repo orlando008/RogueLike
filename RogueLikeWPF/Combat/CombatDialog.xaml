@@ -146,6 +146,53 @@
                         </Button.Content>
                     </Button>
                 </StackPanel>
+
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Style="{StaticResource CombatLabelStyle}">Movement Points Remaining:</Label>
+                        <Label Style="{StaticResource CombatLabelStyle}" Content="{Binding TheMap.ThePlayer.CurrentMovementPoints}"></Label>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Style="{StaticResource CombatLabelStyle}">Action Points Remaining:</Label>
+                        <Label Style="{StaticResource CombatLabelStyle}" Content="{Binding TheMap.ThePlayer.CurrentActionPoints}"></Label>
+                    </StackPanel>
+
+                    <DockPanel LastChildFill="True">
+                        <Label DockPanel.Dock="Top" Style="{StaticResource CombatLabelStyle}">Possible Actions</Label>
+                        <ItemsControl ItemsSource="{Binding TheMap.ThePlayer.PossibleActions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource ActionButtonStyle}">
+                                        <Button.Content>
+                                            <TextBlock Text="{Binding Name}" TextWrapping="WrapWithOverflow" Padding="5"></TextBlock>
+                                        </Button.Content>
+                                        <Button.ToolTip>
+                                            <StackPanel Width="250" Background="{StaticResource DialogBackgroundGradient}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Label Style="{StaticResource ActionButtonLabelStyle}" Content="Range:"></Label>
+                                                    <Label Style="{StaticResource ActionButtonLabelStyle}" Content="{Binding Range}" HorizontalAlignment="Left"></Label>
+                                                </StackPanel>
+                                                
+                                                <Label Style="{StaticResource ActionButtonLabelStyle}">
+                                                    <Label.Content>
+                                                        <TextBlock Text="{Binding FullDescription}" TextWrapping="Wrap"></TextBlock>
+                                                    </Label.Content>
+                                                </Label>
+                                            </StackPanel>
+                                        </Button.ToolTip>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                    </DockPanel>
+                </StackPanel>
             </StackPanel>
         </Grid>        
     </GroupBox>

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Shadows"
         xmlns:rl="clr-namespace:Shadows;assembly=Shadows"
         mc:Ignorable="d" Icon="Images/S.png" Height="800" Width="1366"
-        Title="Shadows" WindowState="Maximized" PreviewKeyDown="Window_PreviewKeyDown">
+        Title="Shadows" WindowState="Maximized" PreviewKeyDown="Window_PreviewKeyDown" Loaded="Window_Loaded">
     <Grid Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1000"/>

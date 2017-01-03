@@ -176,6 +176,8 @@ namespace Shadows
 
             canvasMain.Visibility = Visibility.Collapsed;
             cbatDialogControl.Visibility = Visibility.Visible;
+
+            TheMap.CurrentCombatLogic.InitiateBattle();
             NotifyPropertyChanged("");
         }
 
@@ -398,6 +400,12 @@ namespace Shadows
             }
 
             NotifyPropertyChanged("");
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            ToolTipService.ShowDurationProperty.OverrideMetadata(
+                typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
         }
     }
 }

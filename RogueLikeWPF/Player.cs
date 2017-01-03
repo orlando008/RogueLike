@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using static Shadows.EquipmentGenerationMethods;
 using static Shadows.EquipmentEnumerations;
+using System.Collections.ObjectModel;
 
 namespace Shadows
 {
@@ -14,7 +15,6 @@ namespace Shadows
         int _dungeonLevel;
         int _playerLevel;
         int _playerExperience = 0;
-        int _experiencePerLevel = 0;
         OverallMap _overallMap;
         int _visionRadius = 3;
         int _health = 6;
@@ -33,6 +33,7 @@ namespace Shadows
         CommonEnumerations.BaseClassTypes _baseClassType;
 
         private List<Equipment> _playersEquipment;
+        private ObservableCollection<CombatAction> _possibleActions;
 
         public Player(OverallMap ovMap, CommonEnumerations.BaseClassTypes chosenClass)
         {
@@ -44,6 +45,24 @@ namespace Shadows
             _playerExperience = 0;
             _overallMap = ovMap;
             _baseClassType = chosenClass;
+            _possibleActions = new ObservableCollection<CombatAction>();
+            _possibleActions.Add(new CombatAction( CommonEnumerations.CombatActionTypes.BasicAttackDagger));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackShortSword));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackLongSword));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackShortBow));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackLongBow));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackCrossBow));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackWand));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackStave));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackStaff));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.SharpenSteel));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.ArrowNock));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.HoneKnowledge));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.BerserkerStrike));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.SnipersShot));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.ArcaneWisdom));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.ConsumeHealthPotion));
+            _possibleActions.Add(new CombatAction(CommonEnumerations.CombatActionTypes.DefensiveStance));
 
             _playersEquipment = new List<Equipment>();
 
@@ -63,45 +82,61 @@ namespace Shadows
 
         public void MoveCombatRight()
         {
-            if(_combatPosition < 11)
+            if (_currentMovementPoints > 0)
             {
-                if(_overallMap.CurrentCombatUnit.CombatPosition != _combatPosition + 1)
+                if (_combatPosition < 11)
                 {
-                    _combatPosition = _combatPosition + 1;
-                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You advanced 1 step.", System.Windows.Media.Colors.LightPink));
+                    if(_overallMap.CurrentCombatUnit.CombatPosition != _combatPosition + 1)
+                    {
+                        _combatPosition = _combatPosition + 1;
+                        _currentMovementPoints--;
+                        _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You advanced 1 step.", System.Windows.Media.Colors.LightPink));
+                    }
+                    else
+                    {
+                        _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                    }
+                    
                 }
                 else
                 {
-                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
                 }
-                    
             }
             else
             {
-                _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
-            }
-                
+                _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move anymore, movement points have been fully used.", System.Windows.Media.Colors.LightPink));
+            }         
         }
 
         public void MoveCombatLeft()
         {
-            if(_combatPosition > 1)
+            if(_currentMovementPoints > 0)
             {
-                if (_overallMap.CurrentCombatUnit.CombatPosition != _combatPosition - 1)
+                if(_combatPosition > 1)
                 {
-                    _combatPosition = _combatPosition - 1;
-                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You back up 1 step.", System.Windows.Media.Colors.LightPink));
+                    if (_overallMap.CurrentCombatUnit.CombatPosition != _combatPosition - 1)
+                    {
+                        _combatPosition = _combatPosition - 1;
+                        _currentMovementPoints--;
+                        _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You back up 1 step.", System.Windows.Media.Colors.LightPink));
+                    }
+                    else
+                    {
+                        _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                    }
+                    
                 }
                 else
                 {
-                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                    _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
                 }
-                    
             }
             else
             {
-                _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
+                _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move anymore, movement points have been fully used.", System.Windows.Media.Colors.LightPink));
             }
+
         }
 
         private void GiveStartingWarriorEquipment()
@@ -110,7 +145,7 @@ namespace Shadows
             _baseSTR = 5;
             _baseINT = 3;
 
-            _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.ShortSword));
+            _playersEquipment.Add(new Weapon(EquipmentPrefix.Persistent, EquipmentSuffix.OfDiligence, WeaponTypes.ShortSword));
         }
 
         private void GiveStartingRogueEquipment()
@@ -429,6 +464,45 @@ namespace Shadows
             }
         }
 
+        public int CurrentMovementPoints
+        {
+            get
+            {
+                return _currentMovementPoints;
+            }
+
+            set
+            {
+                _currentMovementPoints = value;
+            }
+        }
+
+        public int CurrentActionPoints
+        {
+            get
+            {
+                return _currentActionPoints;
+            }
+
+            set
+            {
+                _currentActionPoints = value;
+            }
+        }
+
+        public ObservableCollection<CombatAction> PossibleActions
+        {
+            get
+            {
+                return _possibleActions;
+            }
+
+            set
+            {
+                _possibleActions = value;
+            }
+        }
+
         public bool MovePlayerNonCombat(int xDirection, int yDirection)
         {
             Point newLocation = new Point(_location.X + xDirection, _location.Y + yDirection);
@@ -539,12 +613,14 @@ namespace Shadows
 
         void ICombatEntity.BeginTurn()
         {
-            throw new NotImplementedException();
+            _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("Your turn begins.", System.Windows.Media.Colors.LightPink));
+            _overallMap.CurrentCombatLogic.AwardMovementPoints(isPlayer: true);
+            _overallMap.CurrentCombatLogic.AwardActionPoints(isPlayer: true);
         }
 
         void ICombatEntity.GiveEntityTheCombatLogic(CombatLogic clog)
         {
-            throw new NotImplementedException();
+           
         }
     }
 }

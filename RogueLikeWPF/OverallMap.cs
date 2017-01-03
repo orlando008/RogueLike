@@ -23,6 +23,7 @@ namespace Shadows
         private const int MAX_NUMBER_OF_ROOMS = 8;
         private bool _combatResolved = true;
         private CombatUnit _combatUnit;
+        private CombatLogic _currentCombatLogic;
 
         public delegate void RoomDiscoveredEventHandler(RoomDiscoveredEventArgs e);
         public delegate void HallDiscoveredEventHandler(HallDiscoveredEventArgs e);
@@ -84,6 +85,7 @@ namespace Shadows
 
         public void OnCombatEncountered(CombatEncounteredEventArgs e)
         {
+            CurrentCombatLogic = new CombatLogic(this);
             CombatEncountered?.Invoke(e);
         }
 
@@ -224,6 +226,19 @@ namespace Shadows
             set
             {
                 _enemyLocations = value;
+            }
+        }
+
+        public CombatLogic CurrentCombatLogic
+        {
+            get
+            {
+                return _currentCombatLogic;
+            }
+
+            set
+            {
+                _currentCombatLogic = value;
             }
         }
 

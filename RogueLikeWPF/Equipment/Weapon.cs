@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Shadows.EquipmentEnumerations;
 using static Shadows.EquipmentGenerationMethods;
@@ -66,15 +67,20 @@ namespace Shadows
 
             Name = prefix + " " + name + " " + suffix;
 
-            ImageSource = new Uri("pack://application:,,,/Images/Weapons/" + GetWeaponName(wt) + ".png");
+            ImageSource = new Uri("pack://application:,,,/Images/Weapons/" + GetBaselineWeaponName(wt) + ".png");
         }
 
         private string GetWeaponName(WeaponTypes wt)
         {
             string name = "";
             name = Enum.GetName(wt.GetType(), wt);
+            _name = Regex.Replace(name, "(\\B[A-Z])", " $1");
+            return _name;
+        }
 
-            return name;
+        private string GetBaselineWeaponName(WeaponTypes wt)
+        {
+            return Enum.GetName(wt.GetType(), wt);
         }
         
     }

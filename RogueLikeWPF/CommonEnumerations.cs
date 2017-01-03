@@ -14,5 +14,26 @@ namespace Shadows
             Rogue,
             Mage
         }
+
+        public enum CombatActionTypes
+        {
+            BasicAttackDagger,
+            BasicAttackShortSword,
+            BasicAttackLongSword,
+            BasicAttackShortBow,
+            BasicAttackLongBow,
+            BasicAttackCrossBow,
+            BasicAttackWand,
+            BasicAttackStave,
+            BasicAttackStaff,
+            SharpenSteel,
+            ArrowNock,
+            HoneKnowledge,
+            BerserkerStrike,
+            SnipersShot,
+            ArcaneWisdom,
+            ConsumeHealthPotion,
+            DefensiveStance
+        }
     }
 }

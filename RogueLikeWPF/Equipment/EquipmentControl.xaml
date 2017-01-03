@@ -78,7 +78,7 @@
             <Label Style="{StaticResource AreaLabel}">Weapon</Label>
             <Grid>
                 <Rectangle Style="{StaticResource BackingRectangle}"/>
-                <Image x:Name="imgWeapon" ToolTip="{Binding Path=TheMap.ThePlayer.EquippedWeapon.Name}" ToolTipService.ShowDuration="10000" Source="{Binding Path=TheMap.ThePlayer.EquippedWeapon.ImageSource}" Style="{StaticResource gearImage}"></Image>
+                <Image x:Name="imgWeapon" ToolTip="{Binding Path=TheMap.ThePlayer.EquippedWeapon.Name}" Source="{Binding Path=TheMap.ThePlayer.EquippedWeapon.ImageSource}" Style="{StaticResource gearImage}"></Image>
             </Grid>
         </StackPanel>
 

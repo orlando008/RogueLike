@@ -21,6 +21,29 @@
             <GradientStop Color="Black" Offset="0.811"/>
         </LinearGradientBrush>
 
+        <Style x:Key="ActionButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundDark}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="3"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundLight}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundDark}"/>
             <Setter Property="Template">
@@ -42,6 +65,16 @@
                     <Setter Property="Background" Value="{StaticResource RadialGradientBackgroundLight}"/>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CombatLabelStyle" TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
+
+        <Style x:Key="ActionButtonLabelStyle" TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="12"/>
         </Style>
 
         <Style x:Key="TinyButtonStyle" TargetType="{x:Type Button}">
