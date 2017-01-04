@@ -17,7 +17,7 @@ namespace Shadows
             _playerEntity = ovMap.ThePlayer;
             _enemyEntity = ovMap.CurrentCombatUnit;
             _ovMap = ovMap;
-
+            
             _playerEntity.GiveEntityTheCombatLogic(this);
             _enemyEntity.GiveEntityTheCombatLogic(this);
         }
@@ -239,14 +239,80 @@ namespace Shadows
             }
         }
 
-        public void ProcessCombatEntityMovement()
+        public void ProcessCombatEntityMovement(bool isPlayer, int direction)
         {
+            if(isPlayer)
+            {
+                if (_playerEntity.GetCurrentMovementPoints() > 0)
+                {
+                    if(direction == -1)
+                    {
+                        if (_playerEntity.GetCombatPosition() > 1)
+                        {
+                            if (_enemyEntity.GetCombatPosition() != _playerEntity.GetCombatPosition() - 1)
+                            {
+                                _playerEntity.MovementPointAdjustment(-1);
+                                _playerEntity.CombatPositionAdjustment(-1);
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You back up 1 step.", System.Windows.Media.Colors.LightPink));
+                            }
+                            else
+                            {
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                            }
+
+                        }
+                        else
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
+                        }
+                    }
+                    else
+                    {
+                        if (_playerEntity.GetCombatPosition() < 11)
+                        {
+                            if (_enemyEntity.GetCombatPosition() != _playerEntity.GetCombatPosition() + 1)
+                            {
+                                _playerEntity.MovementPointAdjustment(-1);
+                                _playerEntity.CombatPositionAdjustment(1);
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You advanced 1 step.", System.Windows.Media.Colors.LightPink));
+                            }
+                            else
+                            {
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
+                            }
+
+                        }
+                        else
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
+                        }
+                    }
+
+                }
+                else
+                {
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You have no movement points remaining.", System.Windows.Media.Colors.LightPink));
+                }
+            }
 
         }
 
-        public void ProcessCombatEntityAction()
+        public void ProcessCombatEntityAction(bool isPlayer, CombatAction ca)
         {
-
+            if(isPlayer)
+            {
+                if(_playerEntity.GetCurrentActionPoints() > 0)
+                {
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"You used {ca.Name}.", System.Windows.Media.Colors.LightPink));
+                    _playerEntity.ActionPointAdjustment(-1);
+                }
+                else
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You have no action points remaining.", System.Windows.Media.Colors.LightPink));
+            }
+            else
+            {
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"Enemy used {ca.Name}.", System.Windows.Media.Colors.LightPink));
+            }
         }
     }
 
@@ -258,10 +324,12 @@ namespace Shadows
         int GetCurrentSTR();
         int GetCurrentDEX();
         int GetCurrentINT();
+        int GetCombatPosition();
         void InitializeBattleValues();
         void ActionPointAdjustment(int numberOfPoints);
         void MovementPointAdjustment(int numberOfPoints);
         void BeginTurn();
         void GiveEntityTheCombatLogic(CombatLogic clog);
+        void CombatPositionAdjustment(int adjustment);
     }
 }

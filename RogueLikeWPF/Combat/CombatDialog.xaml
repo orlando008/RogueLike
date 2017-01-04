@@ -163,7 +163,7 @@
                         <ItemsControl ItemsSource="{Binding TheMap.ThePlayer.PossibleActions}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Style="{StaticResource ActionButtonStyle}">
+                                    <Button Style="{StaticResource ActionButtonStyle}" Command="{Binding ClickCommand}">
                                         <Button.Content>
                                             <TextBlock Text="{Binding Name}" TextWrapping="WrapWithOverflow" Padding="5"></TextBlock>
                                         </Button.Content>

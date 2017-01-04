@@ -105,7 +105,7 @@ namespace Shadows
 
         public void MoveCommand(int xDirection, int yDirection)
         {
-            if (_ovMap.CombatResolved == false)
+            if (_ovMap.CurrentCombatUnit != null)
             {
                 return;
             }

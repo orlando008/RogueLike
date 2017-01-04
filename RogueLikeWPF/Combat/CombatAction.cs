@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Shadows
 {
@@ -12,10 +13,12 @@ namespace Shadows
         private int _range;
         private string _fullDescription;
         private int _additionChancePercentage;
+        private OverallMap _ovMap;
 
-        public CombatAction(CommonEnumerations.CombatActionTypes name)
+        public CombatAction(CommonEnumerations.CombatActionTypes name, OverallMap ovmap)
         {
-            switch(name)
+            _ovMap = ovmap;
+            switch (name)
             {
                 case CommonEnumerations.CombatActionTypes.BasicAttackDagger:
                     Name = "Basic Attack (Dagger)";
@@ -182,6 +185,44 @@ namespace Shadows
         public override string ToString()
         {
             return Name;
+        }
+
+        private ICommand _clickCommand;
+        public ICommand ClickCommand
+        {
+            get
+            {
+                return _clickCommand ?? (_clickCommand = new CommandHandler(() => CombatActionClicked(), _canExecute));
+            }
+        }
+
+        private bool _canExecute = true;
+        public void CombatActionClicked()
+        {
+            _ovMap.CurrentCombatLogic.ProcessCombatEntityAction(true, this);
+        }
+    }
+
+    public class CommandHandler : ICommand
+    {
+        private Action _action;
+        private bool _canExecute;
+        public CommandHandler(Action action, bool canExecute)
+        {
+            _action = action;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            _action();
         }
     }
 }

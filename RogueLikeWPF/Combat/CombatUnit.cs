@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -20,7 +22,7 @@ namespace Shadows
         EtherealSpirit
     }
 
-    public class CombatUnit : ICombatEntity
+    public class CombatUnit : ICombatEntity, INotifyPropertyChanged
     {
         private int _health = 1;
         private int _experienceWorth = 0; //dungeonLevel * 2
@@ -38,6 +40,19 @@ namespace Shadows
         int _adjustedINT = 0;
         int _currentActionPoints = 0;
         int _currentMovementPoints = 0;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.
+        // The CallerMemberName attribute that is applied to the optional propertyName
+        // parameter causes the property name of the caller to be substituted as an argument.
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         public CombatUnit(OverallMap ovMap, Point dungeonCoordinate)
         {
@@ -132,6 +147,16 @@ namespace Shadows
             
         }
 
+        public int GetCombatPosition()
+        {
+            return CombatPosition;
+        }
+
+        public void CombatPositionAdjustment(int adjustment)
+        {
+            CombatPosition += adjustment;
+        }
+
         public int ExperienceWorth
         {
             get
@@ -166,6 +191,7 @@ namespace Shadows
             set
             {
                 _combatPosition = value;
+                
             }
         }
 

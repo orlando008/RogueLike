@@ -85,6 +85,7 @@ namespace Shadows
 
         public void OnCombatEncountered(CombatEncounteredEventArgs e)
         {
+            CurrentCombatUnit = e.combatUnit;
             CurrentCombatLogic = new CombatLogic(this);
             CombatEncountered?.Invoke(e);
         }
@@ -124,6 +125,10 @@ namespace Shadows
             get
             {
                 return _combatUnit;
+            }
+            set
+            {
+                _combatUnit = value;
             }
         }
 
@@ -300,7 +305,7 @@ namespace Shadows
             //    OnHallDiscovered(e);
             //}
 
-            
+            _combatUnit = null;
         }
 
         public int GetCountOfUnconnectedDoors(int level)
@@ -777,7 +782,7 @@ namespace Shadows
         public void GenerateRandomEnemyEncounter(Point dungeonCoordinate)
         {
             //_combatResolved = false;
-            _combatUnit = new CombatUnit(this, dungeonCoordinate);
+            CombatUnit tmpCombatUnit = new CombatUnit(this, dungeonCoordinate);
 
             if (!EnemyLocations.ContainsKey(ThePlayer.DungeonLevel - 1))
             {
@@ -785,13 +790,13 @@ namespace Shadows
             }
                 
 
-            EnemyLocations[ThePlayer.DungeonLevel-1].Add(_combatUnit);
+            EnemyLocations[ThePlayer.DungeonLevel-1].Add(tmpCombatUnit);
 
             CombatEncounteredEventArgs e = new CombatEncounteredEventArgs();
-            e.combatUnit = _combatUnit;
+            e.combatUnit = tmpCombatUnit;
 
             this._player.CombatPosition = 4;
-            _combatUnit.CombatPosition = 8;
+            tmpCombatUnit.CombatPosition = 8;
             //OnCombatEncountered(e);
         }
     }
