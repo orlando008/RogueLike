@@ -16,6 +16,8 @@ namespace Shadows
         private string _name;
         private bool _equipped;
         private Uri _imageSource;
+        private int _prefixValue;
+        private int _suffixValue;
 
         public virtual string Name
         {
@@ -92,6 +94,32 @@ namespace Shadows
             set
             {
                 _equipmentSuffix = value;
+            }
+        }
+
+        public int PrefixValue
+        {
+            get
+            {
+                return _prefixValue;
+            }
+
+            set
+            {
+                _prefixValue = value;
+            }
+        }
+
+        public int SuffixValue
+        {
+            get
+            {
+                return _suffixValue;
+            }
+
+            set
+            {
+                _suffixValue = value;
             }
         }
 

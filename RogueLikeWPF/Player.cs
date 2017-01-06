@@ -105,6 +105,7 @@ namespace Shadows
             CombatProperties.BaseINT = 3;
 
             _playersEquipment.Add(new Weapon(EquipmentPrefix.Persistent, EquipmentSuffix.OfDiligence, WeaponTypes.ShortSword));
+            _playersEquipment[_playersEquipment.Count - 1].Equipped = true;
         }
 
         private void GiveStartingRogueEquipment()
@@ -114,6 +115,7 @@ namespace Shadows
             CombatProperties.BaseINT = 3;
 
             _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.ShortBow));
+            _playersEquipment[_playersEquipment.Count - 1].Equipped = true;
         }
 
         private void GiveStartingMageEquipment()
@@ -123,6 +125,26 @@ namespace Shadows
             CombatProperties.BaseINT = 5;
 
             _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.Wand));
+            _playersEquipment[_playersEquipment.Count - 1].Equipped = true;
+        }
+        
+        private int GetValueOfEquippedItems(PrefixSuffixModifier psm)
+        {
+            int value = 0;
+            foreach (Equipment item in _playersEquipment.Where(x => x.Equipped))
+            {
+                if(GetBaselineModifier(item.EquipmentPrefix1) == psm)
+                {
+                    value += item.PrefixValue;
+                }
+
+                if(GetBaselineModifier(item.EquipmentSuffix1) == psm)
+                {
+                    value += item.SuffixValue;
+                }
+            }
+
+            return value;
         }
 
         public Equipment EquippedWeapon
@@ -511,9 +533,30 @@ namespace Shadows
 
         void ICombatEntity.InitializeBattleValues()
         {
-            this.CombatProperties.EquipmentAdjustedDEX = this.CombatProperties.BaseDEX;
-            this.CombatProperties.EquipmentAdjustedSTR = this.CombatProperties.BaseSTR;
-            this.CombatProperties.EquipmentAdjustedINT = this.CombatProperties.BaseINT;
+            this.CombatProperties.BattleDEX = this.CombatProperties.BaseDEX;
+            this.CombatProperties.BattleINT = this.CombatProperties.BaseSTR;
+            this.CombatProperties.BattleSTR = this.CombatProperties.BaseINT;
+
+            foreach(PrefixSuffixModifier psm in Enum.GetValues(typeof(PrefixSuffixModifier)))
+            {
+                this.CombatProperties.SetValueOfPropertyBasedOnModifier(psm, GetValueOfEquippedItems(psm));
+            }
+
+            if (_overallMap.RNG.Next(1,101) < this.CombatProperties.PercentChanceToIncreaseDEX)
+            {
+                this.CombatProperties.BattleDEX += 1;
+            }
+
+            if (_overallMap.RNG.Next(1, 101) < this.CombatProperties.PercentChanceToIncreaseSTR)
+            {
+                this.CombatProperties.BattleSTR += 1;
+            }
+
+            if (_overallMap.RNG.Next(1, 101) < this.CombatProperties.PercentChanceToIncreaseINT)
+            {
+                this.CombatProperties.BattleINT += 1;
+            }
+
             this.CombatProperties.CurrentHP = 6;
             this.CombatProperties.CurrentActionPoints = 0;
             this.CombatProperties.CurrentMovementPoints = 0;

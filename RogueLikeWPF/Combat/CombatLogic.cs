@@ -50,96 +50,90 @@ namespace Shadows
             int roll1PercentageChance;
             int roll2PercentageChance;
 
-            if(isPlayer)
+            ICombatEntity tmpCurrentEntity = (isPlayer ? _playerEntity : _enemyEntity);
+            ICombatEntity tmpOppositionEntity = (isPlayer ? _enemyEntity : _playerEntity);
+
+            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline movement point awarded.  Movement +1.", System.Windows.Media.Colors.LightPink));
+            tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints += 1;
+
+            if (tmpCurrentEntity.GetCombatProperties().BattleDEX > tmpOppositionEntity.GetCombatProperties().BattleDEX)
             {
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline movement point awarded.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                _playerEntity.GetCombatProperties().CurrentMovementPoints += 1;
-
-                if (_playerEntity.GetCombatProperties().BattleDEX > _enemyEntity.GetCombatProperties().BattleDEX)
-                {
-                    roll1PercentageChance = 75;
-                }
-                else
-                {
-                    roll1PercentageChance = 60;
-                }
-
-                if (_playerEntity.GetCombatProperties().BattleINT > _enemyEntity.GetCombatProperties().BattleINT)
-                {
-                    roll2PercentageChance = 75;
-                }
-                else
-                {
-                    roll2PercentageChance = 50;
-                }
-
-                if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
-                {
-                    //success
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                    _playerEntity.GetCombatProperties().CurrentMovementPoints += 1;
-
-                    if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
-                    {
-                        //success
-                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second movement roll @" + roll2PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                        _playerEntity.GetCombatProperties().CurrentMovementPoints += 1;
-                    }
-                    else
-                    {
-                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second movement roll @" + roll2PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
-                    }
-                }
-                else
-                {
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
-                }
-
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Movement roll phase complete.  Movement points now stand at " + _playerEntity.GetCombatProperties().CurrentMovementPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
+                roll1PercentageChance = 75;
             }
             else
             {
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline movement point awarded.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                _enemyEntity.GetCombatProperties().CurrentMovementPoints += 1;
+                roll1PercentageChance = 60;
+            }
 
-                if (_enemyEntity.GetCombatProperties().BattleDEX > _playerEntity.GetCombatProperties().BattleDEX)
-                {
-                    roll1PercentageChance = 75;
-                }
-                else
-                {
-                    roll1PercentageChance = 60;
-                }
+            if (tmpCurrentEntity.GetCombatProperties().BattleINT > tmpOppositionEntity.GetCombatProperties().BattleINT)
+            {
+                roll2PercentageChance = 60;
+            }
+            else
+            {
+                roll2PercentageChance = 50;
+            }
 
-                if (_enemyEntity.GetCombatProperties().BattleINT > _playerEntity.GetCombatProperties().BattleINT)
-                {
-                    roll2PercentageChance = 75;
-                }
-                else
-                {
-                    roll2PercentageChance = 50;
-                }
+            roll1PercentageChance += tmpCurrentEntity.GetCombatProperties().PercentIncreaseToMovementRolls;
+            roll2PercentageChance += tmpCurrentEntity.GetCombatProperties().PercentIncreaseToMovementRolls;
 
-                if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
+            if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
+            {
+                //success
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
+                tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints += 1;
+
+                if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
                 {
                     //success
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                    _enemyEntity.GetCombatProperties().CurrentMovementPoints += 1;
-
-                    if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
-                    {
-                        //success
-                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second movement roll @" + roll2PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                        _enemyEntity.GetCombatProperties().CurrentMovementPoints += 1;
-                    }
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second movement roll @" + roll2PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
+                    tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints += 1;
                 }
                 else
                 {
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
-                }
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second movement roll @" + roll2PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
 
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Movement roll phase complete.  Movement points now stand at " + _enemyEntity.GetCombatProperties().CurrentMovementPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
+                    if (tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedMovement > 0)
+                    {
+                        if (_ovMap.RNG.Next(1, 101) < tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedMovement)
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve movement roll @" + roll2PercentageChance + " % was awarded due to equipment 'granting % chance to re-roll failed movement'.", System.Windows.Media.Colors.LightPink));
+                            if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
+                            {
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve movement roll ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
+                                tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints += 1;
+                            }
+                            else
+                            {
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve movement roll ... fails.", System.Windows.Media.Colors.LightPink));
+                            }
+                        }
+                    }
+                }
             }
+            else
+            {
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
+
+                if (tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedMovement > 0)
+                {
+                    if (_ovMap.RNG.Next(1, 101) < tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedMovement)
+                    {
+                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve movement roll @" + roll1PercentageChance + " % was awarded due to equipment 'granting % chance to re-roll failed movement'.", System.Windows.Media.Colors.LightPink));
+                        if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve movement roll ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
+                            tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints += 1;
+                        }
+                        else
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve movement roll ... fails.", System.Windows.Media.Colors.LightPink));
+                        }
+                    }
+                }
+            }
+
+            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Movement roll phase complete.  Movement points now stand at " + tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
         }
 
         public void AwardActionPoints(bool isPlayer)

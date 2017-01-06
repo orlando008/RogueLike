@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static Shadows.EquipmentEnumerations;
 
 namespace Shadows
 {
@@ -39,6 +40,7 @@ namespace Shadows
         private int _percentChanceToRollExtraGold;
         private int _percentChanceToDefyDeath;
         private int _percentChanceToGainHPOnHit;
+        private int _percentChanceToGainActionOnHit;
         private int _percentChanceToIgnoreMovementPointLoss;
 
         private int _currentHP;
@@ -475,9 +477,88 @@ namespace Shadows
             }
         }
 
+        public int PercentChanceToGainActionOnHit
+        {
+            get
+            {
+                return _percentChanceToGainActionOnHit;
+            }
+
+            set
+            {
+                _percentChanceToGainActionOnHit = value;
+                NotifyPropertyChanged(nameof(PercentChanceToGainActionOnHit));
+            }
+        }
+
         public CombatProperties()
         {
 
+        }
+
+        public void SetValueOfPropertyBasedOnModifier(EquipmentEnumerations.PrefixSuffixModifier psm, int value)
+        {
+            switch (psm)
+            {
+                case PrefixSuffixModifier.None:
+                    return;
+                case PrefixSuffixModifier.ChanceToCounterDamage:
+                    PercentChanceToCounterDamage = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToDefyDeath:
+                    PercentChanceToDefyDeath = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToGainActionOnHit:
+                    PercentChanceToGainActionOnHit = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToGainHealthOnHit:
+                    PercentChanceToGainHPOnHit = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToIgnoreMovementPointLoss:
+                    PercentChanceToIgnoreMovementPointLoss = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToIncreaseBattleDEX:
+                    PercentChanceToIncreaseDEX = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToIncreaseBattleINT:
+                    PercentChanceToIncreaseINT = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToIncreaseBattleSTR:
+                    PercentChanceToIncreaseSTR = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToNegateDamage:
+                    PercentChanceToNegateDamage = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToReRollFailedAction:
+                    PercentChanceToReRollFailedAction = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToReRollFailedMovement:
+                    PercentChanceToReRollFailedMovement = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToRollExtraGold:
+                    PercentChanceToRollExtraGold = value;
+                    return;
+                case PrefixSuffixModifier.ChanceToStealStartingPosition:
+                    PercentChanceToStealStartingPosition = value;
+                    return;
+                case PrefixSuffixModifier.IncreaseToActionRolls:
+                    PercentIncreaseToActionRolls = value;
+                    return;
+                case PrefixSuffixModifier.IncreaseToBasicAttackChance:
+                    PercentIncreaseToBasicAttackExtraChance = value;
+                    return;
+                case PrefixSuffixModifier.IncreaseToMagicFind:
+                    PercentIncreaseToMagicFind = value;
+                    return;
+                case PrefixSuffixModifier.IncreaseToMovementRolls:
+                    PercentIncreaseToMovementRolls = value;
+                    return;
+                case PrefixSuffixModifier.IncreaseToRollExtraExp:
+                    PercentChanceToRollExtraExperience = value;
+                    return;
+                default:
+                    return;
+            }
         }
     }
 }
