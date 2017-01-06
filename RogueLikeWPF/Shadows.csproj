@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="Combat\CombatEnumerations.cs" />
     <Compile Include="Combat\CombatLogic.cs" />
+    <Compile Include="Combat\CombatProperties.cs" />
     <Compile Include="CommonEnumerations.cs" />
     <Compile Include="Equipment\Equipment.cs" />
     <Compile Include="Equipment\EquipmentControl.xaml.cs">

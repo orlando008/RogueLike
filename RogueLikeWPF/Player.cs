@@ -19,18 +19,10 @@ namespace Shadows
         int _playerExperience = 0;
         OverallMap _overallMap;
         int _visionRadius = 3;
-        int _health = 6;
-        int _currentActionPoints = 0;
-        int _currentMovementPoints = 0;
         int _maxHealth = 6;
         int _gold = 10;
-        int _combatPosition;
-        int _baseSTR = 0;
-        int _baseDEX = 0;
-        int _baseINT = 0;
-        int _adjustedSTR = 0;
-        int _adjustedDEX = 0;
-        int _adjustedINT = 0;
+
+        CombatProperties _combatProperties;
 
         CommonEnumerations.BaseClassTypes _baseClassType;
 
@@ -41,6 +33,7 @@ namespace Shadows
         {
             int hallway = ovMap.RNG.Next(0, ovMap.LevelHallways[0].Count - 1);
 
+            _combatProperties = new CombatProperties();
             _location = ovMap.LevelHallways[0][hallway];
             _dungeonLevel = 0;
             _playerLevel = 1;
@@ -107,27 +100,27 @@ namespace Shadows
 
         private void GiveStartingWarriorEquipment()
         {
-            _baseDEX = 4;
-            _baseSTR = 5;
-            _baseINT = 3;
+            CombatProperties.BaseDEX = 4;
+            CombatProperties.BaseSTR = 5;
+            CombatProperties.BaseINT = 3;
 
             _playersEquipment.Add(new Weapon(EquipmentPrefix.Persistent, EquipmentSuffix.OfDiligence, WeaponTypes.ShortSword));
         }
 
         private void GiveStartingRogueEquipment()
         {
-            _baseDEX = 5;
-            _baseSTR = 4;
-            _baseINT = 3;
+            CombatProperties.BaseDEX = 5;
+            CombatProperties.BaseSTR = 4;
+            CombatProperties.BaseINT = 3;
 
             _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.ShortBow));
         }
 
         private void GiveStartingMageEquipment()
         {
-            _baseDEX = 4;
-            _baseSTR = 3;
-            _baseINT = 5;
+            CombatProperties.BaseDEX = 4;
+            CombatProperties.BaseSTR = 3;
+            CombatProperties.BaseINT = 5;
 
             _playersEquipment.Add(new Weapon(EquipmentPrefix.None, EquipmentSuffix.None, WeaponTypes.Wand));
         }
@@ -265,7 +258,7 @@ namespace Shadows
         {
             get
             {
-                return _health;
+                return _combatProperties.CurrentHP;
             }
         }
 
@@ -281,7 +274,7 @@ namespace Shadows
         {
             get
             {
-                return Convert.ToDecimal(_health) / Convert.ToDecimal(_maxHealth) * 100;
+                return Convert.ToDecimal(Health) / Convert.ToDecimal(_maxHealth) * 100;
             }
             set { }
         }
@@ -331,13 +324,12 @@ namespace Shadows
         {
             get
             {
-                return _combatPosition;
+                return CombatProperties.CombatPosition;
             }
 
             set
             {
-                _combatPosition = value;
-                NotifyPropertyChanged(nameof(CombatPosition));
+                CombatProperties.CombatPosition = value;
             }
         }
 
@@ -346,7 +338,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 1);
+                return (CombatProperties.CombatPosition == 1);
             }
         }
 
@@ -354,7 +346,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 2);
+                return (CombatProperties.CombatPosition == 2);
             }
         }
 
@@ -362,7 +354,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 3);
+                return (CombatProperties.CombatPosition == 3);
             }
         }
 
@@ -370,7 +362,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 4);
+                return (CombatProperties.CombatPosition == 4);
             }
         }
 
@@ -378,7 +370,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 5);
+                return (CombatProperties.CombatPosition == 5);
             }
         }
 
@@ -386,7 +378,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 6);
+                return (CombatProperties.CombatPosition == 6);
             }
         }
 
@@ -394,7 +386,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 7);
+                return (CombatProperties.CombatPosition == 7);
             }
         }
 
@@ -402,7 +394,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 8);
+                return (CombatProperties.CombatPosition == 8);
             }
         }
 
@@ -410,7 +402,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 9);
+                return (CombatProperties.CombatPosition == 9);
             }
         }
 
@@ -419,7 +411,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 10);
+                return (CombatProperties.CombatPosition == 10);
             }
         }
 
@@ -427,35 +419,22 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 11);
+                return (CombatProperties.CombatPosition == 11);
             }
         }
 
-        public int CurrentMovementPoints
+
+        public CombatProperties CombatProperties
         {
             get
             {
-                return _currentMovementPoints;
+                return _combatProperties;
             }
 
             set
             {
-                _currentMovementPoints = value;
-                NotifyPropertyChanged(nameof(CurrentMovementPoints));
-            }
-        }
-
-        public int CurrentActionPoints
-        {
-            get
-            {
-                return _currentActionPoints;
-            }
-
-            set
-            {
-                _currentActionPoints = value;
-                NotifyPropertyChanged(nameof(CurrentActionPoints));
+                _combatProperties = value;
+                NotifyPropertyChanged(nameof(CombatProperties));
             }
         }
 
@@ -530,54 +509,14 @@ namespace Shadows
             }
         }
 
-        int ICombatEntity.GetCurrentHealthPoints()
-        {
-            return _health;
-        }
-
-        int ICombatEntity.GetCurrentActionPoints()
-        {
-            return _currentActionPoints;
-        }
-
-        int ICombatEntity.GetCurrentMovementPoints()
-        {
-            return _currentMovementPoints;
-        }
-
-        int ICombatEntity.GetCurrentSTR()
-        {
-            return _baseSTR;
-        }
-
-        int ICombatEntity.GetCurrentDEX()
-        {
-            return _baseDEX;
-        }
-
-        int ICombatEntity.GetCurrentINT()
-        {
-            return _baseINT;
-        }
-
         void ICombatEntity.InitializeBattleValues()
         {
-            _adjustedSTR = _baseSTR;
-            _adjustedDEX = _baseDEX;
-            _adjustedINT = _baseINT;
-            _health = 6;
-            _currentActionPoints = 0;
-            _currentMovementPoints = 0;
-        }
-
-        void ICombatEntity.MovementPointAdjustment(int numberOfPoints)
-        {
-            _currentMovementPoints += numberOfPoints;
-        }
-
-        void ICombatEntity.ActionPointAdjustment(int numberOfPoints)
-        {
-            CurrentActionPoints += numberOfPoints;
+            this.CombatProperties.EquipmentAdjustedDEX = this.CombatProperties.BaseDEX;
+            this.CombatProperties.EquipmentAdjustedSTR = this.CombatProperties.BaseSTR;
+            this.CombatProperties.EquipmentAdjustedINT = this.CombatProperties.BaseINT;
+            this.CombatProperties.CurrentHP = 6;
+            this.CombatProperties.CurrentActionPoints = 0;
+            this.CombatProperties.CurrentMovementPoints = 0;
         }
 
         void ICombatEntity.BeginTurn()
@@ -592,14 +531,9 @@ namespace Shadows
            
         }
 
-        public int GetCombatPosition()
+        CombatProperties ICombatEntity.GetCombatProperties()
         {
-            return CombatPosition;
-        }
-
-        public void CombatPositionAdjustment(int adjustment)
-        {
-            CombatPosition += adjustment;
+            return CombatProperties;
         }
     }
 }

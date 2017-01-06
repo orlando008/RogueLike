@@ -404,8 +404,13 @@ namespace Shadows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ToolTipService.ShowDurationProperty.OverrideMetadata(
-                typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
+            try
+            {
+                ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

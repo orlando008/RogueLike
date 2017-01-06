@@ -53,6 +53,7 @@ namespace Shadows
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        CombatProperties _combatProperties;
 
         public CombatUnit(OverallMap ovMap, Point dungeonCoordinate)
         {
@@ -90,49 +91,9 @@ namespace Shadows
             return sb.ToString();
         }
 
-        int ICombatEntity.GetCurrentHealthPoints()
-        {
-            return _health;
-        }
-
-        int ICombatEntity.GetCurrentActionPoints()
-        {
-            return _currentActionPoints;   
-        }
-
-        int ICombatEntity.GetCurrentMovementPoints()
-        {
-            return _currentMovementPoints;
-        }
-
-        int ICombatEntity.GetCurrentSTR()
-        {
-            return _adjustedSTR;
-        }
-
-        int ICombatEntity.GetCurrentDEX()
-        {
-            return _adjustedDEX;
-        }
-
-        int ICombatEntity.GetCurrentINT()
-        {
-            return _adjustedINT;
-        }
-
         void ICombatEntity.InitializeBattleValues()
         {
-            
-        }
-
-        void ICombatEntity.ActionPointAdjustment(int numberOfPoints)
-        {
-            
-        }
-
-        void ICombatEntity.MovementPointAdjustment(int numberOfPoints)
-        {
-            
+            _combatProperties = new CombatProperties();
         }
 
         void ICombatEntity.BeginTurn()
@@ -156,6 +117,12 @@ namespace Shadows
         {
             CombatPosition += adjustment;
         }
+
+        public CombatProperties GetCombatProperties()
+        {
+            return _combatProperties;
+        }
+
 
         public int ExperienceWorth
         {

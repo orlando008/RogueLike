@@ -150,12 +150,12 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource CombatLabelStyle}">Movement Points Remaining:</Label>
-                        <Label Style="{StaticResource CombatLabelStyle}" Content="{Binding TheMap.ThePlayer.CurrentMovementPoints}"></Label>
+                        <Label Style="{StaticResource CombatLabelStyle}" Content="{Binding TheMap.ThePlayer.CombatProperties.CurrentMovementPoints}"></Label>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource CombatLabelStyle}">Action Points Remaining:</Label>
-                        <Label Style="{StaticResource CombatLabelStyle}" Content="{Binding TheMap.ThePlayer.CurrentActionPoints}"></Label>
+                        <Label Style="{StaticResource CombatLabelStyle}" Content="{Binding TheMap.ThePlayer.CombatProperties.CurrentActionPoints}"></Label>
                     </StackPanel>
 
                     <DockPanel LastChildFill="True">

@@ -28,11 +28,11 @@ namespace Shadows
             _enemyEntity.InitializeBattleValues();
 
             //Figure out who goes first
-            if(_playerEntity.GetCurrentDEX() > _enemyEntity.GetCurrentDEX())
+            if(_playerEntity.GetCombatProperties().BattleDEX > _enemyEntity.GetCombatProperties().BattleDEX)
             {
                 _playerEntity.BeginTurn();
             }
-            else if(_playerEntity.GetCurrentDEX() < _enemyEntity.GetCurrentDEX())
+            else if(_playerEntity.GetCombatProperties().BattleDEX < _enemyEntity.GetCombatProperties().BattleDEX)
             {
                 _enemyEntity.BeginTurn();
             }
@@ -53,9 +53,9 @@ namespace Shadows
             if(isPlayer)
             {
                 _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline movement point awarded.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                _playerEntity.MovementPointAdjustment(1);
+                _playerEntity.GetCombatProperties().CurrentMovementPoints += 1;
 
-                if (_playerEntity.GetCurrentDEX() > _enemyEntity.GetCurrentDEX())
+                if (_playerEntity.GetCombatProperties().BattleDEX > _enemyEntity.GetCombatProperties().BattleDEX)
                 {
                     roll1PercentageChance = 75;
                 }
@@ -64,7 +64,7 @@ namespace Shadows
                     roll1PercentageChance = 60;
                 }
 
-                if (_playerEntity.GetCurrentINT() > _enemyEntity.GetCurrentINT())
+                if (_playerEntity.GetCombatProperties().BattleINT > _enemyEntity.GetCombatProperties().BattleINT)
                 {
                     roll2PercentageChance = 75;
                 }
@@ -77,13 +77,13 @@ namespace Shadows
                 {
                     //success
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                    _playerEntity.MovementPointAdjustment(1);
+                    _playerEntity.GetCombatProperties().CurrentMovementPoints += 1;
 
                     if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
                     {
                         //success
                         _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second movement roll @" + roll2PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                        _playerEntity.MovementPointAdjustment(1);
+                        _playerEntity.GetCombatProperties().CurrentMovementPoints += 1;
                     }
                     else
                     {
@@ -95,14 +95,14 @@ namespace Shadows
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
                 }
 
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Movement roll phase complete.  Movement points now stand at " + _playerEntity.GetCurrentMovementPoints().ToString() + ".", System.Windows.Media.Colors.LightPink));
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Movement roll phase complete.  Movement points now stand at " + _playerEntity.GetCombatProperties().CurrentMovementPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
             }
             else
             {
                 _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline movement point awarded.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                _enemyEntity.MovementPointAdjustment(1);
+                _enemyEntity.GetCombatProperties().CurrentMovementPoints += 1;
 
-                if (_enemyEntity.GetCurrentDEX() > _playerEntity.GetCurrentDEX())
+                if (_enemyEntity.GetCombatProperties().BattleDEX > _playerEntity.GetCombatProperties().BattleDEX)
                 {
                     roll1PercentageChance = 75;
                 }
@@ -111,7 +111,7 @@ namespace Shadows
                     roll1PercentageChance = 60;
                 }
 
-                if (_enemyEntity.GetCurrentINT() > _playerEntity.GetCurrentINT())
+                if (_enemyEntity.GetCombatProperties().BattleINT > _playerEntity.GetCombatProperties().BattleINT)
                 {
                     roll2PercentageChance = 75;
                 }
@@ -124,13 +124,13 @@ namespace Shadows
                 {
                     //success
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                    _enemyEntity.MovementPointAdjustment(1);
+                    _enemyEntity.GetCombatProperties().CurrentMovementPoints += 1;
 
                     if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
                     {
                         //success
                         _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second movement roll @" + roll2PercentageChance + "% ... succeeds.  Movement +1.", System.Windows.Media.Colors.LightPink));
-                        _enemyEntity.MovementPointAdjustment(1);
+                        _enemyEntity.GetCombatProperties().CurrentMovementPoints += 1;
                     }
                 }
                 else
@@ -138,7 +138,7 @@ namespace Shadows
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First movement roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
                 }
 
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Movement roll phase complete.  Movement points now stand at " + _enemyEntity.GetCurrentMovementPoints().ToString() + ".", System.Windows.Media.Colors.LightPink));
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Movement roll phase complete.  Movement points now stand at " + _enemyEntity.GetCombatProperties().CurrentMovementPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
             }
         }
 
@@ -150,9 +150,9 @@ namespace Shadows
             if (isPlayer)
             {
                 _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline action point awarded.  Action +1.", System.Windows.Media.Colors.LightPink));
-                _playerEntity.ActionPointAdjustment(1);
+                _playerEntity.GetCombatProperties().CurrentActionPoints += 1;
 
-                if (_playerEntity.GetCurrentSTR() > _enemyEntity.GetCurrentSTR())
+                if (_playerEntity.GetCombatProperties().BattleSTR > _enemyEntity.GetCombatProperties().BattleSTR)
                 {
                     roll1PercentageChance = 60;
                 }
@@ -161,7 +161,7 @@ namespace Shadows
                     roll1PercentageChance = 50;
                 }
 
-                if (_playerEntity.GetCurrentINT() > _enemyEntity.GetCurrentINT())
+                if (_playerEntity.GetCombatProperties().BattleINT > _enemyEntity.GetCombatProperties().BattleINT)
                 {
                     roll2PercentageChance = 50;
                 }
@@ -174,13 +174,13 @@ namespace Shadows
                 {
                     //success
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                    _playerEntity.ActionPointAdjustment(1);
+                    _playerEntity.GetCombatProperties().CurrentActionPoints += 1;
 
                     if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
                     {
                         //success
                         _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second action roll @" + roll2PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                        _playerEntity.ActionPointAdjustment(1);
+                        _playerEntity.GetCombatProperties().CurrentActionPoints += 1;
                     }
                     else
                     {
@@ -192,14 +192,14 @@ namespace Shadows
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
                 }
 
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Action roll phase complete.  Action points now stand at " + _playerEntity.GetCurrentMovementPoints().ToString() + ".", System.Windows.Media.Colors.LightPink));
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Action roll phase complete.  Action points now stand at " + _playerEntity.GetCombatProperties().CurrentActionPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
             }
             else
             {
                 _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline action point awarded.  Action +1.", System.Windows.Media.Colors.LightPink));
-                _enemyEntity.ActionPointAdjustment(1);
+                _enemyEntity.GetCombatProperties().CurrentActionPoints += 1;
 
-                if (_enemyEntity.GetCurrentSTR() > _playerEntity.GetCurrentSTR())
+                if (_enemyEntity.GetCombatProperties().BattleSTR > _playerEntity.GetCombatProperties().BattleSTR)
                 {
                     roll1PercentageChance = 60;
                 }
@@ -208,7 +208,7 @@ namespace Shadows
                     roll1PercentageChance = 50;
                 }
 
-                if (_enemyEntity.GetCurrentINT() > _playerEntity.GetCurrentINT())
+                if (_enemyEntity.GetCombatProperties().BattleINT > _playerEntity.GetCombatProperties().BattleINT)
                 {
                     roll2PercentageChance = 50;
                 }
@@ -221,13 +221,13 @@ namespace Shadows
                 {
                     //success
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                    _enemyEntity.ActionPointAdjustment(1);
+                    _enemyEntity.GetCombatProperties().CurrentActionPoints += 1;
 
                     if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
                     {
                         //success
                         _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second action roll @" + roll2PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                        _enemyEntity.ActionPointAdjustment(1);
+                        _enemyEntity.GetCombatProperties().CurrentActionPoints += 1;
                     }
                 }
                 else
@@ -235,7 +235,7 @@ namespace Shadows
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
                 }
 
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Action roll phase complete.  Action points now stand at " + _enemyEntity.GetCurrentMovementPoints().ToString() + ".", System.Windows.Media.Colors.LightPink));
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Action roll phase complete.  Action points now stand at " + _enemyEntity.GetCombatProperties().CurrentActionPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
             }
         }
 
@@ -243,16 +243,16 @@ namespace Shadows
         {
             if(isPlayer)
             {
-                if (_playerEntity.GetCurrentMovementPoints() > 0)
+                if (_playerEntity.GetCombatProperties().CurrentMovementPoints > 0)
                 {
                     if(direction == -1)
                     {
-                        if (_playerEntity.GetCombatPosition() > 1)
+                        if (_playerEntity.GetCombatProperties().CombatPosition > 1)
                         {
-                            if (_enemyEntity.GetCombatPosition() != _playerEntity.GetCombatPosition() - 1)
+                            if (_enemyEntity.GetCombatProperties().CombatPosition != _playerEntity.GetCombatProperties().CombatPosition - 1)
                             {
-                                _playerEntity.MovementPointAdjustment(-1);
-                                _playerEntity.CombatPositionAdjustment(-1);
+                                _playerEntity.GetCombatProperties().CurrentMovementPoints -=1;
+                                _playerEntity.GetCombatProperties().CombatPosition -=1;
                                 _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You back up 1 step.", System.Windows.Media.Colors.LightPink));
                             }
                             else
@@ -268,12 +268,12 @@ namespace Shadows
                     }
                     else
                     {
-                        if (_playerEntity.GetCombatPosition() < 11)
+                        if (_playerEntity.GetCombatProperties().CombatPosition < 11)
                         {
-                            if (_enemyEntity.GetCombatPosition() != _playerEntity.GetCombatPosition() + 1)
+                            if (_enemyEntity.GetCombatProperties().CombatPosition != _playerEntity.GetCombatProperties().CombatPosition + 1)
                             {
-                                _playerEntity.MovementPointAdjustment(-1);
-                                _playerEntity.CombatPositionAdjustment(1);
+                                _playerEntity.GetCombatProperties().CurrentMovementPoints -= 1;
+                                _playerEntity.GetCombatProperties().CombatPosition += 1;
                                 _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You advanced 1 step.", System.Windows.Media.Colors.LightPink));
                             }
                             else
@@ -301,10 +301,10 @@ namespace Shadows
         {
             if(isPlayer)
             {
-                if(_playerEntity.GetCurrentActionPoints() > 0)
+                if(_playerEntity.GetCombatProperties().CurrentActionPoints > 0)
                 {
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"You used {ca.Name}.", System.Windows.Media.Colors.LightPink));
-                    _playerEntity.ActionPointAdjustment(-1);
+                    _playerEntity.GetCombatProperties().CurrentActionPoints -=1;
                 }
                 else
                     _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You have no action points remaining.", System.Windows.Media.Colors.LightPink));
@@ -318,18 +318,9 @@ namespace Shadows
 
     public interface ICombatEntity
     {
-        int GetCurrentHealthPoints();
-        int GetCurrentActionPoints();
-        int GetCurrentMovementPoints();
-        int GetCurrentSTR();
-        int GetCurrentDEX();
-        int GetCurrentINT();
-        int GetCombatPosition();
         void InitializeBattleValues();
-        void ActionPointAdjustment(int numberOfPoints);
-        void MovementPointAdjustment(int numberOfPoints);
         void BeginTurn();
         void GiveEntityTheCombatLogic(CombatLogic clog);
-        void CombatPositionAdjustment(int adjustment);
+        CombatProperties GetCombatProperties();
     }
 }
