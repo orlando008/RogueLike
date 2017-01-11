@@ -140,97 +140,90 @@ namespace Shadows
         {
             int roll1PercentageChance;
             int roll2PercentageChance;
+            ICombatEntity tmpCurrentEntity = (isPlayer ? _playerEntity : _enemyEntity);
+            ICombatEntity tmpOppositionEntity = (isPlayer ? _enemyEntity : _playerEntity);
 
-            if (isPlayer)
+            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline action point awarded.  action +1.", System.Windows.Media.Colors.LightPink));
+            tmpCurrentEntity.GetCombatProperties().CurrentActionPoints += 1;
+
+            if (tmpCurrentEntity.GetCombatProperties().BattleSTR > tmpOppositionEntity.GetCombatProperties().BattleSTR)
             {
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline action point awarded.  Action +1.", System.Windows.Media.Colors.LightPink));
-                _playerEntity.GetCombatProperties().CurrentActionPoints += 1;
-
-                if (_playerEntity.GetCombatProperties().BattleSTR > _enemyEntity.GetCombatProperties().BattleSTR)
-                {
-                    roll1PercentageChance = 60;
-                }
-                else
-                {
-                    roll1PercentageChance = 50;
-                }
-
-                if (_playerEntity.GetCombatProperties().BattleINT > _enemyEntity.GetCombatProperties().BattleINT)
-                {
-                    roll2PercentageChance = 50;
-                }
-                else
-                {
-                    roll2PercentageChance = 25;
-                }
-
-                if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
-                {
-                    //success
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                    _playerEntity.GetCombatProperties().CurrentActionPoints += 1;
-
-                    if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
-                    {
-                        //success
-                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second action roll @" + roll2PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                        _playerEntity.GetCombatProperties().CurrentActionPoints += 1;
-                    }
-                    else
-                    {
-                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second action roll @" + roll2PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
-                    }
-                }
-                else
-                {
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
-                }
-
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Action roll phase complete.  Action points now stand at " + _playerEntity.GetCombatProperties().CurrentActionPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
+                roll1PercentageChance = 60;
             }
             else
             {
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Baseline action point awarded.  Action +1.", System.Windows.Media.Colors.LightPink));
-                _enemyEntity.GetCombatProperties().CurrentActionPoints += 1;
+                roll1PercentageChance = 50;
+            }
 
-                if (_enemyEntity.GetCombatProperties().BattleSTR > _playerEntity.GetCombatProperties().BattleSTR)
-                {
-                    roll1PercentageChance = 60;
-                }
-                else
-                {
-                    roll1PercentageChance = 50;
-                }
+            if (tmpCurrentEntity.GetCombatProperties().BattleINT > tmpOppositionEntity.GetCombatProperties().BattleINT)
+            {
+                roll2PercentageChance = 60;
+            }
+            else
+            {
+                roll2PercentageChance = 50;
+            }
 
-                if (_enemyEntity.GetCombatProperties().BattleINT > _playerEntity.GetCombatProperties().BattleINT)
-                {
-                    roll2PercentageChance = 50;
-                }
-                else
-                {
-                    roll2PercentageChance = 25;
-                }
+            roll1PercentageChance += tmpCurrentEntity.GetCombatProperties().PercentIncreaseToActionRolls;
+            roll2PercentageChance += tmpCurrentEntity.GetCombatProperties().PercentIncreaseToActionRolls;
 
-                if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
+            if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
+            {
+                //success
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + "% ... succeeds.  action +1.", System.Windows.Media.Colors.LightPink));
+                tmpCurrentEntity.GetCombatProperties().CurrentActionPoints += 1;
+
+                if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
                 {
                     //success
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                    _enemyEntity.GetCombatProperties().CurrentActionPoints += 1;
-
-                    if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
-                    {
-                        //success
-                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second action roll @" + roll2PercentageChance + "% ... succeeds.  Action +1.", System.Windows.Media.Colors.LightPink));
-                        _enemyEntity.GetCombatProperties().CurrentActionPoints += 1;
-                    }
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second action roll @" + roll2PercentageChance + "% ... succeeds.  action +1.", System.Windows.Media.Colors.LightPink));
+                    tmpCurrentEntity.GetCombatProperties().CurrentActionPoints += 1;
                 }
                 else
                 {
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
-                }
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Second action roll @" + roll2PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
 
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Action roll phase complete.  Action points now stand at " + _enemyEntity.GetCombatProperties().CurrentActionPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
+                    if (tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedAction > 0)
+                    {
+                        if (_ovMap.RNG.Next(1, 101) < tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedAction)
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve action roll @" + roll2PercentageChance + " % was awarded due to equipment 'granting % chance to re-roll failed action'.", System.Windows.Media.Colors.LightPink));
+                            if (_ovMap.RNG.Next(1, 101) < roll2PercentageChance)
+                            {
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve action roll ... succeeds.  action +1.", System.Windows.Media.Colors.LightPink));
+                                tmpCurrentEntity.GetCombatProperties().CurrentActionPoints += 1;
+                            }
+                            else
+                            {
+                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve action roll ... fails.", System.Windows.Media.Colors.LightPink));
+                            }
+                        }
+                    }
+                }
             }
+            else
+            {
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("First action roll @" + roll1PercentageChance + " % ... fails.", System.Windows.Media.Colors.LightPink));
+
+                if (tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedAction > 0)
+                {
+                    if (_ovMap.RNG.Next(1, 101) < tmpCurrentEntity.GetCombatProperties().PercentChanceToReRollFailedAction)
+                    {
+                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve action roll @" + roll1PercentageChance + " % was awarded due to equipment 'granting % chance to re-roll failed action'.", System.Windows.Media.Colors.LightPink));
+                        if (_ovMap.RNG.Next(1, 101) < roll1PercentageChance)
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve action roll ... succeeds.  action +1.", System.Windows.Media.Colors.LightPink));
+                            tmpCurrentEntity.GetCombatProperties().CurrentActionPoints += 1;
+                        }
+                        else
+                        {
+                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Reprieve action roll ... fails.", System.Windows.Media.Colors.LightPink));
+                        }
+                    }
+                }
+            }
+
+            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Action roll phase complete.  action points now stand at " + tmpCurrentEntity.GetCombatProperties().CurrentActionPoints.ToString() + ".", System.Windows.Media.Colors.LightPink));
         }
 
         public void ProcessCombatEntityMovement(bool isPlayer, int direction)
@@ -293,19 +286,23 @@ namespace Shadows
 
         public void ProcessCombatEntityAction(bool isPlayer, CombatAction ca)
         {
-            if(isPlayer)
+            ICombatEntity tmpCurrentEntity = (isPlayer ? _playerEntity : _enemyEntity);
+            ICombatEntity tmpOppositionEntity = (isPlayer ? _enemyEntity : _playerEntity);
+
+            if (tmpCurrentEntity.GetCombatProperties().CurrentActionPoints > 0)
             {
-                if(_playerEntity.GetCombatProperties().CurrentActionPoints > 0)
+                if (ca.Range > 0 && Math.Abs(tmpCurrentEntity.GetCombatProperties().CombatPosition - tmpOppositionEntity.GetCombatProperties().CombatPosition) > ca.Range)
                 {
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"You used {ca.Name}.", System.Windows.Media.Colors.LightPink));
-                    _playerEntity.GetCombatProperties().CurrentActionPoints -=1;
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"You must be within range {ca.Range} to use this action.", System.Windows.Media.Colors.LightPink));
+                    return;
                 }
-                else
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You have no action points remaining.", System.Windows.Media.Colors.LightPink));
+
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"You used {ca.Name}.", System.Windows.Media.Colors.LightPink));
+                tmpCurrentEntity.GetCombatProperties().CurrentActionPoints -= 1;
             }
             else
             {
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"Enemy used {ca.Name}.", System.Windows.Media.Colors.LightPink));
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You have no action points remaining.", System.Windows.Media.Colors.LightPink));
             }
         }
     }

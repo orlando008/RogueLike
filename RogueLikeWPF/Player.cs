@@ -104,8 +104,10 @@ namespace Shadows
             CombatProperties.BaseSTR = 5;
             CombatProperties.BaseINT = 3;
 
-            _playersEquipment.Add(new Weapon(EquipmentPrefix.Persistent, EquipmentSuffix.OfDiligence, WeaponTypes.ShortSword));
+            _playersEquipment.Add(new Weapon(EquipmentPrefix.Successful, EquipmentSuffix.OfPersistence, WeaponTypes.ShortSword));
             _playersEquipment[_playersEquipment.Count - 1].Equipped = true;
+            _playersEquipment[_playersEquipment.Count - 1].PrefixValue = 80;
+            _playersEquipment[_playersEquipment.Count - 1].SuffixValue = 80;
         }
 
         private void GiveStartingRogueEquipment()
