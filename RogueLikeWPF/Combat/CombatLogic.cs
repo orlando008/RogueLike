@@ -228,60 +228,35 @@ namespace Shadows
 
         public void ProcessCombatEntityMovement(bool isPlayer, int direction)
         {
-            if(isPlayer)
+            ICombatEntity tmpCurrentEntity = (isPlayer ? _playerEntity : _enemyEntity);
+            ICombatEntity tmpOppositionEntity = (isPlayer ? _enemyEntity : _playerEntity);
+
+            if (tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints > 0)
             {
-                if (_playerEntity.GetCombatProperties().CurrentMovementPoints > 0)
+                if (tmpCurrentEntity.GetCombatProperties().CombatPosition + direction == tmpOppositionEntity.GetCombatProperties().CombatPosition)
                 {
-                    if(direction == -1)
-                    {
-                        if (_playerEntity.GetCombatProperties().CombatPosition > 1)
-                        {
-                            if (_enemyEntity.GetCombatProperties().CombatPosition != _playerEntity.GetCombatProperties().CombatPosition - 1)
-                            {
-                                _playerEntity.GetCombatProperties().CurrentMovementPoints -=1;
-                                _playerEntity.GetCombatProperties().CombatPosition -=1;
-                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You back up 1 step.", System.Windows.Media.Colors.LightPink));
-                            }
-                            else
-                            {
-                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
-                            }
-
-                        }
-                        else
-                        {
-                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
-                        }
-                    }
-                    else
-                    {
-                        if (_playerEntity.GetCombatProperties().CombatPosition < 11)
-                        {
-                            if (_enemyEntity.GetCombatProperties().CombatPosition != _playerEntity.GetCombatProperties().CombatPosition + 1)
-                            {
-                                _playerEntity.GetCombatProperties().CurrentMovementPoints -= 1;
-                                _playerEntity.GetCombatProperties().CombatPosition += 1;
-                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You advanced 1 step.", System.Windows.Media.Colors.LightPink));
-                            }
-                            else
-                            {
-                                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, the enemy is taking up the area.", System.Windows.Media.Colors.LightPink));
-                            }
-
-                        }
-                        else
-                        {
-                            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You cannot move there, a hard wall prevents you.", System.Windows.Media.Colors.LightPink));
-                        }
-                    }
-
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Cannot move there, a unit is taking up the area.", System.Windows.Media.Colors.LightPink));
                 }
                 else
                 {
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You have no movement points remaining.", System.Windows.Media.Colors.LightPink));
+                    if ((tmpCurrentEntity.GetCombatProperties().CombatPosition + direction <= 0) || (tmpCurrentEntity.GetCombatProperties().CombatPosition + direction > 11))
+                    {
+                        _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Cannot move there.", System.Windows.Media.Colors.LightPink));
+                    }
+                    else
+                    {
+                        tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints -= 1;
+                        tmpCurrentEntity.GetCombatProperties().CombatPosition += direction;
+                    }
                 }
             }
-
+            else
+            {
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("No movement points remaining.", System.Windows.Media.Colors.LightPink));
+                return;
+            }
+     
+            EndTurnIfEntityOutOfThingsToDo(isPlayer);
         }
 
         public void ProcessCombatEntityAction(bool isPlayer, CombatAction ca)
@@ -289,21 +264,51 @@ namespace Shadows
             ICombatEntity tmpCurrentEntity = (isPlayer ? _playerEntity : _enemyEntity);
             ICombatEntity tmpOppositionEntity = (isPlayer ? _enemyEntity : _playerEntity);
 
+            string pronoun = (isPlayer ? "You" : "Enemy");
+
             if (tmpCurrentEntity.GetCombatProperties().CurrentActionPoints > 0)
             {
                 if (ca.Range > 0 && Math.Abs(tmpCurrentEntity.GetCombatProperties().CombatPosition - tmpOppositionEntity.GetCombatProperties().CombatPosition) > ca.Range)
                 {
-                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"You must be within range {ca.Range} to use this action.", System.Windows.Media.Colors.LightPink));
+                    _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"Must be within range {ca.Range} to use this action.", System.Windows.Media.Colors.LightPink));
                     return;
                 }
 
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"You used {ca.Name}.", System.Windows.Media.Colors.LightPink));
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"{pronoun} used {ca.Name}.", System.Windows.Media.Colors.LightPink));
                 tmpCurrentEntity.GetCombatProperties().CurrentActionPoints -= 1;
             }
             else
             {
-                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("You have no action points remaining.", System.Windows.Media.Colors.LightPink));
+                _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("No action points remaining.", System.Windows.Media.Colors.LightPink));
+                return;
             }
+
+            EndTurnIfEntityOutOfThingsToDo(isPlayer);
+        }
+
+        public void EndTurnIfEntityOutOfThingsToDo(bool isPlayer)
+        {
+            ICombatEntity tmpCurrentEntity = (isPlayer ? _playerEntity : _enemyEntity);
+
+            if (tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints == 0 &&
+                tmpCurrentEntity.GetCombatProperties().CurrentActionPoints == 0)
+            {
+                EndTurn(isPlayer);
+            }
+        }
+
+        public void EndTurn(bool isPlayer)
+        {
+            string pronoun = (isPlayer ? "Your" : "Enemy");
+
+            ICombatEntity tmpCurrentEntity = (isPlayer ? _playerEntity : _enemyEntity);
+            tmpCurrentEntity.GetCombatProperties().CurrentMovementPoints = 0;
+            tmpCurrentEntity.GetCombatProperties().CurrentActionPoints = 0;
+
+            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"***{pronoun} turn ends***", System.Windows.Media.Colors.LightPink));
+
+            ICombatEntity tmpOppositionEntity = (isPlayer ? _enemyEntity : _playerEntity);
+            tmpOppositionEntity.BeginTurn();
         }
     }
 

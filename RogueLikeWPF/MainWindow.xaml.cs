@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -69,6 +70,7 @@ namespace Shadows
                 this.Dispatcher.Invoke((Action)(() => _program_StoryMessage(e)));
             }
 
+            System.Threading.Thread.Sleep(1000);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -121,6 +123,7 @@ namespace Shadows
             _program._ovMap.RoomDiscovered += _ovMap_RoomDiscovered;
             _program._ovMap.HallDiscovered += _ovMap_HallDiscovered;
             _program._ovMap.CombatEncountered += _ovMap_CombatEncountered;
+
             _program._ovMap.NothingEncountered += _ovMap_NothingEncountered;
             _program._ovMap.StoryMessage += _program_StoryMessage;
             NotifyPropertyChanged("");

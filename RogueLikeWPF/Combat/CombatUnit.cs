@@ -29,7 +29,7 @@ namespace Shadows
         private int _goldWorth = 0; //dungeonLevel * 1.5
         private EnemyForm _enemyForm = EnemyForm.Goblin;
         private int _dungeonLevel = 1;
-        int _combatPosition;
+
         private OverallMap _ovMap;
         private Point _dungeonCoordinate;
         int _baseSTR = 0;
@@ -94,13 +94,60 @@ namespace Shadows
         void ICombatEntity.InitializeBattleValues()
         {
             _combatProperties = new CombatProperties();
+            _combatProperties.CombatPosition = 8;
         }
 
         void ICombatEntity.BeginTurn()
         {
-            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs("Enemy turn begins.", System.Windows.Media.Colors.LightPink));
+            _ovMap.OnStoryMessage(new Program.StoryMessageEventArgs($"***{this.GetEnemyFormName()} turn begins***", System.Windows.Media.Colors.LightPink));
             _ovMap.CurrentCombatLogic.AwardMovementPoints(isPlayer: false);
             _ovMap.CurrentCombatLogic.AwardActionPoints(isPlayer: false);
+
+            //Try to get in range.
+            while(CombatProperties.CurrentMovementPoints > 0)
+            {
+                if (Math.Abs(CombatProperties.CombatPosition - _ovMap.ThePlayer.CombatPosition) == 1)
+                    break;
+
+                _ovMap.CurrentCombatLogic.ProcessCombatEntityMovement(isPlayer: false, direction:-1);
+                NotifyPropertyChanged("");
+            }
+
+            //If in range, attack as many times as possible.
+            while(CombatProperties.CurrentActionPoints > 0)
+            {
+                if (Math.Abs(CombatProperties.CombatPosition - _ovMap.ThePlayer.CombatPosition) == 1)
+                {
+                    _ovMap.CurrentCombatLogic.ProcessCombatEntityAction(isPlayer: false, ca: new CombatAction(CommonEnumerations.CombatActionTypes.BasicAttackDagger, _ovMap));
+                }
+                else
+                {
+                    break;
+                }
+
+                NotifyPropertyChanged("");
+            }
+
+            //Any remainder movement points can be used to move back
+            while (CombatProperties.CurrentMovementPoints > 0)
+            {
+                if (CombatProperties.CombatPosition == 11)
+                    break;
+
+                _ovMap.CurrentCombatLogic.ProcessCombatEntityMovement(isPlayer: false, direction: 1);
+
+                NotifyPropertyChanged("");
+            }
+
+            //Any remainder action points can be used to defend
+            while (CombatProperties.CurrentActionPoints > 0)
+            {
+                _ovMap.CurrentCombatLogic.ProcessCombatEntityAction(isPlayer: false, ca: new CombatAction(CommonEnumerations.CombatActionTypes.DefensiveStance, _ovMap));
+                NotifyPropertyChanged("");
+            }
+
+            if(CombatProperties.CurrentActionPoints > 0 || CombatProperties.CurrentMovementPoints > 0)
+                _ovMap.CurrentCombatLogic.EndTurn(isPlayer: false);
         }
 
         void ICombatEntity.GiveEntityTheCombatLogic(CombatLogic clog)
@@ -148,17 +195,35 @@ namespace Shadows
             }
         }
 
-        public int CombatPosition
+        public CombatProperties CombatProperties
         {
             get
             {
-                return _combatPosition;
+                return _combatProperties;
             }
 
             set
             {
-                _combatPosition = value;
-                
+                _combatProperties = value;
+                NotifyPropertyChanged(nameof(CombatProperties));
+            }
+        }
+
+        public int CombatPosition
+        {
+            get
+            {
+                if (CombatProperties != null)
+                    return CombatProperties.CombatPosition;
+                else
+                    return 0;
+            }
+
+            set
+            {
+                if (CombatProperties != null)
+                    CombatProperties.CombatPosition = value;
+                NotifyPropertyChanged(nameof(CombatPosition));
             }
         }
 
@@ -179,7 +244,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 1);
+                return (CombatPosition == 1);
             }
         }
 
@@ -187,7 +252,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 2);
+                return (CombatPosition == 2);
             }
         }
 
@@ -195,7 +260,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 3);
+                return (CombatPosition == 3);
             }
         }
 
@@ -203,7 +268,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 4);
+                return (CombatPosition == 4);
             }
         }
 
@@ -211,7 +276,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 5);
+                return (CombatPosition == 5);
             }
         }
 
@@ -219,7 +284,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 6);
+                return (CombatPosition == 6);
             }
         }
 
@@ -227,7 +292,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 7);
+                return (CombatPosition == 7);
             }
         }
 
@@ -235,7 +300,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 8);
+                return (CombatPosition == 8);
             }
         }
 
@@ -243,7 +308,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 9);
+                return (CombatPosition == 9);
             }
         }
 
@@ -252,7 +317,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 10);
+                return (CombatPosition == 10);
             }
         }
 
@@ -260,7 +325,7 @@ namespace Shadows
         {
             get
             {
-                return (_combatPosition == 11);
+                return (CombatPosition == 11);
             }
         }
     }

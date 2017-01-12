@@ -566,7 +566,7 @@ namespace Shadows
 
         void ICombatEntity.BeginTurn()
         {
-            _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("Your turn begins.", System.Windows.Media.Colors.LightPink));
+            _overallMap.OnStoryMessage(new Program.StoryMessageEventArgs("***Your turn begins***", System.Windows.Media.Colors.LightPink));
             _overallMap.CurrentCombatLogic.AwardMovementPoints(isPlayer: true);
             _overallMap.CurrentCombatLogic.AwardActionPoints(isPlayer: true);
         }

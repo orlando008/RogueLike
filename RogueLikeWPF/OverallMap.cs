@@ -46,6 +46,11 @@ namespace Shadows
             public RoomTile roomTileThatWasDiscovered;
         }
 
+        public class WaitTheUIEventArgs : EventArgs
+        {
+            public int MillisecondsToWait;
+        }
+
         public class CombatEncounteredEventArgs : EventArgs
         {
             public CombatUnit combatUnit;
